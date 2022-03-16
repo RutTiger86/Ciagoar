@@ -1,17 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32228.343
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CiagoarS", "CiagoarS\CiagoarS.csproj", "{0773D1DA-7BF0-4DB5-878D-FE33BE83E0D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CiagoarS", "CiagoarS\CiagoarS.csproj", "{0773D1DA-7BF0-4DB5-878D-FE33BE83E0D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CiagoarM", "CiagoarM\CiagoarM.csproj", "{07ED5B38-3D96-4A58-B907-2C4206232F4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CiagoarM", "CiagoarM\CiagoarM.csproj", "{07ED5B38-3D96-4A58-B907-2C4206232F4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ciagoar.Data", "Ciagoar.Data\Ciagoar.Data.csproj", "{0D220F8A-8873-4EE6-968D-5AB71632FC8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ciagoar.Data", "Ciagoar.Data\Ciagoar.Data.csproj", "{0D220F8A-8873-4EE6-968D-5AB71632FC8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ciagoar.Core", "Ciagoar.Core\Ciagoar.Core.csproj", "{39CAAA83-05B2-4D16-9CBF-0C58333C2E57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ciagoar.Core", "Ciagoar.Core\Ciagoar.Core.csproj", "{39CAAA83-05B2-4D16-9CBF-0C58333C2E57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ciagoar.Control", "Ciagoar.Control\Ciagoar.Control.csproj", "{484A5F71-5EB8-4664-9599-C45907771C81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ciagoar.Control", "Ciagoar.Control\Ciagoar.Control.csproj", "{484A5F71-5EB8-4664-9599-C45907771C81}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{468AE02E-8F7D-4201-ABE6-E67BFFCEA60D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
