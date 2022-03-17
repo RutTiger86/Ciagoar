@@ -27,6 +27,7 @@ namespace CiagoarS.Common
 
         protected void LogingRES(object response)
         {
+
             _mLogger.LogInformation($"[{ModuleName}]  RESPONSE DATA  [{JsonSerializer.Serialize(response)}]{Environment.NewLine}");
         }
 
