@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ciagoar.Core.OAuth.Common
 {
-    public  class OAuthCommon
+    public class OAuthCommon
     {
         // client configuration
         const string clientID = "581786658708-elflankerquo1a6vsckabbhn25hclla0.apps.googleusercontent.com";
@@ -31,15 +31,6 @@ namespace Ciagoar.Core.OAuth.Common
         }
 
 
-
-        
-
-        public static void output(string output)
-        {
-            //textBoxOutput.Text = textBoxOutput.Text + output + Environment.NewLine;
-            Console.WriteLine(output);
-        }
-
         /// <summary>
         /// Returns URI-safe data with a given input length.
         /// </summary>
@@ -47,10 +38,9 @@ namespace Ciagoar.Core.OAuth.Common
         /// <returns></returns>
         public static string randomDataBase64url(uint length)
         {
-            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-            byte[] bytes = new byte[length];
-            rng.GetBytes(bytes);
-            return base64urlencodeNoPadding(bytes);
+            var data = new byte[length];
+            RandomNumberGenerator.Create().GetBytes(data);
+            return base64urlencodeNoPadding(data);
         }
 
         /// <summary>
@@ -60,9 +50,8 @@ namespace Ciagoar.Core.OAuth.Common
         /// <returns></returns>
         public static byte[] sha256(string inputStirng)
         {
-            byte[] bytes = Encoding.ASCII.GetBytes(inputStirng);
-            SHA256Managed sha256 = new SHA256Managed();
-            return sha256.ComputeHash(bytes);
+            byte[] bytes = Encoding.ASCII.GetBytes(inputStirng);            
+            return SHA256.Create().ComputeHash(bytes);
         }
 
         /// <summary>

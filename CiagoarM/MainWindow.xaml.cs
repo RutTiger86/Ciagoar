@@ -24,9 +24,6 @@ namespace CiagoarM
         public MainWindow()
         {
             InitializeComponent();
-
-            LoginWindows loginWindows = new LoginWindows();
-            loginWindows.Show();
         }
     }
 }
