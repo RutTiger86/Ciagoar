@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace CiagoarM.Views
+namespace CiagoarM.Views.Users
 {
     /// <summary>
     /// LoginWindows.xaml에 대한 상호 작용 논리
@@ -21,7 +21,7 @@ namespace CiagoarM.Views
     {
         public LoginWindows()
         {
-            InitializeComponent();
+            InitializeComponent();           
         }
     }
 }

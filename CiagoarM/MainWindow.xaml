@@ -5,12 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CiagoarM"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Visibility="Hidden" >
+        mc:Ignorable="d" x:Name="mainwindow"
+        Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
     
     <Window.DataContext >
         <local:MainWindowModel/>
     </Window.DataContext>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding WindowLoadedCommand}" CommandParameter="{Binding ElementName=mainwindow}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     
     <Grid>
 
