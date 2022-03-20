@@ -12,5 +12,6 @@ namespace CiagoarS.DataBase
         public string AuthenticationKey { get; set; }
         public DateTime CreateTime { get; set; }
         public DateTime? UpdateTime { get; set; }
+        public short AuthType { get; set; }
     }
 }

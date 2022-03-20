@@ -18,7 +18,11 @@ namespace CiagoarS.DataBase
 
         public virtual DbSet<UserInfo> UserInfos { get; set; }
 
-       
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+           
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserInfo>(entity =>

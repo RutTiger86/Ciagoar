@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using Ciagoar.Core.Base;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CiagoarM.Commons
 {
-    public class BaseViewModel
+    public class BaseViewModel : PropertyChangeBase
     {
         private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 

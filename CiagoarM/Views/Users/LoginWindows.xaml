@@ -49,12 +49,12 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Row="2" Grid.Column="0" Content="Login"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}"/>
-            <Button Grid.Row="2" Grid.Column="1" Content="Join"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}"/>
+            <Button Grid.Row="2" Grid.Column="0" Content="Login"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Command="{Binding LoginCommand}"/>
+            <Button Grid.Row="2" Grid.Column="1" Content="Join"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Command="{Binding JoinCommand}"/>
         </Grid>
 
 
-        <Button Grid.Row="4" Background="Transparent" Width="206" Height="46" BorderThickness="0" Padding="0">
+        <Button Grid.Row="4" Background="Transparent" Width="206" Height="46" BorderThickness="0" Padding="0" Command="{Binding GoogleStartCommand}">
             <Image Source="/Assets/btn_google_sign-in.png" Stretch="UniformToFill"/>
         </Button>
     </Grid>
