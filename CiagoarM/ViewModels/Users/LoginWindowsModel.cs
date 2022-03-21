@@ -1,6 +1,7 @@
 ﻿using Ciagoar.Control.Command;
 using Ciagoar.Data.Enums;
 using CiagoarM.Commons;
+using CiagoarM.Commons.Interface;
 using CiagoarM.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CiagoarM.ViewModels.Users
 {
-    public class LoginWindowsModel : BaseViewModel
+    public class LoginWindowsModel : BaseModel, ILogin
     {
         #region Binding Value
 
@@ -57,6 +58,7 @@ namespace CiagoarM.ViewModels.Users
             get;
             private set;
         }
+        public Action SuccessLogin { get; set; }
 
         #endregion
 
@@ -92,7 +94,14 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                UserModel.Login(AuthenticationType.EM, PassWord, ID);
+                if (new UserModel().Login(AuthenticationType.EM, PassWord, ID))
+                {
+                    SuccessLogin?.Invoke();
+                }
+                else
+                {
+                    //FailLogin
+                }
             }
             catch (Exception ex)
             {
@@ -117,7 +126,14 @@ namespace CiagoarM.ViewModels.Users
             try
             {
                 string Resettoken = "";
-                UserModel.Login(AuthenticationType.GG, Resettoken);
+                if (new UserModel().Login(AuthenticationType.GG, Resettoken))
+                {
+
+                }
+                else
+                {
+                    //FailLogin
+                }
             }
             catch (Exception ex)
             {

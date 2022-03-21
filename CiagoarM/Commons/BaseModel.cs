@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CiagoarM.Commons
 {
-    public class BaseViewModel : PropertyChangeBase
+    public class BaseModel : PropertyChangeBase
     {
         private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 

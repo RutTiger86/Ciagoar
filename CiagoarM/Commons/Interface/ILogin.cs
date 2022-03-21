@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ciagoar.Core.Interface
+namespace CiagoarM.Commons.Interface
 {
-    public interface ICloseWindows
+    public interface ILogin
     {
-        Action Close { get; set; }
+        public Action SuccessLogin { get; set; }
+
     }
 }

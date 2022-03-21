@@ -1,6 +1,7 @@
 ﻿using Ciagoar.Control.Command;
 using Ciagoar.Core.Interface;
 using CiagoarM.Commons;
+using CiagoarM.Commons.Interface;
 using CiagoarM.Views.Users;
 using System;
 using System.Collections.Generic;
@@ -8,14 +9,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
 
 namespace CiagoarM
 {
-    public class MainWindowModel: BaseViewModel, ICloseWindows
+    public class MainWindowModel : BaseModel
     {
         #region Command
 
-        public RelayCommand WindowLoadedCommand
+        public RelayCommand MainClosedCommand
         {
             get;
             private set;
@@ -24,16 +26,13 @@ namespace CiagoarM
         #endregion
 
         #region Variable
-        private MainWindow _main { get; set; }
-
-        public Action Close { get; set; }       
 
         LoginWindows _loginWindows;
         private LoginWindows loginWindows
         {
             get
             {
-                if(_loginWindows == null)
+                if (_loginWindows == null)
                 {
                     _loginWindows = new LoginWindows();
                     _loginWindows.Closed += _loginWindows_Closed;
@@ -50,6 +49,8 @@ namespace CiagoarM
             {
                 LogInfo("★★★★★ MainWindowModel Start ★★★★★");
                 SettingCommand();
+                ShowLoginWindow();
+                LogInfo("loginWindows Show");
             }
             catch (Exception ex)
             {
@@ -59,40 +60,39 @@ namespace CiagoarM
 
         private void SettingCommand()
         {
-            WindowLoadedCommand = new RelayCommand(WindowLoaded);
-
-            LogInfo("SettingCommand Done");
-        }
-
-        private void WindowLoaded(object param)
-        {
             try
             {
-                _main = param as MainWindow;
-
-                if (_main != null)
-                {
-                    LogInfo("MainWindow Loaded");
-
-                    Close += () =>
-                    {
-                        _main.Close();
-                    };
-
-                    _main.Visibility = Visibility.Hidden;
-                }
-                else
-                {
-                    LogInfo("★★ MainWindow As Null");
-                    LogError("★★ MainWindow As Null");
-                }
-
-                loginWindows.Show();
-                LogInfo("loginWindows Show");
+                MainClosedCommand = new RelayCommand(CloseApplication);
+                LogInfo("SettingCommand Done");
             }
             catch (Exception ex)
             {
+                LogException(ex.Message);
+            }
+        }
 
+        private void ShowLoginWindow()
+        {
+            try
+            {
+                ((ILogin)loginWindows.DataContext).SuccessLogin += SuccessLogin;
+                loginWindows.Show();
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+        private void SuccessLogin()
+        {
+            try
+            {
+                loginWindows.Visibility = Visibility.Collapsed;
+                App.Current.MainWindow.Show();
+            }
+            catch (Exception ex)
+            {
                 LogException(ex.Message);
             }
         }
@@ -102,7 +102,7 @@ namespace CiagoarM
             try
             {
                 LogInfo("loginWindows Closed, MainWindow Closing");
-                Close?.Invoke();
+                App.Current.MainWindow?.Close();
             }
             catch (Exception ex)
             {
@@ -110,6 +110,21 @@ namespace CiagoarM
             }
         }
 
+        private void CloseApplication(object param)
+        {
+            try
+            {
+                if(loginWindows!=null)
+                {
+                    loginWindows.Close();                    
+                }
+                App.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
 
     }
 }

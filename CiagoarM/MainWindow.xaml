@@ -6,15 +6,15 @@
         xmlns:local="clr-namespace:CiagoarM"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d" x:Name="mainwindow"
-        Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
+        Title="MainWindow" Height="450" Width="800" WindowState="Maximized" Visibility="Hidden">
     
     <Window.DataContext >
         <local:MainWindowModel/>
     </Window.DataContext>
 
     <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding WindowLoadedCommand}" CommandParameter="{Binding ElementName=mainwindow}"/>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding MainClosedCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     
