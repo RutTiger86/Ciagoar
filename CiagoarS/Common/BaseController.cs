@@ -70,7 +70,7 @@ namespace CiagoarS.Common
                 Data = default(T)
             };
 
-            _mLogger.LogError($"{ModuleName}  RESPONSE DATA  [{JsonSerializer.Serialize(response)}]{Environment.NewLine} Detail- {sDetail}{Environment.NewLine}");
+            _mLogger.LogInformation($"{ModuleName}  RESPONSE DATA  [{JsonSerializer.Serialize(response)}]{Environment.NewLine}");
 
             if (sDetail != null)
             {

@@ -123,4 +123,7 @@
   <data name="EC_EX_001" xml:space="preserve">
     <value>The service has encountered an unexpected problem. Please contact your administrator.</value>
   </data>
+  <data name="RE_NEXIST_USER_001" xml:space="preserve">
+    <value>The user does not exist.</value>
+  </data>
 </root>

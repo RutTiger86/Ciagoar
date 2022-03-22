@@ -123,4 +123,7 @@
   <data name="EC_EX_001" xml:space="preserve">
     <value>서비스에 예기지못한 문제가 발생했습니다. 관리자에게 문의하시기 바랍니다.</value>
   </data>
+  <data name="RE_NEXIST_USER_001" xml:space="preserve">
+    <value>해당 사용자는 존재하지 않습니다.</value>
+  </data>
 </root>

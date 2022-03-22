@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ciagoar.Core\Ciagoar.Core.csproj" />
     <ProjectReference Include="..\Ciagoar.Data\Ciagoar.Data.csproj" />
   </ItemGroup>
 

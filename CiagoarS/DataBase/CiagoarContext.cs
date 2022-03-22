@@ -18,11 +18,6 @@ namespace CiagoarS.DataBase
 
         public virtual DbSet<UserInfo> UserInfos { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-           
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserInfo>(entity =>
@@ -35,13 +30,9 @@ namespace CiagoarS.DataBase
                     .IsRequired()
                     .HasMaxLength(512);
 
-                entity.Property(e => e.AuthenticationType)
-                    .IsRequired()
-                    .HasMaxLength(2)
-                    .IsUnicode(false)
-                    .HasDefaultValueSql("(N'EM')");
-
-                entity.Property(e => e.CreateTime).HasColumnType("datetime");
+                entity.Property(e => e.CreateTime)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Email)
                     .IsRequired()

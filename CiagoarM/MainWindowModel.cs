@@ -35,7 +35,8 @@ namespace CiagoarM
                 if (_loginWindows == null)
                 {
                     _loginWindows = new LoginWindows();
-                    _loginWindows.Closed += _loginWindows_Closed;
+                    _loginWindows.Closed += (s, arg) => { ProgramShutdown(null); };
+                    ((ILogin)_loginWindows.DataContext).SuccessLogin += SuccessLogin;
                 }
 
                 return _loginWindows;
@@ -62,7 +63,7 @@ namespace CiagoarM
         {
             try
             {
-                MainClosedCommand = new RelayCommand(CloseApplication);
+                MainClosedCommand = new RelayCommand(ProgramShutdown);
                 LogInfo("SettingCommand Done");
             }
             catch (Exception ex)
@@ -74,8 +75,7 @@ namespace CiagoarM
         private void ShowLoginWindow()
         {
             try
-            {
-                ((ILogin)loginWindows.DataContext).SuccessLogin += SuccessLogin;
+            {                
                 loginWindows.Show();
             }
             catch (Exception ex)
@@ -97,12 +97,15 @@ namespace CiagoarM
             }
         }
 
-        private void _loginWindows_Closed(object sender, EventArgs e)
+
+        private void ProgramShutdown(object param)
         {
             try
             {
-                LogInfo("loginWindows Closed, MainWindow Closing");
-                App.Current.MainWindow?.Close();
+                LogInfo("ProgramShutDown");
+                Application.Current.MainWindow?.Close();
+                loginWindows?.Close();
+                Application.Current.Shutdown();
             }
             catch (Exception ex)
             {
@@ -110,21 +113,7 @@ namespace CiagoarM
             }
         }
 
-        private void CloseApplication(object param)
-        {
-            try
-            {
-                if(loginWindows!=null)
-                {
-                    loginWindows.Close();                    
-                }
-                App.Current.Shutdown();
-            }
-            catch (Exception ex)
-            {
-                LogException(ex.Message);
-            }
-        }
+
 
     }
 }

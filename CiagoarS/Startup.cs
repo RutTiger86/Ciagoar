@@ -71,8 +71,8 @@ namespace CiagoarS
             app.UseAuthorization();
 
             app.UseSwagger();
-
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CiagoarS v1"));
+            app.UseSwaggerUI();
+            //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CiagoarS v1"));
 
             // Log4Net
             loggerFactory.AddLog4Net("log4net.config");

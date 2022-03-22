@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ciagoar.Data.Request.User
+namespace Ciagoar.Data.Request.Users
 {
     public class REQ_USER_JOIN
     {
@@ -16,9 +16,8 @@ namespace Ciagoar.Data.Request.User
         public string langCode { get; set; }
 
         [Required(AllowEmptyStrings = false)]
-        [StringLength(2)]
-        [DefaultValue("EM")]
-        public string authenticationType { get; set; }
+        [DefaultValue(0)]
+        public int authenticationType { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(50)]

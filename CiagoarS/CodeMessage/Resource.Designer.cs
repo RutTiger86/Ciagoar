@@ -77,5 +77,14 @@ namespace CiagoarS.CodeMessage {
                 return ResourceManager.GetString("EC_EX_001", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   The user does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string RE_NEXIST_USER_001 {
+            get {
+                return ResourceManager.GetString("RE_NEXIST_USER_001", resourceCulture);
+            }
+        }
     }
 }
