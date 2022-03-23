@@ -25,7 +25,7 @@
 
         <StackPanel Grid.Row="1" VerticalAlignment="Center">
             <Label Content="{x:Static Lang:Resource.Main_Title}" Style="{StaticResource TitleLabel}"/>
-            <Label Content="{x:Static Lang:Resource.Tile_Total_Text}"  Style="{StaticResource ContentLabel}"/>
+            <Label Content="{x:Static Lang:Resource.Title_Total_Text}"  Style="{StaticResource ContentLabel}"/>
         </StackPanel>
 
         <Grid Grid.Row="2" Margin="2">
@@ -35,13 +35,13 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.Column="0" Content="ID : " Style="{StaticResource ContentLabel}" HorizontalAlignment="Right" ></Label>
-            <TextBox Grid.Row="0" Grid.Column="1" Width="230" HorizontalAlignment="Left" Style="{StaticResource MediumTextBox}"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumTextBox}" Text="{Binding ID}"/>
 
             <Label Grid.Row="1" Grid.Column="0" Content="PW : " Style="{StaticResource ContentLabel}" HorizontalAlignment="Right" ></Label>
-            <TextBox Grid.Row="1" Grid.Column="1" Width="230" HorizontalAlignment="Left" Style="{StaticResource MediumTextBox}"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumTextBox}" Text="{Binding PassWord}"/>
         </Grid>
 
         <Grid Grid.Row="3" Margin="2">          

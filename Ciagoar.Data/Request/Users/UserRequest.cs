@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ciagoar.Data.Request.Users
 {
-    public class REQ_USER_JOIN
+    public class REQ_USER_LOGIN
     {
         [Required(AllowEmptyStrings = false)]
         [StringLength(5)]

@@ -56,10 +56,10 @@ namespace CiagoarS.Controllers
         /// <para>     --Nickname    사용자 별칭</para>
         /// <para>     --AuthType    계정 권한</para>
         /// </response>
-        [Route("userJoin")]
+        [Route("userLogin")]
         [HttpPost]
         [Produces("application/json")]
-        public BaseResponse<Ci_User> SetUserJoin(REQ_USER_JOIN parameters)
+        public BaseResponse<Ci_User> SetUserLogin(REQ_USER_LOGIN parameters)
         {
             LogingREQ(parameters);
 

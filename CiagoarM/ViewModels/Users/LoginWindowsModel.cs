@@ -2,12 +2,14 @@
 using Ciagoar.Data.Enums;
 using CiagoarM.Commons;
 using CiagoarM.Commons.Interface;
+using CiagoarM.Languages;
 using CiagoarM.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CiagoarM.ViewModels.Users
 {
@@ -94,13 +96,32 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                if (new UserModel().Login(AuthenticationType.EM, PassWord, ID))
+                asyncLogin(AuthenticationType.EM, PassWord, ID);
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+        public async void asyncLogin(AuthenticationType authentication, string AuthenticationKey, string Email = null)
+        {
+            try
+            {
+                bool success = await new UserModel().Login(authentication, AuthenticationKey, Email);
+
+                if (success)
                 {
                     SuccessLogin?.Invoke();
                 }
                 else
                 {
-                    //FailLogin
+                    string messageBoxText = Resource.MSG_LoginFail;
+                    string caption = Resource.Caption_Warning;
+                    MessageBoxButton button = MessageBoxButton.OK;
+                    MessageBoxImage icon = MessageBoxImage.Warning;
+
+                    _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
                 }
             }
             catch (Exception ex)
@@ -126,14 +147,9 @@ namespace CiagoarM.ViewModels.Users
             try
             {
                 string Resettoken = "";
-                if (new UserModel().Login(AuthenticationType.GG, Resettoken))
-                {
 
-                }
-                else
-                {
-                    //FailLogin
-                }
+                asyncLogin(AuthenticationType.GG, Resettoken, ID);
+
             }
             catch (Exception ex)
             {

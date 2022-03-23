@@ -61,6 +61,15 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   Warning과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Caption_Warning {
+            get {
+                return ResourceManager.GetString("Caption_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ciagoar과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Main_Title {
@@ -70,11 +79,20 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   Login failed. Please check the input information.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string MSG_LoginFail {
+            get {
+                return ResourceManager.GetString("MSG_LoginFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Come In And Go Out And Record과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        public static string Tile_Total_Text {
+        public static string Title_Total_Text {
             get {
-                return ResourceManager.GetString("Tile_Total_Text", resourceCulture);
+                return ResourceManager.GetString("Title_Total_Text", resourceCulture);
             }
         }
     }

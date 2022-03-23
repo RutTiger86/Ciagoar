@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Caption_Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
   <data name="Main_Title" xml:space="preserve">
     <value>Ciagoar</value>
   </data>
-  <data name="Tile_Total_Text" xml:space="preserve">
+  <data name="MSG_LoginFail" xml:space="preserve">
+    <value>Login failed. Please check the input information.</value>
+  </data>
+  <data name="Title_Total_Text" xml:space="preserve">
     <value>Come In And Go Out And Record</value>
   </data>
 </root>
