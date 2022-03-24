@@ -1,7 +1,8 @@
-﻿using Ciagoar.Core.Interface;
-using Ciagoar.Core.OAuth.Common;
+﻿using Ciagoar.Core.OAuth.Common;
+using Ciagoar.Data.HTTPS;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -22,7 +23,7 @@ namespace Ciagoar.Core.OAuth
         const string tokenEndpoint = "https://www.googleapis.com/oauth2/v4/token";
         const string userInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
 
-        public async void Googole(IActivateControl activateControl)
+        public static async Task<string> TryLogin()
         {            
             // Generates state and PKCE values.
             string state = OAuthCommon.randomDataBase64url(32);
@@ -48,13 +49,16 @@ namespace Ciagoar.Core.OAuth
                 code_challenge_method);
 
             // Opens request in the browser.
-            System.Diagnostics.Process.Start(authorizationRequest);
+
+            Process.Start(new ProcessStartInfo { FileName = authorizationRequest, UseShellExecute = true });
+
+            //System.Diagnostics.Process.Start("explorer.exe", authorizationRequest);
 
             // Waits for the OAuth authorization response.
             var context = await http.GetContextAsync();
 
             // Brings this app back to the foreground.
-            activateControl.RunActivate();
+            //activateControl.RunActivate();
 
             // Sends an HTTP response to the browser.
             var response = context.Response;
@@ -73,13 +77,13 @@ namespace Ciagoar.Core.OAuth
             if (context.Request.QueryString.Get("error") != null)
             {
                 //OAuthCommon.output(String.Format("OAuth authorization error: {0}.", context.Request.QueryString.Get("error")));
-                return;
+                return String.Empty;
             }
             if (context.Request.QueryString.Get("code") == null
                 || context.Request.QueryString.Get("state") == null)
             {
                 //OAuthCommon.output("Malformed authorization response. " + context.Request.QueryString);
-                return;
+                return String.Empty;
             }
 
             // extracts the code
@@ -91,16 +95,16 @@ namespace Ciagoar.Core.OAuth
             if (incoming_state != state)
             {
                 //OAuthCommon.output(String.Format("Received request with invalid state ({0})", incoming_state));
-                return;
+                return String.Empty;
             }
             //OAuthCommon.output("Authorization code: " + code);
 
             // Starts the code exchange at the Token Endpoint.
-            performCodeExchange(code, code_verifier, redirectURI);
+            return await performCodeExchange(code, code_verifier, redirectURI);
         }
 
 
-        async void performCodeExchange(string code, string code_verifier, string redirectURI)
+        async static Task<string> performCodeExchange(string code, string code_verifier, string redirectURI)
         {
             // Builds the Token request
             string tokenRequestBody = string.Format("code={0}&redirect_uri={1}&client_id={2}&code_verifier={3}&client_secret={4}&scope=&grant_type=authorization_code",
@@ -123,18 +127,19 @@ namespace Ciagoar.Core.OAuth
 
             if (!response.IsSuccessStatusCode)
             {
-                return;
+                return String.Empty;
             }
 
             // Sets the Authentication header of our HTTP client using the acquired access token.
-            Dictionary<string, string> tokenEndpointDecoded = JsonSerializer.Deserialize<Dictionary<string, string>>(responseString);
-            string accessToken = tokenEndpointDecoded["access_token"];
+            GoogleOAuth tokenEndpointDecoded = JsonSerializer.Deserialize<GoogleOAuth>(responseString);
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenEndpointDecoded.token_type, tokenEndpointDecoded.access_token);
 
             // Makes a call to the Userinfo endpoint, and prints the results.
             HttpResponseMessage userinfoResponse = client.GetAsync(userInfoEndpoint).Result;
             string userinfoResponseContent = await userinfoResponse.Content.ReadAsStringAsync();
+
+            return userinfoResponseContent;
         }
 
 

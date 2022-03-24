@@ -12,8 +12,8 @@
     <Window.DataContext>
         <Views:LoginWindowsModel></Views:LoginWindowsModel>
     </Window.DataContext>
-    
-    <Grid>
+
+    <Grid IsEnabled="{Binding IsEnableControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
@@ -41,7 +41,7 @@
             <TextBox Grid.Row="0" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumTextBox}" Text="{Binding ID}"/>
 
             <Label Grid.Row="1" Grid.Column="0" Content="PW : " Style="{StaticResource ContentLabel}" HorizontalAlignment="Right" ></Label>
-            <TextBox Grid.Row="1" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumTextBox}" Text="{Binding PassWord}"/>
+            <PasswordBox x:Name="PWBox" Grid.Row="1" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumPasswordBox}"/>
         </Grid>
 
         <Grid Grid.Row="3" Margin="2">          
@@ -49,7 +49,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Row="2" Grid.Column="0" Content="Login"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Command="{Binding LoginCommand}"/>
+            <Button Grid.Row="2" Grid.Column="0" Content="Login"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PWBox}"/>
             <Button Grid.Row="2" Grid.Column="1" Content="Join"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Command="{Binding JoinCommand}"/>
         </Grid>
 

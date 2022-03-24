@@ -1,4 +1,6 @@
-﻿using Ciagoar.Data.Enums;
+﻿using Ciagoar.Core.OAuth;
+using Ciagoar.Data.Enums;
+using Ciagoar.Data.HTTPS;
 using Ciagoar.Data.Request.Users;
 using Ciagoar.Data.Response;
 using Ciagoar.Data.Response.Users;
@@ -88,12 +90,25 @@ namespace CiagoarM.Models
                 HttpClient client = new();
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-                
+
                 HttpResponseMessage response = await client.PostAsync(URL, content).ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
                     baseResponse = await response.Content.ReadFromJsonAsync<BaseResponse<T>>();
+                }
+                else
+                {                   
+                    var customerJsonString = response.Content.ReadAsStringAsync().Result;
+
+                    Error data = JsonSerializer.Deserialize<Error>(customerJsonString);
+
+                    baseResponse = new BaseResponse<T>()
+                    {
+                        ErrorCode = data.status.ToString(),
+                        ErrorMessage = data.errors.ToString(),
+                        Result = false
+                    };
                 }
             }
             catch (Exception ex)
@@ -109,6 +124,21 @@ namespace CiagoarM.Models
         {
             try
             {
+                if(String.IsNullOrEmpty(RefrashTokken))
+                {
+                   string Result = await Google.TryLogin();
+
+                   if(!String.IsNullOrEmpty(Result))
+                    {
+                        Console.WriteLine(Result);
+                        return true;
+                    }
+
+                }
+                else
+                {
+                    
+                }
 
             }
             catch (Exception ex)

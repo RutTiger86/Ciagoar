@@ -5,8 +5,10 @@ using Ciagoar.Data.Response;
 using Ciagoar.Data.Response.Users;
 using CiagoarS.CodeMessage;
 using CiagoarS.Common;
+using CiagoarS.Common.Enums;
 using CiagoarS.DataBase;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -69,7 +71,7 @@ namespace CiagoarS.Controllers
             {
                 switch((AuthenticationType)parameters.authenticationType)
                 {
-                    case AuthenticationType.EM: response = SetUserJoin_Email(parameters.email, parameters.authenticationKey); break;
+                    case AuthenticationType.EM: response = SetUserLogin_Email(parameters.email, parameters.authenticationKey); break;
                     case AuthenticationType.GG:break;
                         default:break;
                 }
@@ -85,7 +87,7 @@ namespace CiagoarS.Controllers
             return response;
         }
 
-        private BaseResponse<Ci_User> SetUserJoin_Email(string Email, string Password)
+        private BaseResponse<Ci_User> SetUserLogin_Email(string Email, string Password)
         {
             try
             {
@@ -105,9 +107,13 @@ namespace CiagoarS.Controllers
                 }
                 else
                 {
-                    return ProcessError<Ci_User>(nameof(Resource.RE_NEXIST_USER_001));
+                    return ProcessError<Ci_User>(ErrorCode.RE_NEXIST_USER_001);
                 }
 
+            }
+            catch(SqlException SExp)
+            {
+                return DataBaseError<Ci_User>(SExp.Message);
             }
             catch (Exception Exp)
             {
@@ -118,7 +124,6 @@ namespace CiagoarS.Controllers
 
         private static string GetHash(string input)
         {
-
             // Convert the input string to a byte array and compute the hash.
             byte[] data = OAuthCommon.sha256(input); ;
 

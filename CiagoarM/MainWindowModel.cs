@@ -1,5 +1,4 @@
 ﻿using Ciagoar.Control.Command;
-using Ciagoar.Core.Interface;
 using CiagoarM.Commons;
 using CiagoarM.Commons.Interface;
 using CiagoarM.Views.Users;

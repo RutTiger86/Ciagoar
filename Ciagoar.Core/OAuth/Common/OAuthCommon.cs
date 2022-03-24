@@ -13,13 +13,6 @@ namespace Ciagoar.Core.OAuth.Common
 {
     public class OAuthCommon
     {
-        // client configuration
-        const string clientID = "581786658708-elflankerquo1a6vsckabbhn25hclla0.apps.googleusercontent.com";
-        const string clientSecret = "3f6NggMbPtrmIBpgx-MK2xXK";
-        const string authorizationEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
-        const string tokenEndpoint = "https://www.googleapis.com/oauth2/v4/token";
-        const string userInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
-
         // ref http://stackoverflow.com/a/3978040
         public static int GetRandomUnusedPort()
         {

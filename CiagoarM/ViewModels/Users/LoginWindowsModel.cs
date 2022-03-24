@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace CiagoarM.ViewModels.Users
 {
@@ -28,13 +29,13 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        private string _passWord;
-        public string PassWord
+        private bool _isEnableControl = true;
+        public bool IsEnableControl
         {
-            get { return _passWord; }
+            get { return _isEnableControl; }
             set
             {
-                _passWord = value;
+                _isEnableControl = value;
                 onPropertyChanged();
             }
         }
@@ -96,7 +97,12 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                asyncLogin(AuthenticationType.EM, PassWord, ID);
+                if (param is PasswordBox)
+                {
+                    PasswordBox passwordBox = (PasswordBox)param;
+                    IsEnableControl = false;
+                    asyncLogin(AuthenticationType.EM, passwordBox.Password, ID);
+                }
             }
             catch (Exception ex)
             {
@@ -123,6 +129,7 @@ namespace CiagoarM.ViewModels.Users
 
                     _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
                 }
+                IsEnableControl = true;
             }
             catch (Exception ex)
             {
@@ -146,9 +153,7 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                string Resettoken = "";
-
-                asyncLogin(AuthenticationType.GG, Resettoken, ID);
+                asyncLogin(AuthenticationType.GG, Properties.Settings.Default.RefrashToken, ID);
 
             }
             catch (Exception ex)

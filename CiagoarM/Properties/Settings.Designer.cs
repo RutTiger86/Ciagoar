@@ -46,5 +46,17 @@ namespace CiagoarM.Properties {
                 this["ServerBaseAddress"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RefrashToken {
+            get {
+                return ((string)(this["RefrashToken"]));
+            }
+            set {
+                this["RefrashToken"] = value;
+            }
+        }
     }
 }

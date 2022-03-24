@@ -1,4 +1,8 @@
-﻿namespace Ciagoar.Data.Response
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
+
+namespace Ciagoar.Data.Response
 {
     public class BaseResponse<T>
     {
