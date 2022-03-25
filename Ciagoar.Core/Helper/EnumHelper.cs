@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-using System.Text;
 
-namespace CiagoarM.Commons.Helper
+namespace Ciagoar.Core.Helper
 {
     public class EnumHelper
     {

@@ -1,4 +1,4 @@
-﻿using Ciagoar.Core.OAuth.Common;
+﻿using Ciagoar.Core.Helper;
 using Ciagoar.Data.Enums;
 using Ciagoar.Data.Request.Users;
 using Ciagoar.Data.Response;
@@ -125,7 +125,7 @@ namespace CiagoarS.Controllers
         private static string GetHash(string input)
         {
             // Convert the input string to a byte array and compute the hash.
-            byte[] data = OAuthCommon.sha256(input); ;
+            byte[] data = CryptographyHelper.sha256(input); ;
 
             // Create a new Stringbuilder to collect the bytes
             // and create a string.

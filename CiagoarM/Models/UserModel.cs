@@ -1,6 +1,8 @@
-﻿using Ciagoar.Core.OAuth;
+﻿using Ciagoar.Core.Helper;
+using Ciagoar.Core.OAuth;
 using Ciagoar.Data.Enums;
 using Ciagoar.Data.HTTPS;
+using Ciagoar.Data.OAuth;
 using Ciagoar.Data.Request.Users;
 using Ciagoar.Data.Response;
 using Ciagoar.Data.Response.Users;
@@ -54,7 +56,10 @@ namespace CiagoarM.Models
                     email=Email
                 };
 
-                BaseResponse<Ci_User> response =  await CallPostCiagoarAPI<Ci_User>("User/userLogin", _USER_LOGIN);
+                string URL = Properties.Settings.Default.ServerBaseAddress + "User/Login";
+                string Stringcontent = JsonSerializer.Serialize(_USER_LOGIN);
+
+                BaseResponse<Ci_User> response = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
 
                 if(response.Result)
                 {
@@ -75,63 +80,22 @@ namespace CiagoarM.Models
             return false;
         }
 
-
-        private async Task<BaseResponse<T>> CallPostCiagoarAPI<T>(string RequestURI ,object Content)
-        {
-            BaseResponse<T> baseResponse = null;
-
-            try
-            {
-                string URL = Properties.Settings.Default.ServerBaseAddress + RequestURI;
-                string Stringcontent = JsonSerializer.Serialize(Content);
-                
-                StringContent content = new(Stringcontent, Encoding.Default, "application/json");
-
-                HttpClient client = new();
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-
-                HttpResponseMessage response = await client.PostAsync(URL, content).ConfigureAwait(false);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    baseResponse = await response.Content.ReadFromJsonAsync<BaseResponse<T>>();
-                }
-                else
-                {                   
-                    var customerJsonString = response.Content.ReadAsStringAsync().Result;
-
-                    Error data = JsonSerializer.Deserialize<Error>(customerJsonString);
-
-                    baseResponse = new BaseResponse<T>()
-                    {
-                        ErrorCode = data.status.ToString(),
-                        ErrorMessage = data.errors.ToString(),
-                        Result = false
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                LogException(ex.Message);
-            }
-
-            return baseResponse;
-        }
-
-
         private async Task<bool> TryGoogleLogin(string RefrashTokken)
         {
             try
             {
                 if(String.IsNullOrEmpty(RefrashTokken))
                 {
-                   string Result = await Google.TryLogin();
+                    BaseResponse<GoogleUserInfo> response = await Google.TryLogin();
 
-                   if(!String.IsNullOrEmpty(Result))
+                    if (response.Result)
                     {
-                        Console.WriteLine(Result);
                         return true;
+                    }
+                    else
+                    {
+                        LogError($"{response.ErrorCode} : {response.ErrorMessage}");
+                        return false;
                     }
 
                 }

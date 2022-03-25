@@ -1,28 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Ciagoar.Core.OAuth.Common
+namespace Ciagoar.Core.Helper
 {
-    public class OAuthCommon
+    public class CryptographyHelper
     {
-        // ref http://stackoverflow.com/a/3978040
-        public static int GetRandomUnusedPort()
-        {
-            var listener = new TcpListener(IPAddress.Loopback, 0);
-            listener.Start();
-            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
-            listener.Stop();
-            return port;
-        }
-
 
         /// <summary>
         /// Returns URI-safe data with a given input length.
@@ -43,9 +29,10 @@ namespace Ciagoar.Core.OAuth.Common
         /// <returns></returns>
         public static byte[] sha256(string inputStirng)
         {
-            byte[] bytes = Encoding.ASCII.GetBytes(inputStirng);            
+            byte[] bytes = Encoding.ASCII.GetBytes(inputStirng);
             return SHA256.Create().ComputeHash(bytes);
         }
+
 
         /// <summary>
         /// Base64url no-padding encodes the given input buffer.

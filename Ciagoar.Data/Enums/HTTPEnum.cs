@@ -5,22 +5,13 @@ using System.Text;
 
 namespace Ciagoar.Data.Enums
 {
-    public enum HEADER_METHOD
-    {
-        [Description("GET")]
-        HTTP_GET,
-        [Description("POST")]
-        HTTP_POST,
-        [Description("PUT")]
-        HTTP_PUT,
-        [Description("DELETE")]
-        HTTP_DELETE
-    };
-    public enum HEADER_ACCEPT
+    public enum MediaType
     {
         [Description("application/xml")]
-        RESPONSE_XML,
+        APPLICATION_XML,
         [Description("application/json")]
-        RESPONSE_JSON
+        APPLICATION_JSON,
+        [Description("application/x-www-form-urlencoded")]
+        APPLICATION_x_WWW_FORM
     };
 }
