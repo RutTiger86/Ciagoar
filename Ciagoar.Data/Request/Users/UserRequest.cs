@@ -26,7 +26,6 @@ namespace Ciagoar.Data.Request.Users
         public string email { get; set; }
 
 
-        [Required(AllowEmptyStrings = false)]
         [StringLength(512)]
         [DefaultValue("")]
         public string authenticationKey { get; set; }

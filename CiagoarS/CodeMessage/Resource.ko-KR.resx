@@ -117,13 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EC_DB_001" xml:space="preserve">
+  <data name="EC_DB" xml:space="preserve">
     <value>SQL 처리 중에 예외가 발생했습니다. 관리자에게 문의하시기 바랍니다.</value>
   </data>
-  <data name="EC_EX_001" xml:space="preserve">
+  <data name="EC_EX" xml:space="preserve">
     <value>서비스에 예기지못한 문제가 발생했습니다. 관리자에게 문의하시기 바랍니다.</value>
   </data>
-  <data name="RE_NEXIST_USER_001" xml:space="preserve">
+  <data name="RE_EXIST_USER_NEXIST_OAUTH" xml:space="preserve">
+    <value>이미 다른 방식으로 가입된 계정이 존재합니다. 해당 계정과 연결하시겠습니까?</value>
+  </data>
+  <data name="RE_NEXIST_USER" xml:space="preserve">
     <value>해당 사용자는 존재하지 않습니다.</value>
+  </data>
+  <data name="RE_OAUTH_REFRASH_TOKKEN_EXPIRED" xml:space="preserve">
+    <value>장기간 미접속으로 인해 재 로그인이 필요합니다.</value>
   </data>
 </root>

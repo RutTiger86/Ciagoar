@@ -69,11 +69,11 @@ namespace CiagoarS.Controllers
 
             try
             {
-                switch((AuthenticationType)parameters.authenticationType)
+                switch ((AuthenticationType)parameters.authenticationType)
                 {
                     case AuthenticationType.EM: response = SetUserLogin_Email(parameters.email, parameters.authenticationKey); break;
-                    case AuthenticationType.GG:break;
-                        default:break;
+                    case AuthenticationType.GG: response = SetUserLogin_Google(parameters.email, parameters.authenticationKey); break;
+                    default: break;
                 }
 
             }
@@ -91,27 +91,33 @@ namespace CiagoarS.Controllers
         {
             try
             {
-                Password= GetHash(Password);
+                Password = CryptographyHelper.GetHash(Password);
 
-                UserInfo userInfo =  _context.UserInfos.FirstOrDefault(p => p.Email.Equals(Email) && p.AuthenticationKey.Equals(Password));
+                Ci_User userInfo = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(Email) && p.IsUse && !p.IsDelete)
+                                    join UAuthentications in _context.UserAuthentications.Where(p => p.AuthenticationKey.Equals(Password) && p.AuthenticationType == (int)AuthenticationType.EM && p.IsUse && !p.IsDelete)
+                                    on UInfo.Id equals UAuthentications.UserInfoId
+                                    select new Ci_User()
+                                    {
+                                        AuthType = UInfo.AuthType,
+                                        Email = UInfo.Email,
+                                        Nickname = UInfo.Nickname
+                                    }).FirstOrDefault();
 
-                if(userInfo != null)
+                if (userInfo != null)
                 {
-                    return new BaseResponse<Ci_User> { Result = true, Data = new Ci_User()
+                    return new BaseResponse<Ci_User>
                     {
-                        AuthType = userInfo.AuthType,
-                        Email = userInfo.Email,
-                        Nickname = userInfo.Nickname
-                    }
+                        Result = true,
+                        Data = userInfo
                     };
                 }
                 else
                 {
-                    return ProcessError<Ci_User>(ErrorCode.RE_NEXIST_USER_001);
+                    return ProcessError<Ci_User>(ErrorCode.RE_NEXIST_USER);
                 }
 
             }
-            catch(SqlException SExp)
+            catch (SqlException SExp)
             {
                 return DataBaseError<Ci_User>(SExp.Message);
             }
@@ -119,27 +125,87 @@ namespace CiagoarS.Controllers
             {
                 return ExceptionError<Ci_User>(Exp.Message);
             }
-
         }
 
-        private static string GetHash(string input)
+        private BaseResponse<Ci_User> SetUserLogin_Google(string Email, string RefreshTokken)
         {
-            // Convert the input string to a byte array and compute the hash.
-            byte[] data = CryptographyHelper.sha256(input); ;
-
-            // Create a new Stringbuilder to collect the bytes
-            // and create a string.
-            var sBuilder = new StringBuilder();
-
-            // Loop through each byte of the hashed data
-            // and format each one as a hexadecimal string.
-            for (int i = 0; i < data.Length; i++)
+            try
             {
-                sBuilder.Append(data[i].ToString("x2"));
-            }
+                Tuple<Ci_User, string> userInfo = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(Email) && p.IsUse && !p.IsDelete)
+                                                   join UAuthentications in _context.UserAuthentications.Where(p => p.AuthenticationType == (int)AuthenticationType.GG && p.IsUse && !p.IsDelete)
+                                                   on UInfo.Id equals UAuthentications.UserInfoId
+                                                   select new Tuple<Ci_User, string>(new Ci_User()
+                                                   {
+                                                       AuthType = UInfo.AuthType,
+                                                       Email = UInfo.Email,
+                                                       Nickname = UInfo.Nickname
+                                                   }, UAuthentications.AuthenticationKey)
+                                                   ).FirstOrDefault();
 
-            // Return the hexadecimal string.
-            return sBuilder.ToString();
+                if (userInfo != default)
+                {
+                    string AuthRefrashTokken = userInfo.Item2;
+                    if (string.IsNullOrWhiteSpace(RefreshTokken) && !userInfo.Item2.Equals(RefreshTokken))
+                    {
+                        UserAuthentication userAuthentication = _context.UserAuthentications.Where(p => p.AuthenticationType == (int)AuthenticationType.GG && p.IsUse && !p.IsDelete).First();
+                        userAuthentication.AuthenticationKey = RefreshTokken;
+                        _context.SaveChanges();
+
+                        AuthRefrashTokken = RefreshTokken;
+                    }
+
+                    if (GetAccessKey(AuthRefrashTokken))
+                    {
+                        //엑세스 토큰 성공 호출 로그인 진행 
+                        return new BaseResponse<Ci_User>
+                        {
+                            Result = true,
+                            Data = userInfo.Item1
+                        };
+                    }
+                    else
+                    {
+                        // 리프레쉬 토큰 만료 재 로그인 필요
+                        return ProcessError<Ci_User>(ErrorCode.RE_OAUTH_REFRASH_TOKKEN_EXPIRED);
+                    }
+                }
+                else
+                {
+                    // 구글 로그인 사용자 없음 
+                    if (_context.UserInfos.Any(p => p.Email.Equals(Email) && p.IsUse && !p.IsDelete))
+                    {
+                        //해당 계정 존재 ( 연결 확인 필요 ) 
+                        return ProcessError<Ci_User>(ErrorCode.RE_EXIST_USER_NEXIST_OAUTH);
+                    }
+                    else
+                    {
+                        //해당 계정 자체가 존재 하지 않음
+                        return ProcessError<Ci_User>(ErrorCode.RE_NEXIST_USER);
+                    }                    
+                }
+            }
+            catch (SqlException SExp)
+            {
+                return DataBaseError<Ci_User>(SExp.Message);
+            }
+            catch (Exception Exp)
+            {
+                return ExceptionError<Ci_User>(Exp.Message);
+            }
         }
+
+        private bool GetAccessKey(string RefreshTokken)
+        {
+            try
+            {
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _mLogger.LogError($"[{ModuleName}]  Detail- {ex.Message}{Environment.NewLine}");
+                return false;
+            }
+        }
+
     }
 }

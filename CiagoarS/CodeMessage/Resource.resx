@@ -117,13 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EC_DB_001" xml:space="preserve">
+  <data name="EC_DB" xml:space="preserve">
     <value>An exception occurred during SQL processing. Please contact the administrator.</value>
   </data>
-  <data name="EC_EX_001" xml:space="preserve">
+  <data name="EC_EX" xml:space="preserve">
     <value>The service has encountered an unexpected problem. Please contact your administrator.</value>
   </data>
-  <data name="RE_NEXIST_USER_001" xml:space="preserve">
+  <data name="RE_EXIST_USER_NEXIST_OAUTH" xml:space="preserve">
+    <value>An account already signed up in another way exists. Would you like to associate it with that account?</value>
+  </data>
+  <data name="RE_NEXIST_USER" xml:space="preserve">
     <value>The user does not exist.</value>
+  </data>
+  <data name="RE_OAUTH_REFRASH_TOKKEN_EXPIRED" xml:space="preserve">
+    <value>Re-login is required due to long-term inactivity.</value>
   </data>
 </root>

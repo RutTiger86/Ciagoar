@@ -43,8 +43,8 @@ namespace CiagoarS.Common
             BaseResponse<T> response = new()
             {
                 Result = false,
-                ErrorCode = nameof(Resource.EC_EX_001),
-                ErrorMessage = Resource.EC_EX_001,
+                ErrorCode = nameof(Resource.EC_EX),
+                ErrorMessage = Resource.EC_EX,
                 Data = default(T)
             };
 
@@ -58,8 +58,8 @@ namespace CiagoarS.Common
             BaseResponse<T> response = new()
             {
                 Result = false,
-                ErrorCode = nameof(Resource.EC_DB_001),
-                ErrorMessage = Resource.EC_DB_001,
+                ErrorCode = nameof(Resource.EC_DB),
+                ErrorMessage = Resource.EC_DB,
                 Data = default(T)
             };
 

@@ -11,5 +11,8 @@
     <Setting Name="RefrashToken" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="GoogleOAuthPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\998.OAuth\GoogleOAuth.Json</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -58,5 +58,17 @@ namespace CiagoarM.Properties {
                 this["RefrashToken"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\998.OAuth\\GoogleOAuth.Json")]
+        public string GoogleOAuthPath {
+            get {
+                return ((string)(this["GoogleOAuthPath"]));
+            }
+            set {
+                this["GoogleOAuthPath"] = value;
+            }
+        }
     }
 }

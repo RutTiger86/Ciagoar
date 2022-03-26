@@ -63,27 +63,45 @@ namespace CiagoarS.CodeMessage {
         /// <summary>
         ///   An exception occurred during SQL processing. Please contact the administrator.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        public static string EC_DB_001 {
+        public static string EC_DB {
             get {
-                return ResourceManager.GetString("EC_DB_001", resourceCulture);
+                return ResourceManager.GetString("EC_DB", resourceCulture);
             }
         }
         
         /// <summary>
         ///   The service has encountered an unexpected problem. Please contact your administrator.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        public static string EC_EX_001 {
+        public static string EC_EX {
             get {
-                return ResourceManager.GetString("EC_EX_001", resourceCulture);
+                return ResourceManager.GetString("EC_EX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An account already signed up in another way exists. Would you like to associate it with that account?과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string RE_EXIST_USER_NEXIST_OAUTH {
+            get {
+                return ResourceManager.GetString("RE_EXIST_USER_NEXIST_OAUTH", resourceCulture);
             }
         }
         
         /// <summary>
         ///   The user does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        public static string RE_NEXIST_USER_001 {
+        public static string RE_NEXIST_USER {
             get {
-                return ResourceManager.GetString("RE_NEXIST_USER_001", resourceCulture);
+                return ResourceManager.GetString("RE_NEXIST_USER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Re-login is required due to long-term inactivity.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string RE_OAUTH_REFRASH_TOKKEN_EXPIRED {
+            get {
+                return ResourceManager.GetString("RE_OAUTH_REFRASH_TOKKEN_EXPIRED", resourceCulture);
             }
         }
     }

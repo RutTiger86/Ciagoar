@@ -19,15 +19,15 @@ namespace Ciagoar.Core.OAuth
     public class Google : BaseOAuth
     {
         // client configuration
-        const string clientID = "";
-        const string clientSecret = "";
-        const string authorizationEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
-        const string tokenEndpoint = "https://www.googleapis.com/oauth2/v4/token";
+        public static GoogleOAuthJsonDetail GoogleO { get; set; }
         const string userInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
-        const string SCOPE = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+        //const string SCOPE = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+        const string SCOPE = "openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
 
-        public static async Task<BaseResponse<GoogleUserInfo>> TryLogin()
+        public static async Task<BaseResponse<GoogleUserInfo>> TryLogin(GoogleOAuthJsonDetail googleO)
         {
+            GoogleO = googleO;
+
             // Generates state and PKCE values.
             string state = CryptographyHelper.randomDataBase64url(32);
             string code_verifier = CryptographyHelper.randomDataBase64url(32);
@@ -41,15 +41,16 @@ namespace Ciagoar.Core.OAuth
             var http = new HttpListener();
             http.Prefixes.Add(redirectURI);
             http.Start();
-
+            //openid%20profile
             // Creates the OAuth 2.0 authorization request.
-            string authorizationRequest = string.Format("{0}?response_type=code&scope=openid%20profile&redirect_uri={1}&client_id={2}&state={3}&code_challenge={4}&code_challenge_method={5}",
-                authorizationEndpoint,
+            string authorizationRequest = string.Format("{0}?response_type=code&scope={6}&redirect_uri={1}&client_id={2}&state={3}&code_challenge={4}&code_challenge_method={5}",
+                GoogleO.auth_uri,
                 System.Uri.EscapeDataString(redirectURI),
-                clientID,
+                GoogleO.client_id,
                 state,
                 code_challenge,
-                code_challenge_method);
+                code_challenge_method,
+                SCOPE);
 
             // Opens request in the browser.
             Process.Start(new ProcessStartInfo { FileName = authorizationRequest, UseShellExecute = true });
@@ -102,9 +103,9 @@ namespace Ciagoar.Core.OAuth
             string tokenRequestBody = string.Format("code={0}&redirect_uri={1}&client_id={2}&code_verifier={3}&client_secret={4}&scope={5}&grant_type=authorization_code",
                 code,
                 System.Uri.EscapeDataString(redirectURI),
-                clientID,
+                GoogleO.client_id,
                 code_verifier,
-                clientSecret,
+                GoogleO.client_secret,
                 SCOPE
                 );
 
@@ -115,7 +116,7 @@ namespace Ciagoar.Core.OAuth
             handler.AllowAutoRedirect = true;
             HttpClient client = new HttpClient(handler);
 
-            HttpResponseMessage response = await client.PostAsync(tokenEndpoint, content);
+            HttpResponseMessage response = await client.PostAsync(GoogleO.token_uri, content);
             string responseString = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)

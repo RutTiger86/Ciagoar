@@ -9,6 +9,7 @@ using Ciagoar.Data.Response.Users;
 using CiagoarM.Commons;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -86,17 +87,23 @@ namespace CiagoarM.Models
             {
                 if(String.IsNullOrEmpty(RefrashTokken))
                 {
-                    BaseResponse<GoogleUserInfo> response = await Google.TryLogin();
+                    GoogleOAuthJsonDetail OAuthKey = GetGoogleOAuthKey();
 
-                    if (response.Result)
+                    if (OAuthKey!= null)
                     {
-                        return true;
+                        BaseResponse<GoogleUserInfo> response = await Google.TryLogin(OAuthKey);
+
+                        if (response.Result)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            LogError($"{response.ErrorCode} : {response.ErrorMessage}");
+                            return false;
+                        }
                     }
-                    else
-                    {
-                        LogError($"{response.ErrorCode} : {response.ErrorMessage}");
-                        return false;
-                    }
+
 
                 }
                 else
@@ -110,6 +117,15 @@ namespace CiagoarM.Models
                 LogException(ex.Message);
             }
             return false;
+        }
+
+        private GoogleOAuthJsonDetail GetGoogleOAuthKey()
+        {
+            // Open the file to read from.
+            string readText = File.ReadAllText(Properties.Settings.Default.GoogleOAuthPath);
+            GoogleOAuthJson oAuthJson= JsonSerializer.Deserialize<GoogleOAuthJson>(readText);
+            return oAuthJson.installed;
+
         }
     }
 }
