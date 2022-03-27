@@ -132,4 +132,7 @@
   <data name="RE_OAUTH_REFRASH_TOKKEN_EXPIRED" xml:space="preserve">
     <value>장기간 미접속으로 인해 재 로그인이 필요합니다.</value>
   </data>
+  <data name="RE_OAUTH_UNSUPPORTED_3RDPARTY_LOGIN" xml:space="preserve">
+    <value>지원하지 않는 3rdParty Login 입니다.</value>
+  </data>
 </root>

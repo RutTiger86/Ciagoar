@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ciagoar.Data.HTTPS
+namespace Ciagoar.Data.OAuth
 {
     public class GoogleOAuth
     {

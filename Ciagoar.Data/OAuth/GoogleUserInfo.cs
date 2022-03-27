@@ -23,5 +23,6 @@ namespace Ciagoar.Data.OAuth
 
         public string locale { get; set; }
 
+        public string refresh_token { get; set; }
     }
 }

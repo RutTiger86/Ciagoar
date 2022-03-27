@@ -32,6 +32,7 @@ namespace CiagoarS.Common
             _mLogger.LogInformation($"[{ModuleName}]  RECEIVE REQUEST DATA  [{Serialize(parameters)}]{Environment.NewLine}");
         }
 
+
         protected void LogingRES(object response)
         {
 

@@ -132,4 +132,7 @@
   <data name="RE_OAUTH_REFRASH_TOKKEN_EXPIRED" xml:space="preserve">
     <value>Re-login is required due to long-term inactivity.</value>
   </data>
+  <data name="RE_OAUTH_UNSUPPORTED_3RDPARTY_LOGIN" xml:space="preserve">
+    <value>Unsupported 3rdParty Login.</value>
+  </data>
 </root>

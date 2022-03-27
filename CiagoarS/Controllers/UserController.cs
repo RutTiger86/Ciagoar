@@ -1,5 +1,7 @@
 ﻿using Ciagoar.Core.Helper;
+using Ciagoar.Core.OAuth;
 using Ciagoar.Data.Enums;
+using Ciagoar.Data.OAuth;
 using Ciagoar.Data.Request.Users;
 using Ciagoar.Data.Response;
 using Ciagoar.Data.Response.Users;
@@ -11,8 +13,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CiagoarS.Controllers
 {
@@ -43,7 +47,7 @@ namespace CiagoarS.Controllers
         /// <param name="parameters">
         /// <para>요청형식 설명</para>
         /// <para>- langCode                    : 언어코드 (en-US:영어, ko-KR:한국어)</para>
-        /// <para>- authenticationType          : 인증방법 (EM:Emain인증, GG: Google)</para>
+        /// <para>- authenticationType          : 인증방법 </para>
         /// <para>- email                       : 이메일주소</para>
         /// <para>- authenticationKey           : 가입 Key(EM 일경우 패스워드/ 3rd Party일경우 Tokken) </para>
         /// </param> 
@@ -61,7 +65,7 @@ namespace CiagoarS.Controllers
         [Route("userLogin")]
         [HttpPost]
         [Produces("application/json")]
-        public BaseResponse<Ci_User> SetUserLogin(REQ_USER_LOGIN parameters)
+        public async Task<BaseResponse<Ci_User>> SetUserLoginAsync(REQ_USER_LOGIN parameters)
         {
             LogingREQ(parameters);
 
@@ -72,7 +76,7 @@ namespace CiagoarS.Controllers
                 switch ((AuthenticationType)parameters.authenticationType)
                 {
                     case AuthenticationType.EM: response = SetUserLogin_Email(parameters.email, parameters.authenticationKey); break;
-                    case AuthenticationType.GG: response = SetUserLogin_Google(parameters.email, parameters.authenticationKey); break;
+                    case AuthenticationType.GG: response = await SetUserLogin_Google(parameters.email, parameters.authenticationKey); break;
                     default: break;
                 }
 
@@ -127,7 +131,7 @@ namespace CiagoarS.Controllers
             }
         }
 
-        private BaseResponse<Ci_User> SetUserLogin_Google(string Email, string RefreshTokken)
+        private async Task<BaseResponse<Ci_User>> SetUserLogin_Google(string Email, string RefreshTokken)
         {
             try
             {
@@ -154,7 +158,8 @@ namespace CiagoarS.Controllers
                         AuthRefrashTokken = RefreshTokken;
                     }
 
-                    if (GetAccessKey(AuthRefrashTokken))
+                    BaseResponse<GoogleOAuth> response = await Google.RefrashAccessToken(AuthRefrashTokken);
+                    if (response.Result)
                     {
                         //엑세스 토큰 성공 호출 로그인 진행 
                         return new BaseResponse<Ci_User>
@@ -194,18 +199,69 @@ namespace CiagoarS.Controllers
             }
         }
 
-        private bool GetAccessKey(string RefreshTokken)
-        {
+
+        /// <summary>
+        /// OAuth지원 3rdParty 정보
+        /// </summary>
+        /// <remarks>
+        ///  OAuth지원 3rdParty 정보
+        /// </remarks>
+        /// <param name="parameters">
+        /// <para>요청형식 설명</para>
+        /// <para>- langCode                    : 언어코드 (en-US:영어, ko-KR:한국어)</para>
+        /// <para>- authenticationType          : 인증방법 </para>
+        /// </param> 
+        /// <returns>리턴값 설명</returns>
+        /// <response code="200">
+        /// <para>응답형식 설명</para>
+        /// <para>Result - true/false</para>
+        /// <para>ErrorCode - 실패시 오류코드</para>
+        /// <para>ErrorMessage - 실패시 오류메세지</para>
+        /// <para>Data - 성공시 결과</para>
+        /// <para>     --AuthenticationType       인증방법</para>
+        /// <para>     --ClientId                 OAuth ClientID</para>
+        /// <para>     --ClientSecret             OAuth ClientSecret</para>
+        /// <para>     --AuthUri                  Auth요청 URI</para>
+        /// <para>     --TokenUri                 Token요청 URI</para>
+        /// </response>
+        [Route("oAuthInfo")]
+        [HttpGet]
+        [Produces("application/json")]
+        public BaseResponse<Ci_OAuth> GetOAuthInfo([FromQuery] REQ_OAUTH_INFO parameters)
+        { 
+            LogingREQ(parameters);
+
+            BaseResponse<Ci_OAuth> response = new BaseResponse<Ci_OAuth>();
+
             try
             {
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _mLogger.LogError($"[{ModuleName}]  Detail- {ex.Message}{Environment.NewLine}");
-                return false;
-            }
-        }
+                Ci_OAuth ci_OAuth =  _context.OauthInfos.Where(p => p.AuthenticationType == parameters.authenticationType).Select(p => new Ci_OAuth()
+                {
+                    AuthenticationType = p.AuthenticationType,
+                    AuthUri = p.AuthUri,
+                    ClientId = p.ClientId,
+                    ClientSecret = p.ClientSecret,
+                    TokenUri = p.TokenUri
+                }).FirstOrDefault();
+              
+                if(ci_OAuth != null)
+                {
+                    response = new BaseResponse<Ci_OAuth>() { Result = true, Data = ci_OAuth };
+                }
+                else
+                {
+                    response = ProcessError<Ci_OAuth>(ErrorCode.RE_OAUTH_UNSUPPORTED_3RDPARTY_LOGIN);
+                }
 
+            }
+            catch (Exception Exp)
+            {
+                response = ExceptionError<Ci_OAuth>(Exp.Message);
+            }
+
+            LogingRES(response);
+
+            return response;
+        }
     }
 }

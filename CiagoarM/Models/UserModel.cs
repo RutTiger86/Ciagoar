@@ -81,17 +81,16 @@ namespace CiagoarM.Models
             return false;
         }
 
-        private async Task<bool> TryGoogleLogin(string RefrashTokken)
+        private async Task<bool> TryGoogleLogin(string Email)
         {
             try
             {
-                if(String.IsNullOrEmpty(RefrashTokken))
+                if(String.IsNullOrEmpty(Email))
                 {
-                    GoogleOAuthJsonDetail OAuthKey = GetGoogleOAuthKey();
-
-                    if (OAuthKey!= null)
-                    {
-                        BaseResponse<GoogleUserInfo> response = await Google.TryLogin(OAuthKey);
+                    BaseResponse<Ci_OAuth> OAuthKey = await GetOAuthInfo(AuthenticationType.GG);
+                    if(OAuthKey.Result)
+                    { 
+                        BaseResponse<GoogleUserInfo> response = await Google.TryLogin(OAuthKey.Data);
 
                         if (response.Result)
                         {
@@ -103,8 +102,11 @@ namespace CiagoarM.Models
                             return false;
                         }
                     }
-
-
+                    else
+                    {
+                        LogError($"{OAuthKey.ErrorCode} : {OAuthKey.ErrorMessage}");
+                        return false;
+                    }
                 }
                 else
                 {
@@ -119,13 +121,27 @@ namespace CiagoarM.Models
             return false;
         }
 
-        private GoogleOAuthJsonDetail GetGoogleOAuthKey()
+        private async Task<BaseResponse<Ci_OAuth>> GetOAuthInfo(AuthenticationType authenticationType)
         {
-            // Open the file to read from.
-            string readText = File.ReadAllText(Properties.Settings.Default.GoogleOAuthPath);
-            GoogleOAuthJson oAuthJson= JsonSerializer.Deserialize<GoogleOAuthJson>(readText);
-            return oAuthJson.installed;
+            BaseResponse<Ci_OAuth> result = new BaseResponse<Ci_OAuth>();
+            try
+            {
+                Dictionary<string, string> pQueryParm = new Dictionary<string, string>()
+                {
+                    ["langCode"] = Properties.Settings.Default.LangCode,
+                    ["authenticationType"] = ((int)authenticationType).ToString()
+                };
 
+                string URL = Properties.Settings.Default.ServerBaseAddress + "User/oAuthInfo";
+
+                result = await HttpHelper.SendRequest<Ci_OAuth>(URL, null, HttpMethod.Get, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, pQueryParm);
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+
+            return result;
         }
     }
 }

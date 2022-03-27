@@ -2,6 +2,7 @@
 using Ciagoar.Data.HTTPS;
 using Ciagoar.Data.OAuth;
 using Ciagoar.Data.Response;
+using Ciagoar.Data.Response.Users;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,12 +20,11 @@ namespace Ciagoar.Core.OAuth
     public class Google : BaseOAuth
     {
         // client configuration
-        public static GoogleOAuthJsonDetail GoogleO { get; set; }
+        public static Ci_OAuth GoogleO { get; set; }
         const string userInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
-        //const string SCOPE = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
         const string SCOPE = "openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
 
-        public static async Task<BaseResponse<GoogleUserInfo>> TryLogin(GoogleOAuthJsonDetail googleO)
+        public static async Task<BaseResponse<GoogleUserInfo>> TryLogin(Ci_OAuth googleO)
         {
             GoogleO = googleO;
 
@@ -35,7 +35,7 @@ namespace Ciagoar.Core.OAuth
             const string code_challenge_method = "S256";
 
             // Creates a redirect URI using an available port on the loopback address.
-            string redirectURI = string.Format("http://{0}:{1}/", IPAddress.Loopback, GetRandomUnusedPort());
+            string redirectURI = $"http://{IPAddress.Loopback}:{GetRandomUnusedPort()}/";
 
             // Creates an HttpListener to listen for requests on that redirect URI.           
             var http = new HttpListener();
@@ -43,14 +43,7 @@ namespace Ciagoar.Core.OAuth
             http.Start();
             //openid%20profile
             // Creates the OAuth 2.0 authorization request.
-            string authorizationRequest = string.Format("{0}?response_type=code&scope={6}&redirect_uri={1}&client_id={2}&state={3}&code_challenge={4}&code_challenge_method={5}",
-                GoogleO.auth_uri,
-                System.Uri.EscapeDataString(redirectURI),
-                GoogleO.client_id,
-                state,
-                code_challenge,
-                code_challenge_method,
-                SCOPE);
+            string authorizationRequest = $"{GoogleO.AuthUri}?response_type=code&scope={SCOPE}&redirect_uri={Uri.EscapeDataString(redirectURI)}&client_id={GoogleO.ClientId}&state={state}&code_challenge={code_challenge}&code_challenge_method={code_challenge_method}";
 
             // Opens request in the browser.
             Process.Start(new ProcessStartInfo { FileName = authorizationRequest, UseShellExecute = true });
@@ -61,7 +54,7 @@ namespace Ciagoar.Core.OAuth
 
             // Sends an HTTP response to the browser.
             var response = context.Response;
-            string responseString = string.Format("<html><head><meta http-equiv='refresh' content='10;url=https://google.com'></head><body>Please return to the app.</body></html>");
+            string responseString ="<html><head><meta http-equiv='refresh' content='10;url=https://google.com'></head><body>Please return to the app.</body></html>";
             var buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
             response.ContentLength64 = buffer.Length;
             var responseOutput = response.OutputStream;
@@ -93,21 +86,36 @@ namespace Ciagoar.Core.OAuth
             }
 
             // Starts the code exchange at the Token Endpoint.
-            return await performCodeExchange(code, code_verifier, redirectURI);
+            BaseResponse<GoogleOAuth> CodeExchange =   await performCodeExchange(code, code_verifier, redirectURI);
+
+
+            if(CodeExchange.Result)
+            {
+                BaseResponse<GoogleUserInfo> userInfo =  await GetUserInfo(CodeExchange.Data.access_token, CodeExchange.Data.token_type);
+
+                if(userInfo.Result)
+                {
+                    userInfo.Data.refresh_token = CodeExchange.Data.refresh_token;
+                }
+
+                return userInfo;
+            }
+            else
+            {
+                return new BaseResponse<GoogleUserInfo>()
+                {
+                    Result = false,
+                    ErrorCode = CodeExchange.ErrorCode,
+                    ErrorMessage = CodeExchange.ErrorMessage,
+                    Data = default
+                };
+            }
         }
 
-
-        async static Task<BaseResponse<GoogleUserInfo>> performCodeExchange(string code, string code_verifier, string redirectURI)
+        async static Task<BaseResponse<GoogleOAuth>> performCodeExchange(string code, string code_verifier, string redirectURI)
         {
             // Builds the Token request
-            string tokenRequestBody = string.Format("code={0}&redirect_uri={1}&client_id={2}&code_verifier={3}&client_secret={4}&scope={5}&grant_type=authorization_code",
-                code,
-                System.Uri.EscapeDataString(redirectURI),
-                GoogleO.client_id,
-                code_verifier,
-                GoogleO.client_secret,
-                SCOPE
-                );
+            string tokenRequestBody = $"code={code}&redirect_uri={System.Uri.EscapeDataString(redirectURI)}&client_id={GoogleO.ClientId}&code_verifier={code_verifier}&client_secret={GoogleO.ClientSecret}&scope={SCOPE}&grant_type=authorization_code";
 
             StringContent content = new StringContent(tokenRequestBody, Encoding.UTF8, "application/x-www-form-urlencoded");
 
@@ -116,7 +124,37 @@ namespace Ciagoar.Core.OAuth
             handler.AllowAutoRedirect = true;
             HttpClient client = new HttpClient(handler);
 
-            HttpResponseMessage response = await client.PostAsync(GoogleO.token_uri, content);
+            HttpResponseMessage response = await client.PostAsync(GoogleO.TokenUri, content);
+            string responseString = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new BaseResponse<GoogleOAuth>() { Result = false, ErrorCode = response.StatusCode.ToString(), ErrorMessage = responseString };
+            }
+            else
+            {
+                // Sets the Authentication header of our HTTP client using the acquired access token.              
+                BaseResponse<GoogleOAuth> baseResponse = new BaseResponse<GoogleOAuth>()
+                {
+                    Result = true,
+                    Data = JsonSerializer.Deserialize<GoogleOAuth>(responseString)
+                };
+
+                return baseResponse;
+            }
+        }
+
+        async static Task<BaseResponse<GoogleUserInfo>> GetUserInfo(string access_token, string token_type = "Bearer")
+        {
+            // Performs the authorization code exchange.
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.AllowAutoRedirect = true;
+            HttpClient client = new HttpClient(handler);
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(token_type, access_token);
+
+            // Makes a call to the Userinfo endpoint, and prints the results.
+            HttpResponseMessage response = client.GetAsync(userInfoEndpoint).Result;
             string responseString = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
@@ -125,20 +163,42 @@ namespace Ciagoar.Core.OAuth
             }
             else
             {
-
-                // Sets the Authentication header of our HTTP client using the acquired access token.
-                GoogleOAuth tokenEndpointDecoded = JsonSerializer.Deserialize<GoogleOAuth>(responseString);
-
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenEndpointDecoded.token_type, tokenEndpointDecoded.access_token);
-
-                // Makes a call to the Userinfo endpoint, and prints the results.
-                HttpResponseMessage userinfoResponse = client.GetAsync(userInfoEndpoint).Result;
-                string userinfoResponseContent = await userinfoResponse.Content.ReadAsStringAsync();
-
+                // Sets the Authentication header of our HTTP client using the acquired access token.              
                 BaseResponse<GoogleUserInfo> baseResponse = new BaseResponse<GoogleUserInfo>()
                 {
                     Result = true,
-                    Data = JsonSerializer.Deserialize<GoogleUserInfo>(userinfoResponseContent)
+                    Data = JsonSerializer.Deserialize<GoogleUserInfo>(responseString)
+                };
+                return baseResponse;
+            }
+        }
+
+        public async static Task<BaseResponse<GoogleOAuth>> RefrashAccessToken(string refresh_token)
+        {
+            // Builds the Token request
+            string tokenRequestBody = $"client_id={GoogleO.ClientId}&client_secret={GoogleO.ClientSecret}&refresh_token={refresh_token}&grant_type=refresh_token";
+
+            StringContent content = new StringContent(tokenRequestBody, Encoding.UTF8, "application/x-www-form-urlencoded");
+
+            // Performs the authorization code exchange.
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.AllowAutoRedirect = true;
+            HttpClient client = new HttpClient(handler);
+
+            HttpResponseMessage response = await client.PostAsync(GoogleO.TokenUri, content);
+            string responseString = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new BaseResponse<GoogleOAuth>() { Result = false, ErrorCode = response.StatusCode.ToString(), ErrorMessage = responseString };
+            }
+            else
+            {
+                // Sets the Authentication header of our HTTP client using the acquired access token.              
+                BaseResponse<GoogleOAuth> baseResponse = new BaseResponse<GoogleOAuth>()
+                {
+                    Result = true,
+                    Data = JsonSerializer.Deserialize<GoogleOAuth>(responseString)
                 };
 
                 return baseResponse;

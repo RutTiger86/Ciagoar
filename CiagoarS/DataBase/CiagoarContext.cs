@@ -16,18 +16,46 @@ namespace CiagoarS.DataBase
         {
         }
 
+        public virtual DbSet<OauthInfo> OauthInfos { get; set; }
         public virtual DbSet<UserAuthentication> UserAuthentications { get; set; }
         public virtual DbSet<UserInfo> UserInfos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-            }
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<OauthInfo>(entity =>
+            {
+                entity.ToTable("OAUTH_INFO");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AuthUri)
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .HasColumnName("AuthURI");
+
+                entity.Property(e => e.ClientId)
+                    .IsRequired()
+                    .HasColumnName("ClientID");
+
+                entity.Property(e => e.ClientSecret).IsRequired();
+
+                entity.Property(e => e.CreateTime)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.TokenUri)
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .HasColumnName("TokenURI");
+
+                entity.Property(e => e.UpdateTime).HasColumnType("datetime");
+            });
+
             modelBuilder.Entity<UserAuthentication>(entity =>
             {
                 entity.ToTable("USER_AUTHENTICATION");

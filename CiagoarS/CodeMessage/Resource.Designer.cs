@@ -104,5 +104,14 @@ namespace CiagoarS.CodeMessage {
                 return ResourceManager.GetString("RE_OAUTH_REFRASH_TOKKEN_EXPIRED", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Unsupported 3rdParty Login.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string RE_OAUTH_UNSUPPORTED_3RDPARTY_LOGIN {
+            get {
+                return ResourceManager.GetString("RE_OAUTH_UNSUPPORTED_3RDPARTY_LOGIN", resourceCulture);
+            }
+        }
     }
 }
