@@ -94,6 +94,10 @@ namespace CiagoarM.Models
 
                         if (response.Result)
                         {
+
+
+
+
                             return true;
                         }
                         else
@@ -110,7 +114,29 @@ namespace CiagoarM.Models
                 }
                 else
                 {
-                    
+                    // Builds the Token request
+                    REQ_USER_LOGIN _USER_LOGIN = new()
+                    {
+                        langCode = Properties.Settings.Default.LangCode,
+                        authenticationType = (int)AuthenticationType.GG,
+                        email = Email
+                    };
+
+                    string URL = Properties.Settings.Default.ServerBaseAddress + "User/Login";
+                    string Stringcontent = JsonSerializer.Serialize(_USER_LOGIN);
+
+                    BaseResponse<Ci_User> response = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
+
+                    if (response.Result)
+                    {
+                        Localproperties.LoginUser = response.Data;
+                        return true;
+                    }
+                    else
+                    {
+                        LogError($"{response.ErrorCode} : {response.ErrorMessage}");
+                        return false;
+                    }
                 }
 
             }

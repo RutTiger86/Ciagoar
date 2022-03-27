@@ -123,6 +123,9 @@
   <data name="EC_EX" xml:space="preserve">
     <value>서비스에 예기지못한 문제가 발생했습니다. 관리자에게 문의하시기 바랍니다.</value>
   </data>
+  <data name="RE_EXIST_USER" xml:space="preserve">
+    <value>이미 존재하는 계정입니다. 사용자 정보를 확인해주세요</value>
+  </data>
   <data name="RE_EXIST_USER_NEXIST_OAUTH" xml:space="preserve">
     <value>이미 다른 방식으로 가입된 계정이 존재합니다. 해당 계정과 연결하시겠습니까?</value>
   </data>

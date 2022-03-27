@@ -15,4 +15,13 @@ namespace Ciagoar.Data.Enums
         [Description("Google")]
         GG
     }
+
+    public enum AuthType
+    {
+
+        [Description("Admin")]
+        Admin,
+        [Description("User")]
+        User
+    }
 }

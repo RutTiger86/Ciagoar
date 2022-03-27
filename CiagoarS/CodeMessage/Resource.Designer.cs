@@ -79,6 +79,15 @@ namespace CiagoarS.CodeMessage {
         }
         
         /// <summary>
+        ///   Already Exist User. Please check User information과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string RE_EXIST_USER {
+            get {
+                return ResourceManager.GetString("RE_EXIST_USER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   An account already signed up in another way exists. Would you like to associate it with that account?과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string RE_EXIST_USER_NEXIST_OAUTH {

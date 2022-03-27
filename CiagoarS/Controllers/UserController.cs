@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -76,7 +77,7 @@ namespace CiagoarS.Controllers
                 switch ((AuthenticationType)parameters.authenticationType)
                 {
                     case AuthenticationType.EM: response = SetUserLogin_Email(parameters.email, parameters.authenticationKey); break;
-                    case AuthenticationType.GG: response = await SetUserLogin_Google(parameters.email, parameters.authenticationKey); break;
+                    case AuthenticationType.GG: response = await SetUserLogin_Google(parameters.email); break;
                     default: break;
                 }
 
@@ -131,7 +132,7 @@ namespace CiagoarS.Controllers
             }
         }
 
-        private async Task<BaseResponse<Ci_User>> SetUserLogin_Google(string Email, string RefreshTokken)
+        private async Task<BaseResponse<Ci_User>> SetUserLogin_Google(string Email)
         {
             try
             {
@@ -149,14 +150,6 @@ namespace CiagoarS.Controllers
                 if (userInfo != default)
                 {
                     string AuthRefrashTokken = userInfo.Item2;
-                    if (string.IsNullOrWhiteSpace(RefreshTokken) && !userInfo.Item2.Equals(RefreshTokken))
-                    {
-                        UserAuthentication userAuthentication = _context.UserAuthentications.Where(p => p.AuthenticationType == (int)AuthenticationType.GG && p.IsUse && !p.IsDelete).First();
-                        userAuthentication.AuthenticationKey = RefreshTokken;
-                        _context.SaveChanges();
-
-                        AuthRefrashTokken = RefreshTokken;
-                    }
 
                     BaseResponse<GoogleOAuth> response = await Google.RefrashAccessToken(AuthRefrashTokken);
                     if (response.Result)
@@ -186,7 +179,7 @@ namespace CiagoarS.Controllers
                     {
                         //해당 계정 자체가 존재 하지 않음
                         return ProcessError<Ci_User>(ErrorCode.RE_NEXIST_USER);
-                    }                    
+                    }
                 }
             }
             catch (SqlException SExp)
@@ -228,14 +221,14 @@ namespace CiagoarS.Controllers
         [HttpGet]
         [Produces("application/json")]
         public BaseResponse<Ci_OAuth> GetOAuthInfo([FromQuery] REQ_OAUTH_INFO parameters)
-        { 
+        {
             LogingREQ(parameters);
 
             BaseResponse<Ci_OAuth> response = new BaseResponse<Ci_OAuth>();
 
             try
             {
-                Ci_OAuth ci_OAuth =  _context.OauthInfos.Where(p => p.AuthenticationType == parameters.authenticationType).Select(p => new Ci_OAuth()
+                Ci_OAuth ci_OAuth = _context.OauthInfos.Where(p => p.AuthenticationType == parameters.authenticationType).Select(p => new Ci_OAuth()
                 {
                     AuthenticationType = p.AuthenticationType,
                     AuthUri = p.AuthUri,
@@ -243,8 +236,8 @@ namespace CiagoarS.Controllers
                     ClientSecret = p.ClientSecret,
                     TokenUri = p.TokenUri
                 }).FirstOrDefault();
-              
-                if(ci_OAuth != null)
+
+                if (ci_OAuth != null)
                 {
                     response = new BaseResponse<Ci_OAuth>() { Result = true, Data = ci_OAuth };
                 }
@@ -257,6 +250,107 @@ namespace CiagoarS.Controllers
             catch (Exception Exp)
             {
                 response = ExceptionError<Ci_OAuth>(Exp.Message);
+            }
+
+            LogingRES(response);
+
+            return response;
+        }
+
+        /// <summary>
+        /// 사용자 가입 
+        /// </summary>
+        /// <remarks>
+        ///  OAuth지원 3rdParty 정보
+        /// </remarks>
+        /// <param name="parameters">
+        /// <para>요청형식 설명</para>
+        /// <para>- langCode                    : 언어코드 (en-US:영어, ko-KR:한국어)</para>
+        /// <para>- authenticationType          : 인증방법 </para>
+        /// </param> 
+        /// <returns>리턴값 설명</returns>
+        /// <response code="200">
+        /// <para>응답형식 설명</para>
+        /// <para>Result - true/false</para>
+        /// <para>ErrorCode - 실패시 오류코드</para>
+        /// <para>ErrorMessage - 실패시 오류메세지</para>
+        /// <para>Data - 성공시 결과</para>
+        /// <para>     --AuthenticationType       인증방법</para>
+        /// <para>     --ClientId                 OAuth ClientID</para>
+        /// <para>     --ClientSecret             OAuth ClientSecret</para>
+        /// <para>     --AuthUri                  Auth요청 URI</para>
+        /// <para>     --TokenUri                 Token요청 URI</para>
+        /// </response>
+        [Route("JoinoAuth")]
+        [HttpPost]
+        [Produces("application/json")]
+        public BaseResponse<bool> SetJoinoAuth(REQ_USER_JOIN parameters)
+        {
+            LogingREQ(parameters);
+
+            BaseResponse<bool> response = new();
+
+            try
+            {
+                UserInfo userInfo = _context.UserInfos.Where(p => p.Email.Equals(parameters.email)).FirstOrDefault();
+
+                if (userInfo == null)
+                {
+                    //신규가입
+                    userInfo = new UserInfo()
+                    {
+                        Email = parameters.email,
+                        AuthType = (int)AuthType.User,
+                        Nickname = parameters.nickname,
+                        IsUse = true,
+                        UserAuthentications = new List<UserAuthentication>()
+                        {
+                            new UserAuthentication()
+                            {
+                                AuthenticationType = parameters.authenticationType,
+                                AuthenticationKey = parameters.authenticationKey,
+                                IsUse = true,
+                            }
+                        }
+                    };
+
+                    _context.UserInfos.Add(userInfo);
+                    _context.SaveChanges();
+
+                    response.Result = true;
+                    response.Data = true;
+                }
+                else
+                {
+                    if (_context.UserAuthentications.Any(p => p.AuthenticationKey.Equals(parameters.authenticationKey)))
+                    {
+                        //사용자 정보도 있고 로그인 정보도 있음 중복
+
+                        UserAuthentication authentication = new UserAuthentication()
+                        {
+                            AuthenticationType = parameters.authenticationType,
+                            AuthenticationKey = parameters.authenticationKey,
+                            UserInfoId = userInfo.Id,
+                            IsUse = true,
+                        };
+
+                        _context.UserAuthentications.Add(authentication);
+                        _context.SaveChanges();
+
+                        response.Result = true;
+                        response.Data = true;
+                    }
+                    else
+                    {
+                        //사용자 정보는 있으나 로그인 정보는 없음 계정 연결 
+                        response = ProcessError<bool>(ErrorCode.RE_EXIST_USER);                        
+                    }
+                }
+
+            }
+            catch (Exception Exp)
+            {
+                response = ExceptionError<bool>(Exp.Message);
             }
 
             LogingRES(response);

@@ -123,6 +123,9 @@
   <data name="EC_EX" xml:space="preserve">
     <value>The service has encountered an unexpected problem. Please contact your administrator.</value>
   </data>
+  <data name="RE_EXIST_USER" xml:space="preserve">
+    <value>Already Exist User. Please check User information</value>
+  </data>
   <data name="RE_EXIST_USER_NEXIST_OAUTH" xml:space="preserve">
     <value>An account already signed up in another way exists. Would you like to associate it with that account?</value>
   </data>
