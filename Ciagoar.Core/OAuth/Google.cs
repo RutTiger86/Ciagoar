@@ -19,15 +19,11 @@ namespace Ciagoar.Core.OAuth
 {
     public class Google : BaseOAuth
     {
-        // client configuration
-        public static Ci_OAuth GoogleO { get; set; }
         const string userInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
         const string SCOPE = "openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
 
-        public static async Task<BaseResponse<GoogleUserInfo>> TryLogin(Ci_OAuth googleO)
+        public static async Task<BaseResponse<GoogleUserInfo>> TryLogin(Ci_OAuth GoogleO)
         {
-            GoogleO = googleO;
-
             // Generates state and PKCE values.
             string state = CryptographyHelper.randomDataBase64url(32);
             string code_verifier = CryptographyHelper.randomDataBase64url(32);
@@ -86,7 +82,7 @@ namespace Ciagoar.Core.OAuth
             }
 
             // Starts the code exchange at the Token Endpoint.
-            BaseResponse<GoogleOAuth> CodeExchange =   await performCodeExchange(code, code_verifier, redirectURI);
+            BaseResponse<GoogleOAuth> CodeExchange =   await performCodeExchange(GoogleO, code, code_verifier, redirectURI);
 
 
             if(CodeExchange.Result)
@@ -112,7 +108,7 @@ namespace Ciagoar.Core.OAuth
             }
         }
 
-        async static Task<BaseResponse<GoogleOAuth>> performCodeExchange(string code, string code_verifier, string redirectURI)
+        async static Task<BaseResponse<GoogleOAuth>> performCodeExchange(Ci_OAuth GoogleO, string code, string code_verifier, string redirectURI)
         {
             // Builds the Token request
             string tokenRequestBody = $"code={code}&redirect_uri={System.Uri.EscapeDataString(redirectURI)}&client_id={GoogleO.ClientId}&code_verifier={code_verifier}&client_secret={GoogleO.ClientSecret}&scope={SCOPE}&grant_type=authorization_code";
@@ -173,7 +169,7 @@ namespace Ciagoar.Core.OAuth
             }
         }
 
-        public async static Task<BaseResponse<GoogleOAuth>> RefrashAccessToken(string refresh_token)
+        public async static Task<BaseResponse<GoogleOAuth>> RefrashAccessToken(Ci_OAuth GoogleO, string refresh_token)
         {
             // Builds the Token request
             string tokenRequestBody = $"client_id={GoogleO.ClientId}&client_secret={GoogleO.ClientSecret}&refresh_token={refresh_token}&grant_type=refresh_token";

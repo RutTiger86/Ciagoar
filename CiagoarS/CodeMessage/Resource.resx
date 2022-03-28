@@ -129,6 +129,9 @@
   <data name="RE_EXIST_USER_NEXIST_OAUTH" xml:space="preserve">
     <value>An account already signed up in another way exists. Would you like to associate it with that account?</value>
   </data>
+  <data name="RE_NEXIST_AUTHENTICATION" xml:space="preserve">
+    <value>This is an authentication method that does not exist.</value>
+  </data>
   <data name="RE_NEXIST_USER" xml:space="preserve">
     <value>The user does not exist.</value>
   </data>

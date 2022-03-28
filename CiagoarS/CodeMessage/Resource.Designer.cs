@@ -97,6 +97,15 @@ namespace CiagoarS.CodeMessage {
         }
         
         /// <summary>
+        ///   This is an authentication method that does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string RE_NEXIST_AUTHENTICATION {
+            get {
+                return ResourceManager.GetString("RE_NEXIST_AUTHENTICATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   The user does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string RE_NEXIST_USER {

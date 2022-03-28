@@ -9,6 +9,7 @@
         RE_OAUTH_REFRASH_TOKKEN_EXPIRED, // Refrash Tokken 유효기간 만료 
         RE_OAUTH_UNSUPPORTED_3RDPARTY_LOGIN, // 지원하지 않는 3rdParty Login
         RE_EXIST_USER, // 이미 존재하는 계정
+        RE_NEXIST_AUTHENTICATION, // 존재하지 않는 인증방식
 
     }
 }

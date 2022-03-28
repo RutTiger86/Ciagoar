@@ -129,6 +129,9 @@
   <data name="RE_EXIST_USER_NEXIST_OAUTH" xml:space="preserve">
     <value>이미 다른 방식으로 가입된 계정이 존재합니다. 해당 계정과 연결하시겠습니까?</value>
   </data>
+  <data name="RE_NEXIST_AUTHENTICATION" xml:space="preserve">
+    <value>존재하지 않는 인증방식 입니다.</value>
+  </data>
   <data name="RE_NEXIST_USER" xml:space="preserve">
     <value>해당 사용자는 존재하지 않습니다.</value>
   </data>

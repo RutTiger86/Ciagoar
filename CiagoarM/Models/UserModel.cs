@@ -24,14 +24,14 @@ namespace CiagoarM.Models
     {
         
 
-        public async Task<bool> Login(AuthenticationType authentication, string AuthenticationKey, string Email = null)
+        public async Task<bool> Login(AuthenticationType authentication, string Email, string AuthenticationKey = null)
         {
             try
             {
                 switch (authentication)
                 {
                     case AuthenticationType.EM: return await TryEmailLogin(Email, AuthenticationKey); 
-                    case AuthenticationType.GG: return await TryGoogleLogin(AuthenticationKey);
+                    case AuthenticationType.GG: return await TryGoogleLogin(Email);
                     default: return false;
                 }
             }
@@ -94,11 +94,32 @@ namespace CiagoarM.Models
 
                         if (response.Result)
                         {
+                            // Builds the Token request
+                            REQ_USER_JOIN _USER_JOIN = new()
+                            {
+                                langCode = Properties.Settings.Default.LangCode,
+                                authenticationType = (int)AuthenticationType.GG,
+                                email = Email,
+                                authenticationKey = response.Data.refresh_token,
+                                nickname = response.Data.name
+                            };
 
+                            string URL = Properties.Settings.Default.ServerBaseAddress + "User/SetJoinUser";
+                            string Stringcontent = JsonSerializer.Serialize(_USER_JOIN);
 
+                            BaseResponse<bool> JoinResult = await HttpHelper.SendRequest<bool>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
 
+                            if(JoinResult.Result)
+                            {
+                                //가입성공 진입
+                                return true;
+                            }
+                            else
+                            {
+                                LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
+                                return false;
+                            }
 
-                            return true;
                         }
                         else
                         {
