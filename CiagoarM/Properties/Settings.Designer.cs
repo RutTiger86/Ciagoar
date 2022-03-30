@@ -50,24 +50,48 @@ namespace CiagoarM.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string RefrashToken {
+        public string AutoLoginID {
             get {
-                return ((string)(this["RefrashToken"]));
+                return ((string)(this["AutoLoginID"]));
             }
             set {
-                this["RefrashToken"] = value;
+                this["AutoLoginID"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\998.OAuth\\GoogleOAuth.Json")]
-        public string GoogleOAuthPath {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AutoLoginPW {
             get {
-                return ((string)(this["GoogleOAuthPath"]));
+                return ((string)(this["AutoLoginPW"]));
             }
             set {
-                this["GoogleOAuthPath"] = value;
+                this["AutoLoginPW"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public short AutoAuthenticationType {
+            get {
+                return ((short)(this["AutoAuthenticationType"]));
+            }
+            set {
+                this["AutoAuthenticationType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsAutoLogin {
+            get {
+                return ((bool)(this["IsAutoLogin"]));
+            }
+            set {
+                this["IsAutoLogin"] = value;
             }
         }
     }

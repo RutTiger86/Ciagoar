@@ -8,11 +8,17 @@
     <Setting Name="ServerBaseAddress" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://localhost/Ciagoar/</Value>
     </Setting>
-    <Setting Name="RefrashToken" Type="System.String" Scope="User">
+    <Setting Name="AutoLoginID" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="GoogleOAuthPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\998.OAuth\GoogleOAuth.Json</Value>
+    <Setting Name="AutoLoginPW" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AutoAuthenticationType" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="IsAutoLogin" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

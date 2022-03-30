@@ -40,7 +40,7 @@ namespace CiagoarS.Controllers
         }
 
         /// <summary>
-        /// 사용자 가입
+        /// 사용자 로그인
         /// </summary>
         /// <remarks>
         /// 신규 사용자 가입
@@ -202,6 +202,8 @@ namespace CiagoarS.Controllers
         }
 
 
+        
+
         /// <summary>
         /// OAuth지원 3rdParty 정보
         /// </summary>
@@ -293,11 +295,11 @@ namespace CiagoarS.Controllers
         [Route("SetJoinUser")]
         [HttpPost]
         [Produces("application/json")]
-        public BaseResponse<bool> SetJoinUser(REQ_USER_JOIN parameters)
+        public BaseResponse<Ci_User> SetJoinUser(REQ_USER_JOIN parameters)
         {
             LogingREQ(parameters);
 
-            BaseResponse<bool> response = new();
+            BaseResponse<Ci_User> response = new();
 
             try
             {
@@ -305,14 +307,38 @@ namespace CiagoarS.Controllers
 
                 if (userInfo == null)
                 {
-                    //신규가입
-                    userInfo = new UserInfo()
-                    {
-                        Email = parameters.email,
-                        AuthType = (int)AuthType.User,
-                        Nickname = parameters.nickname,
-                        IsUse = true,
-                        UserAuthentications = new List<UserAuthentication>()
+                    response = InsertUserInfo(parameters);
+                }
+                else
+                {
+                    response = ConnectUserAuthentication(userInfo.Id,parameters);
+                }
+
+            }
+            catch (Exception Exp)
+            {
+                response = ExceptionError<Ci_User>(Exp.Message);
+            }
+
+            LogingRES(response);
+
+            return response;
+        }
+
+        private BaseResponse<Ci_User> InsertUserInfo(REQ_USER_JOIN parameters)
+        {
+            BaseResponse<Ci_User> response = new();
+
+            try
+            {
+                //신규가입
+                UserInfo userInfo = new ()
+                {
+                    Email = parameters.email,
+                    AuthType = (int)AuthType.User,
+                    Nickname = parameters.nickname,
+                    IsUse = true,
+                    UserAuthentications = new List<UserAuthentication>()
                         {
                             new UserAuthentication()
                             {
@@ -321,47 +347,93 @@ namespace CiagoarS.Controllers
                                 IsUse = true,
                             }
                         }
-                    };
+                };
 
-                    _context.UserInfos.Add(userInfo);
-                    _context.SaveChanges();
+                _context.UserInfos.Add(userInfo);
+                _context.SaveChanges();
 
-                    response.Result = true;
-                    response.Data = true;
-                }
-                else
+
+                response.Result = true;
+                response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                                 select new Ci_User()
+                                 {
+                                     AuthType = UInfo.AuthType,
+                                     Email = UInfo.Email,
+                                     Nickname = UInfo.Nickname
+                                 }).FirstOrDefault();
+
+            }
+            catch (Exception Exp)
+            {
+
+                response = ExceptionError<Ci_User>(Exp.Message);
+            }
+
+            return response;
+        }
+
+
+        private BaseResponse<Ci_User> ConnectUserAuthentication(int UserInfoID,REQ_USER_JOIN parameters)
+        {
+            BaseResponse<Ci_User> response = new();
+
+            try
+            {
+                UserAuthentication userAuthentication = _context.UserAuthentications.FirstOrDefault(p => p.AuthenticationType.Equals(parameters.authenticationType));
+
+                if (userAuthentication != null)
                 {
-                    if (_context.UserAuthentications.Any(p => p.AuthenticationType.Equals(parameters.authenticationType)))
+                    //사용자 정보도 있고 로그인 정보도 있음
+                    if (parameters.authenticationType != (int)AuthenticationType.EM)
                     {
-                        //사용자 정보도 있고 로그인 정보도 있음 중복
-                        response = ProcessError<bool>(ErrorCode.RE_EXIST_USER);
-                    }
-                    else
-                    {
-                        //사용자 정보는 있으나 로그인 정보는 없음 계정 연결 
-                        UserAuthentication authentication = new UserAuthentication()
-                        {
-                            AuthenticationType = parameters.authenticationType,
-                            AuthenticationKey = parameters.authenticationKey,
-                            UserInfoId = userInfo.Id,
-                            IsUse = true,
-                        };
-
-                        _context.UserAuthentications.Add(authentication);
+                        // RefrashCodeUpdate
+                        userAuthentication.AuthenticationKey = parameters.authenticationKey;
                         _context.SaveChanges();
 
                         response.Result = true;
-                        response.Data = true;
+                        response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                                         select new Ci_User()
+                                         {
+                                             AuthType = UInfo.AuthType,
+                                             Email = UInfo.Email,
+                                             Nickname = UInfo.Nickname
+                                         }).FirstOrDefault();
                     }
+                    else
+                    {
+                        // Email계정으로 등록 불가 
+                        response = ProcessError<Ci_User>(ErrorCode.RE_EXIST_USER);
+                    }
+                }
+                else
+                {
+                    //사용자 정보는 있으나 로그인 정보는 없음 계정 연결 
+                    UserAuthentication authentication = new ()
+                    {
+                        AuthenticationType = parameters.authenticationType,
+                        AuthenticationKey = parameters.authenticationKey,
+                        UserInfoId = UserInfoID,
+                        IsUse = true,
+                    };
+
+                    _context.UserAuthentications.Add(authentication);
+                    _context.SaveChanges();
+
+                    response.Result = true;
+                    response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                                     select new Ci_User()
+                                     {
+                                         AuthType = UInfo.AuthType,
+                                         Email = UInfo.Email,
+                                         Nickname = UInfo.Nickname
+                                     }).FirstOrDefault();
                 }
 
             }
             catch (Exception Exp)
             {
-                response = ExceptionError<bool>(Exp.Message);
+                response = ExceptionError<Ci_User>(Exp.Message);
             }
-
-            LogingRES(response);
 
             return response;
         }

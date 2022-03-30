@@ -30,7 +30,7 @@ namespace CiagoarM.Models
             {
                 switch (authentication)
                 {
-                    case AuthenticationType.EM: return await TryEmailLogin(Email, AuthenticationKey); 
+                    case AuthenticationType.EM: return await TryLogin(authentication, Email, AuthenticationKey); 
                     case AuthenticationType.GG: return await TryGoogleLogin(Email);
                     default: return false;
                 }
@@ -43,7 +43,7 @@ namespace CiagoarM.Models
             return false;
         }
 
-        private async Task<bool> TryEmailLogin(string Email, string Password )
+        private async Task<bool> TryLogin(AuthenticationType AuthType, string Email, string Password = null )
         {
 
             try
@@ -52,12 +52,12 @@ namespace CiagoarM.Models
                 REQ_USER_LOGIN _USER_LOGIN = new ()
                 {
                     langCode = Properties.Settings.Default.LangCode,
-                    authenticationType = (int)AuthenticationType.EM,
+                    authenticationType = (int)AuthType,
                     authenticationKey = Password,
                     email=Email
                 };
 
-                string URL = Properties.Settings.Default.ServerBaseAddress + "User/Login";
+                string URL = Properties.Settings.Default.ServerBaseAddress + "User/userLogin";
                 string Stringcontent = JsonSerializer.Serialize(_USER_LOGIN);
 
                 BaseResponse<Ci_User> response = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
@@ -87,77 +87,11 @@ namespace CiagoarM.Models
             {
                 if(String.IsNullOrEmpty(Email))
                 {
-                    BaseResponse<Ci_OAuth> OAuthKey = await GetOAuthInfo(AuthenticationType.GG);
-                    if(OAuthKey.Result)
-                    { 
-                        BaseResponse<GoogleUserInfo> response = await Google.TryLogin(OAuthKey.Data);
-
-                        if (response.Result)
-                        {
-                            // Builds the Token request
-                            REQ_USER_JOIN _USER_JOIN = new()
-                            {
-                                langCode = Properties.Settings.Default.LangCode,
-                                authenticationType = (int)AuthenticationType.GG,
-                                email = Email,
-                                authenticationKey = response.Data.refresh_token,
-                                nickname = response.Data.name
-                            };
-
-                            string URL = Properties.Settings.Default.ServerBaseAddress + "User/SetJoinUser";
-                            string Stringcontent = JsonSerializer.Serialize(_USER_JOIN);
-
-                            BaseResponse<bool> JoinResult = await HttpHelper.SendRequest<bool>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
-
-                            if(JoinResult.Result)
-                            {
-                                //가입성공 진입
-                                return true;
-                            }
-                            else
-                            {
-                                LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
-                                return false;
-                            }
-
-                        }
-                        else
-                        {
-                            LogError($"{response.ErrorCode} : {response.ErrorMessage}");
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        LogError($"{OAuthKey.ErrorCode} : {OAuthKey.ErrorMessage}");
-                        return false;
-                    }
+                    return await ConnectGoogle();
                 }
                 else
                 {
-                    // Builds the Token request
-                    REQ_USER_LOGIN _USER_LOGIN = new()
-                    {
-                        langCode = Properties.Settings.Default.LangCode,
-                        authenticationType = (int)AuthenticationType.GG,
-                        email = Email
-                    };
-
-                    string URL = Properties.Settings.Default.ServerBaseAddress + "User/Login";
-                    string Stringcontent = JsonSerializer.Serialize(_USER_LOGIN);
-
-                    BaseResponse<Ci_User> response = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
-
-                    if (response.Result)
-                    {
-                        Localproperties.LoginUser = response.Data;
-                        return true;
-                    }
-                    else
-                    {
-                        LogError($"{response.ErrorCode} : {response.ErrorMessage}");
-                        return false;
-                    }
+                    return await TryLogin(AuthenticationType.GG, Email);
                 }
 
             }
@@ -168,12 +102,87 @@ namespace CiagoarM.Models
             return false;
         }
 
+        private async Task<bool> ConnectGoogle()
+        {
+            try
+            {
+                BaseResponse<Ci_OAuth> OAuthKey = await GetOAuthInfo(AuthenticationType.GG);
+
+                if (OAuthKey.Result)
+                {
+                    BaseResponse<GoogleUserInfo> response = await Google.TryLogin(OAuthKey.Data);
+
+                    if (response.Result)
+                    {
+
+                        return await OAuthSet(AuthenticationType.GG, response.Data.email, response.Data.refresh_token, response.Data.name);
+                    }
+                    else
+                    {
+                        LogError($"{response.ErrorCode} : {response.ErrorMessage}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    LogError($"{OAuthKey.ErrorCode} : {OAuthKey.ErrorMessage}");
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+            return false;
+        }
+
+        private async Task<bool> OAuthSet(AuthenticationType authentication ,string Email, string refresh_token, string nickname)
+        {
+            try
+            {
+                // Builds the Token request
+                REQ_USER_JOIN _USER_JOIN = new()
+                {
+                    langCode = Properties.Settings.Default.LangCode,
+                    authenticationType = (short)authentication,
+                    email = Email,
+                    authenticationKey = refresh_token,
+                    nickname = nickname
+                };
+
+                string URL = Properties.Settings.Default.ServerBaseAddress + "User/SetJoinUser";
+                string Stringcontent = JsonSerializer.Serialize(_USER_JOIN);
+
+                BaseResponse<Ci_User> JoinResult = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
+
+                if (JoinResult.Result)
+                {
+
+                    Localproperties.LoginUser = JoinResult.Data;
+                    //가입성공 진입
+                    return true;
+                }
+                else
+                {
+                    LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+                return false;
+            }
+        }
+
+        
         private async Task<BaseResponse<Ci_OAuth>> GetOAuthInfo(AuthenticationType authenticationType)
         {
             BaseResponse<Ci_OAuth> result = new BaseResponse<Ci_OAuth>();
             try
             {
-                Dictionary<string, string> pQueryParm = new Dictionary<string, string>()
+                Dictionary<string, string> pQueryParm = new()
                 {
                     ["langCode"] = Properties.Settings.Default.LangCode,
                     ["authenticationType"] = ((int)authenticationType).ToString()

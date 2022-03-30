@@ -22,6 +22,9 @@ namespace CiagoarM
             private set;
         }
 
+        
+
+
         #endregion
 
         #region Variable
@@ -48,8 +51,7 @@ namespace CiagoarM
             try
             {
                 LogInfo("★★★★★ MainWindowModel Start ★★★★★");
-                SettingCommand();
-                ShowLoginWindow();
+                SettingCommand();                
                 LogInfo("loginWindows Show");
             }
             catch (Exception ex)
@@ -71,10 +73,13 @@ namespace CiagoarM
             }
         }
 
-        private void ShowLoginWindow()
+
+
+        public void ShowLoginWindow()
         {
             try
-            {                
+            {
+                App.Current.MainWindow.Visibility = Visibility.Hidden;
                 loginWindows.Show();
             }
             catch (Exception ex)
@@ -88,6 +93,7 @@ namespace CiagoarM
             try
             {
                 loginWindows.Visibility = Visibility.Collapsed;
+                App.Current.MainWindow.Visibility = Visibility.Visible;
                 App.Current.MainWindow.Show();
             }
             catch (Exception ex)

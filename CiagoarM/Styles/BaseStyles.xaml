@@ -59,4 +59,13 @@
         <Setter Property="Margin" Value="2"/>
     </Style>
 
+    <Style x:Key="MediumCheckBox" TargetType="{x:Type CheckBox}" BasedOn="{StaticResource MediumFont}">
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="Height" Value="45"/>
+        <Setter Property="Margin" Value="2"/>
+    </Style>
+
 </ResourceDictionary>

@@ -126,6 +126,9 @@
   <data name="MSG_LoginFail" xml:space="preserve">
     <value>로그인에 실패하였습니다. 입력정보를 확인 부탁 바랍니다.</value>
   </data>
+  <data name="Title_Auto_Login" xml:space="preserve">
+    <value>자동 로그인</value>
+  </data>
   <data name="Title_Total_Text" xml:space="preserve">
     <value>들어오고 나가고 기록하고 (Come In And Go Out And Record)</value>
   </data>

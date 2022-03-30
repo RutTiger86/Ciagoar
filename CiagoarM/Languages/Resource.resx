@@ -126,6 +126,9 @@
   <data name="MSG_LoginFail" xml:space="preserve">
     <value>Login failed. Please check the input information.</value>
   </data>
+  <data name="Title_Auto_Login" xml:space="preserve">
+    <value>Auto Login</value>
+  </data>
   <data name="Title_Total_Text" xml:space="preserve">
     <value>Come In And Go Out And Record</value>
   </data>

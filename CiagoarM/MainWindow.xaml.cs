@@ -24,6 +24,7 @@ namespace CiagoarM
         public MainWindow()
         {
             InitializeComponent();
+            ((MainWindowModel)this.DataContext).ShowLoginWindow();
         }
     }
 }

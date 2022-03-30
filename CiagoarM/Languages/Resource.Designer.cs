@@ -88,6 +88,15 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   Auto Login과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Auto_Login {
+            get {
+                return ResourceManager.GetString("Title_Auto_Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Come In And Go Out And Record과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Title_Total_Text {

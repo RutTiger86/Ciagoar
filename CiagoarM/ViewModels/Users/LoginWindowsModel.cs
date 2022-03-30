@@ -40,6 +40,18 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
+        private bool _isAutoLogin = Properties.Settings.Default.IsAutoLogin;
+        public bool IsAutoLogin
+        {
+            get { return _isAutoLogin; }
+            set
+            {
+                _isAutoLogin = value;
+                Properties.Settings.Default.IsAutoLogin = value;
+                Properties.Settings.Default.Save();
+                onPropertyChanged();
+            }
+        }
         #endregion
 
 
@@ -71,6 +83,7 @@ namespace CiagoarM.ViewModels.Users
             try
             {
                 SettingCommand();
+                AutoLoginCheck();
             }
             catch (Exception ex)
             {
@@ -78,7 +91,27 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        public void SettingCommand()
+        private void AutoLoginCheck()
+        {
+            try
+            {
+                if(Properties.Settings.Default.IsAutoLogin && !string.IsNullOrWhiteSpace(Properties.Settings.Default.AutoLoginID))
+                {
+                    switch(Properties.Settings.Default.AutoAuthenticationType)
+                    {
+                        case (int)AuthenticationType.EM: asyncLogin(AuthenticationType.EM, Properties.Settings.Default.AutoLoginID, Properties.Settings.Default.AutoLoginPW); break;
+                        case (int)AuthenticationType.GG: asyncLogin(AuthenticationType.GG, Properties.Settings.Default.AutoLoginID); break;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+        private void SettingCommand()
         {
             try
             {
@@ -93,7 +126,7 @@ namespace CiagoarM.ViewModels.Users
 
         }
 
-        public void Login(object param)
+        private void Login(object param)
         {
             try
             {
@@ -101,7 +134,7 @@ namespace CiagoarM.ViewModels.Users
                 {
                     PasswordBox passwordBox = (PasswordBox)param;
                     IsEnableControl = false;
-                    asyncLogin(AuthenticationType.EM, passwordBox.Password, ID);
+                    asyncLogin(AuthenticationType.EM, ID, passwordBox.Password);
                 }
             }
             catch (Exception ex)
@@ -110,14 +143,25 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        public async void asyncLogin(AuthenticationType authentication, string AuthenticationKey, string Email = null)
+        private async void asyncLogin(AuthenticationType authentication, string Email = null, string AuthenticationKey = null)
         {
             try
             {
-                bool success = await new UserModel().Login(authentication, AuthenticationKey, Email);
+                bool success = await new UserModel().Login(authentication, Email, AuthenticationKey);
 
                 if (success)
                 {
+
+                    if(IsAutoLogin)
+                    {
+                       
+                        Properties.Settings.Default.AutoAuthenticationType = (short)authentication;
+                        Properties.Settings.Default.AutoLoginID = Localproperties.LoginUser.Email;
+                        Properties.Settings.Default.AutoLoginPW = AuthenticationKey;
+                        Properties.Settings.Default.Save();
+
+                    }
+
                     SuccessLogin?.Invoke();
                 }
                 else
@@ -137,7 +181,7 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        public void Join(object param)
+        private void Join(object param)
         {
             try
             {
@@ -149,11 +193,11 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        public void GoogleStart(object param)
+        private void GoogleStart(object param)
         {
             try
             {
-                asyncLogin(AuthenticationType.GG, Properties.Settings.Default.RefrashToken, ID);
+                asyncLogin(AuthenticationType.GG);
 
             }
             catch (Exception ex)
