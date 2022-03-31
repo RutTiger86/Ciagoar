@@ -38,7 +38,7 @@ namespace CiagoarM
                 {
                     _loginWindows = new LoginWindows();
                     _loginWindows.Closed += (s, arg) => { ProgramShutdown(null); };
-                    ((ILogin)_loginWindows.DataContext).SuccessLogin += SuccessLogin;
+                    ((IReturnAction)_loginWindows.DataContext).ReturnAction += SuccessLogin;
                 }
 
                 return _loginWindows;

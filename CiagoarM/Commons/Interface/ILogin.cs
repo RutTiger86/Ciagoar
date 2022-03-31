@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CiagoarM.Commons.Interface
 {
-    public interface ILogin
+    public interface IReturnAction
     {
-        public Action SuccessLogin { get; set; }
+        public Action ReturnAction { get; set; }
 
     }
 }

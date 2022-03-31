@@ -14,17 +14,17 @@ using System.Windows.Controls;
 
 namespace CiagoarM.ViewModels.Users
 {
-    public class LoginWindowsModel : BaseModel, ILogin
+    public class LoginWindowsModel : BaseModel, IReturnAction
     {
         #region Binding Value
 
-        private string _Id;
-        public string ID
+        private string _email;
+        public string Email
         {
-            get { return _Id; }
+            get { return _email; }
             set
             {
-                _Id = value;
+                _email = value;
                 onPropertyChanged();
             }
         }
@@ -52,6 +52,17 @@ namespace CiagoarM.ViewModels.Users
                 onPropertyChanged();
             }
         }
+
+        private Visibility _isJoinViewVisible = Visibility.Hidden;
+        public Visibility IsJoinViewVisible
+        {
+            get { return _isJoinViewVisible; }
+            set
+            {
+                _isJoinViewVisible = value;
+                onPropertyChanged();
+            }
+        }
         #endregion
 
 
@@ -73,7 +84,7 @@ namespace CiagoarM.ViewModels.Users
             get;
             private set;
         }
-        public Action SuccessLogin { get; set; }
+        public Action ReturnAction { get; set; }
 
         #endregion
 
@@ -83,7 +94,9 @@ namespace CiagoarM.ViewModels.Users
             try
             {
                 SettingCommand();
-                AutoLoginCheck();
+                //AutoLoginCheck();
+
+                IsJoinViewVisible = Visibility.Hidden;
             }
             catch (Exception ex)
             {
@@ -134,7 +147,7 @@ namespace CiagoarM.ViewModels.Users
                 {
                     PasswordBox passwordBox = (PasswordBox)param;
                     IsEnableControl = false;
-                    asyncLogin(AuthenticationType.EM, ID, passwordBox.Password);
+                    asyncLogin(AuthenticationType.EM, Email, passwordBox.Password);
                 }
             }
             catch (Exception ex)
@@ -162,7 +175,7 @@ namespace CiagoarM.ViewModels.Users
 
                     }
 
-                    SuccessLogin?.Invoke();
+                    ReturnAction?.Invoke();
                 }
                 else
                 {

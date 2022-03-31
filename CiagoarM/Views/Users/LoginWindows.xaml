@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:CiagoarM.Views.Users"
         xmlns:Views="clr-namespace:CiagoarM.ViewModels.Users"
         xmlns:Lang ="clr-namespace:CiagoarM.Languages"
+       
         mc:Ignorable="d"
         Title="{x:Static Lang:Resource.Main_Title}" Height="450" Width="800" WindowStartupLocation="CenterScreen">
 
@@ -13,53 +14,60 @@
         <Views:LoginWindowsModel></Views:LoginWindowsModel>
     </Window.DataContext>
 
-    <Grid IsEnabled="{Binding IsEnableControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="120"/>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="1" VerticalAlignment="Center">
-            <Label Content="{x:Static Lang:Resource.Main_Title}" Style="{StaticResource TitleLabel}"/>
-            <Label Content="{x:Static Lang:Resource.Title_Total_Text}"  Style="{StaticResource ContentLabel}"/>
-        </StackPanel>
-
-        <Grid Grid.Row="2" Margin="2">
+    <Grid>
+        <Grid IsEnabled="{Binding IsEnableControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="120"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="ID : " Style="{StaticResource ContentLabel}" HorizontalAlignment="Right" ></Label>
-            <TextBox Grid.Row="0" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumTextBox}" Text="{Binding ID}"/>
 
-            <Label Grid.Row="1" Grid.Column="0" Content="PW : " Style="{StaticResource ContentLabel}" HorizontalAlignment="Right" ></Label>
-            <PasswordBox x:Name="PWBox" Grid.Row="1" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumPasswordBox}"/>
+            <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                <Label Content="{x:Static Lang:Resource.Main_Title}" Style="{StaticResource TitleLabel}"/>
+                <Label Content="{x:Static Lang:Resource.Title_Total_Text}"  Style="{StaticResource ContentLabel}"/>
+            </StackPanel>
+
+            <Grid Grid.Row="2" Margin="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Content="ID : " Style="{StaticResource ContentLabel}" HorizontalAlignment="Right" ></Label>
+                <TextBox Grid.Row="0" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumTextBox}" Text="{Binding Email}"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="PW : " Style="{StaticResource ContentLabel}" HorizontalAlignment="Right" ></Label>
+                <PasswordBox x:Name="PWBox" Grid.Row="1" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumPasswordBox}"/>
+            </Grid>
+
+            <Grid Grid.Row="3" Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Row="2" Grid.Column="0" Content="Login"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PWBox}"/>
+                <Button Grid.Row="2" Grid.Column="1" Content="Join"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Command="{Binding JoinCommand}"/>
+            </Grid>
+
+
+            <Button Grid.Row="4" Background="Transparent" Width="206" Height="46" BorderThickness="0" Padding="0" Command="{Binding GoogleStartCommand}">
+                <Image Source="/Assets/btn_google_sign-in.png" Stretch="UniformToFill"/>
+            </Button>
+
+            <CheckBox Grid.Row="5" Content="{x:Static Lang:Resource.Title_Auto_Login}" IsChecked="{Binding IsAutoLogin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MediumCheckBox}"/>
+
         </Grid>
 
-        <Grid Grid.Row="3" Margin="2">          
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Button Grid.Row="2" Grid.Column="0" Content="Login"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PWBox}"/>
-            <Button Grid.Row="2" Grid.Column="1" Content="Join"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Command="{Binding JoinCommand}"/>
-        </Grid>
+        <local:JoinView Visibility="{Binding IsJoinViewVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
 
 
-        <Button Grid.Row="4" Background="Transparent" Width="206" Height="46" BorderThickness="0" Padding="0" Command="{Binding GoogleStartCommand}">
-            <Image Source="/Assets/btn_google_sign-in.png" Stretch="UniformToFill"/>
-        </Button>
-
-        <CheckBox Grid.Row="5" Content="{x:Static Lang:Resource.Title_Auto_Login}" IsChecked="{Binding IsAutoLogin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MediumCheckBox}"/>
 
     </Grid>
 </Window>
