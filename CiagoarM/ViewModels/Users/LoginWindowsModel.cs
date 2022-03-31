@@ -4,6 +4,7 @@ using CiagoarM.Commons;
 using CiagoarM.Commons.Interface;
 using CiagoarM.Languages;
 using CiagoarM.Models;
+using CiagoarM.Views.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,16 +54,8 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        private Visibility _isJoinViewVisible = Visibility.Hidden;
-        public Visibility IsJoinViewVisible
-        {
-            get { return _isJoinViewVisible; }
-            set
-            {
-                _isJoinViewVisible = value;
-                onPropertyChanged();
-            }
-        }
+        private JoinView _JoinView { get; set; }
+
         #endregion
 
 
@@ -84,6 +77,12 @@ namespace CiagoarM.ViewModels.Users
             get;
             private set;
         }
+
+        public RelayCommand LoadedCommand
+        {
+            get;
+            private set;
+        }
         public Action ReturnAction { get; set; }
 
         #endregion
@@ -95,8 +94,6 @@ namespace CiagoarM.ViewModels.Users
             {
                 SettingCommand();
                 //AutoLoginCheck();
-
-                IsJoinViewVisible = Visibility.Hidden;
             }
             catch (Exception ex)
             {
@@ -108,9 +105,9 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                if(Properties.Settings.Default.IsAutoLogin && !string.IsNullOrWhiteSpace(Properties.Settings.Default.AutoLoginID))
+                if (Properties.Settings.Default.IsAutoLogin && !string.IsNullOrWhiteSpace(Properties.Settings.Default.AutoLoginID))
                 {
-                    switch(Properties.Settings.Default.AutoAuthenticationType)
+                    switch (Properties.Settings.Default.AutoAuthenticationType)
                     {
                         case (int)AuthenticationType.EM: asyncLogin(AuthenticationType.EM, Properties.Settings.Default.AutoLoginID, Properties.Settings.Default.AutoLoginPW); break;
                         case (int)AuthenticationType.GG: asyncLogin(AuthenticationType.GG, Properties.Settings.Default.AutoLoginID); break;
@@ -131,6 +128,7 @@ namespace CiagoarM.ViewModels.Users
                 LoginCommand = new RelayCommand(Login);
                 JoinCommand = new RelayCommand(Join);
                 GoogleStartCommand = new RelayCommand(GoogleStart);
+                LoadedCommand = new RelayCommand(Loaded);
             }
             catch (Exception ex)
             {
@@ -139,13 +137,43 @@ namespace CiagoarM.ViewModels.Users
 
         }
 
+        private void Loaded(object param)
+        {
+            try
+            {
+                if (param is JoinView view)
+                {
+                    _JoinView = view;
+                    _JoinView.Visibility = Visibility.Hidden;
+                    ((IReturnAction)_JoinView.DataContext).ReturnAction += JoinViewHiden;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+        private void JoinViewHiden()
+        {
+            try
+            {
+                _JoinView.Visibility = Visibility.Hidden;
+                IsEnableControl = true;
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+
         private void Login(object param)
         {
             try
             {
-                if (param is PasswordBox)
+                if (param is PasswordBox passwordBox)
                 {
-                    PasswordBox passwordBox = (PasswordBox)param;
                     IsEnableControl = false;
                     asyncLogin(AuthenticationType.EM, Email, passwordBox.Password);
                 }
@@ -165,9 +193,9 @@ namespace CiagoarM.ViewModels.Users
                 if (success)
                 {
 
-                    if(IsAutoLogin)
+                    if (IsAutoLogin)
                     {
-                       
+
                         Properties.Settings.Default.AutoAuthenticationType = (short)authentication;
                         Properties.Settings.Default.AutoLoginID = Localproperties.LoginUser.Email;
                         Properties.Settings.Default.AutoLoginPW = AuthenticationKey;
@@ -198,7 +226,8 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-
+                IsEnableControl = false;
+                _JoinView.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
             {

@@ -6,13 +6,24 @@
         xmlns:local="clr-namespace:CiagoarM.Views.Users"
         xmlns:Views="clr-namespace:CiagoarM.ViewModels.Users"
         xmlns:Lang ="clr-namespace:CiagoarM.Languages"
-       
+       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="{x:Static Lang:Resource.Main_Title}" Height="450" Width="800" WindowStartupLocation="CenterScreen">
 
     <Window.DataContext>
         <Views:LoginWindowsModel></Views:LoginWindowsModel>
     </Window.DataContext>
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
+    </Window.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" CommandParameter="{Binding ElementName=joinView}">
+            </i:InvokeCommandAction>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <Grid>
         <Grid IsEnabled="{Binding IsEnableControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -65,9 +76,6 @@
 
         </Grid>
 
-        <local:JoinView Visibility="{Binding IsJoinViewVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
-
-
-
+        <local:JoinView x:Name="joinView" HorizontalAlignment="Center" Width="600"/>
     </Grid>
 </Window>

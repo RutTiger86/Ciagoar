@@ -115,7 +115,21 @@ namespace CiagoarM.Models
                     if (response.Result)
                     {
 
-                        return await OAuthSet(AuthenticationType.GG, response.Data.email, response.Data.refresh_token, response.Data.name);
+                        BaseResponse<Ci_User> JoinResult =  await JoinUser(AuthenticationType.GG, response.Data.email, response.Data.refresh_token, response.Data.name);
+
+                        if (JoinResult.Result)
+                        {
+
+                            Localproperties.LoginUser = JoinResult.Data;
+                            //가입성공 진입
+                            return true;
+                        }
+                        else
+                        {
+                            LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
+                            return false;
+                        }
+
                     }
                     else
                     {
@@ -137,8 +151,9 @@ namespace CiagoarM.Models
             return false;
         }
 
-        private async Task<bool> OAuthSet(AuthenticationType authentication ,string Email, string refresh_token, string nickname)
+        public async Task<BaseResponse<Ci_User>> JoinUser(AuthenticationType authentication ,string Email, string AuthenticationKey, string nickname)
         {
+            BaseResponse<Ci_User> JoinResult = new();
             try
             {
                 // Builds the Token request
@@ -147,36 +162,24 @@ namespace CiagoarM.Models
                     langCode = Properties.Settings.Default.LangCode,
                     authenticationType = (short)authentication,
                     email = Email,
-                    authenticationKey = refresh_token,
+                    authenticationKey = AuthenticationKey,
                     nickname = nickname
                 };
 
                 string URL = Properties.Settings.Default.ServerBaseAddress + "User/SetJoinUser";
                 string Stringcontent = JsonSerializer.Serialize(_USER_JOIN);
 
-                BaseResponse<Ci_User> JoinResult = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
+                JoinResult = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
 
-                if (JoinResult.Result)
-                {
-
-                    Localproperties.LoginUser = JoinResult.Data;
-                    //가입성공 진입
-                    return true;
-                }
-                else
-                {
-                    LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
-                    return false;
-                }
             }
             catch (Exception ex)
             {
-                LogException(ex.Message);
-                return false;
+                LogException(ex.Message);       
             }
+
+            return JoinResult;
         }
 
-        
         private async Task<BaseResponse<Ci_OAuth>> GetOAuthInfo(AuthenticationType authenticationType)
         {
             BaseResponse<Ci_OAuth> result = new BaseResponse<Ci_OAuth>();

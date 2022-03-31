@@ -8,27 +8,15 @@
              xmlns:converter ="clr-namespace:CiagoarM.Commons.Converter"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="550" BorderThickness="1" BorderBrush="Black">
+             d:DesignHeight="450" d:DesignWidth="550" BorderThickness="1" BorderBrush="Black" >
 
     <UserControl.Resources>
         <converter:PWConverter x:Key="PWConverter"/>
     </UserControl.Resources>
+    
     <UserControl.DataContext>
         <model:JoinViewModel/>
     </UserControl.DataContext>
-
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}">
-                <i:InvokeCommandAction.CommandParameter>
-                        <MultiBinding Converter="{StaticResource PWConverter}">
-                            <Binding ElementName="PWBox"/>
-                            <Binding ElementName="RePWBox"/>
-                        </MultiBinding>
-                </i:InvokeCommandAction.CommandParameter>
-            </i:InvokeCommandAction>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     
     <Grid Background="White" IsEnabled="{Binding IsEnableControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
         <Grid.RowDefinitions>
@@ -45,7 +33,7 @@
         </Grid.ColumnDefinitions>
 
         <Label Content="Email" ContentStringFormat=" {0} :" Grid.Row="0"  Style="{StaticResource ContentLabel}" HorizontalContentAlignment="Right"/>
-        <TextBox Grid.Row="0" Grid.Column="1" Width="auto" Margin="10" HorizontalAlignment="Stretch" Style="{StaticResource MediumTextBox}" Text="{Binding Email}"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Width="auto" Margin="10" HorizontalAlignment="Stretch" Style="{StaticResource MediumTextBox}" Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
         
         <Label Content="NickName" ContentStringFormat=" {0} :" Grid.Row="1" Style="{StaticResource ContentLabel}" HorizontalContentAlignment="Right"/>
         <TextBox Grid.Row="1" Grid.Column="1" Width="auto" Margin="10" HorizontalAlignment="Stretch" Style="{StaticResource MediumTextBox}" Text="{Binding NickName}"/>
@@ -64,7 +52,14 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Content="Cancle" HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}"  Command="{Binding CancleCommand}" />
+            <Button Content="Cancle" HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}"  Command="{Binding CancleCommand}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource PWConverter}">
+                        <Binding ElementName="PWBox"/>
+                        <Binding ElementName="RePWBox"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
 
 
 

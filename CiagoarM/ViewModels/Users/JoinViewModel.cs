@@ -1,12 +1,17 @@
 ﻿using Ciagoar.Control.Command;
 using Ciagoar.Data.Request.Users;
+using Ciagoar.Data.Response;
+using Ciagoar.Data.Response.Users;
 using CiagoarM.Commons;
 using CiagoarM.Commons.Interface;
 using CiagoarM.Languages;
+using CiagoarM.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,23 +23,41 @@ namespace CiagoarM.ViewModels.Users
         #region Binding Value
 
         private string _email;
+
         public string Email
         {
             get { return _email; }
             set
             {
-                _email = value;
-                onPropertyChanged();
+                if (Regex.IsMatch(value, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase))
+                {
+                    _email = value;
+                    onPropertyChanged();
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        string messageBoxText = "Email형식이 맞아야 합니다.";// Resource.MSG_LoginFail;
+                        string caption = Resource.Caption_Warning;
+                        MessageBoxButton button = MessageBoxButton.OK;
+                        MessageBoxImage icon = MessageBoxImage.Warning;
+
+                        _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                    }
+                    _email = String.Empty;
+                    onPropertyChanged();
+                }
             }
         }
 
         private string _nickName;
         public string NickName
         {
-            get { return _email; }
+            get { return _nickName; }
             set
             {
-                _email = value;
+                _nickName = value;
                 onPropertyChanged();
             }
         }
@@ -65,12 +88,6 @@ namespace CiagoarM.ViewModels.Users
             private set;
         }
 
-        public RelayCommand LoadedCommand
-        {
-            get;
-            private set;
-        }
-
         public Action ReturnAction { get; set; }
 
         #endregion
@@ -91,7 +108,6 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                LoadedCommand = new RelayCommand(Loaded);
                 CancleCommand = new RelayCommand(Cancle);
                 JoinCommand = new RelayCommand(Join);
             }
@@ -101,28 +117,8 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        private void Loaded(object param)
-        {
-            try
-            {
-                var values = (object[])param;
 
-                if (values != null && values[0] is PasswordBox PWS1 && values[1] is PasswordBox PWS2)
-                { 
-                    PWS1.Password = null;
-                    PWS2.Password = null;
-                }
-
-                Email = String.Empty;
-                IsEnableControl = true;
-            }
-            catch (Exception ex)
-            {
-                LogException(ex.Message);
-            }
-        }
-
-        private void Join(object param)
+        private async void Join(object param)
         {
             try
             {
@@ -134,6 +130,27 @@ namespace CiagoarM.ViewModels.Users
                     {
                         IsEnableControl = false;
 
+                        BaseResponse<Ci_User> JoinResult = await new UserModel().JoinUser(Ciagoar.Data.Enums.AuthenticationType.EM, Email, PWS1.Password, NickName);
+
+                        if (JoinResult.Result)
+                        {
+                            //가입성공 
+                            PWS1.Password = null;
+                            PWS2.Password = null;
+                            ReturnProcess();                            
+                        }
+                        else
+                        {
+                            LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
+                            string messageBoxText = $"[{JoinResult.ErrorCode}]  {JoinResult.ErrorMessage}";// Resource.MSG_LoginFail;
+                            string caption = Resource.Caption_Warning;
+                            MessageBoxButton button = MessageBoxButton.OK;
+                            MessageBoxImage icon = MessageBoxImage.Warning;
+
+                            _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                        }
+
+                        IsEnableControl = true;
                     }
                     else
                     {
@@ -153,11 +170,38 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
+        
+
         private void Cancle(object param)
         {
             try
             {
+                var values = (object[])param;
+
+                if (values[0] is PasswordBox PWS1 && values[1] is PasswordBox PWS2)
+                {
+                    PWS1.Password = null;
+                    PWS2.Password = null;
+                }
+
+                ReturnProcess();
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+        private void ReturnProcess()
+        {
+            try
+            {
+                Email = String.Empty;
+                NickName = String.Empty;
+                IsEnableControl = true;
+
                 ReturnAction?.Invoke();
+
             }
             catch (Exception ex)
             {
