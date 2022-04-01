@@ -20,10 +20,7 @@ namespace CiagoarS.DataBase
         public virtual DbSet<UserAuthentication> UserAuthentications { get; set; }
         public virtual DbSet<UserInfo> UserInfos { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-        }
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -97,7 +94,7 @@ namespace CiagoarS.DataBase
 
                 entity.Property(e => e.Nickname)
                     .IsRequired()
-                    .HasMaxLength(64);
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.UpdateTime).HasColumnType("datetime");
 

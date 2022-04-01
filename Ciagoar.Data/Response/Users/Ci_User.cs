@@ -11,5 +11,7 @@ namespace Ciagoar.Data.Response.Users
         public string Email { get; set; }
         public string Nickname { get; set; }
         public short AuthType { get; set; }
+
+        public short AuthenticationStep { get; set; }
     }
 }

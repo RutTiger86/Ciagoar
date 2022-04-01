@@ -9,6 +9,7 @@ namespace CiagoarS.DataBase
         public int UserInfoId { get; set; }
         public short AuthenticationType { get; set; }
         public string AuthenticationKey { get; set; }
+        public short AuthenticationStep { get; set; }
         public bool IsUse { get; set; }
         public bool IsDelete { get; set; }
         public DateTime CreateTime { get; set; }

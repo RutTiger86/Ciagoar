@@ -1,11 +1,11 @@
 ﻿using Ciagoar.Core.Helper;
 using Ciagoar.Core.OAuth;
 using Ciagoar.Data.Enums;
+using Ciagoar.Data.HTTPS;
 using Ciagoar.Data.OAuth;
 using Ciagoar.Data.Request.Users;
 using Ciagoar.Data.Response;
 using Ciagoar.Data.Response.Users;
-using CiagoarS.CodeMessage;
 using CiagoarS.Common;
 using CiagoarS.Common.Enums;
 using CiagoarS.DataBase;
@@ -14,9 +14,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CiagoarS.Controllers
@@ -105,7 +103,8 @@ namespace CiagoarS.Controllers
                                     {
                                         AuthType = UInfo.AuthType,
                                         Email = UInfo.Email,
-                                        Nickname = UInfo.Nickname
+                                        Nickname = UInfo.Nickname,
+                                        AuthenticationStep = UAuthentications.AuthenticationStep
                                     }).FirstOrDefault();
 
                 if (userInfo != null)
@@ -143,7 +142,8 @@ namespace CiagoarS.Controllers
                                                    {
                                                        AuthType = UInfo.AuthType,
                                                        Email = UInfo.Email,
-                                                       Nickname = UInfo.Nickname
+                                                       Nickname = UInfo.Nickname,
+                                                       AuthenticationStep = 0
                                                    }, UAuthentications.AuthenticationKey)
                                                    ).FirstOrDefault();
 
@@ -339,28 +339,72 @@ namespace CiagoarS.Controllers
                     Nickname = parameters.nickname,
                     IsUse = true,
                     UserAuthentications = new List<UserAuthentication>()
+                    {
+                        new UserAuthentication()
                         {
-                            new UserAuthentication()
-                            {
-                                AuthenticationType = parameters.authenticationType,
-                                AuthenticationKey = parameters.authenticationKey,
-                                IsUse = true,
-                            }
+                            AuthenticationType = parameters.authenticationType,
+                            AuthenticationKey = parameters.authenticationKey,
+                            AuthenticationStep = (short)(parameters.authenticationType == (short)AuthenticationType.EM? 2 : 0),
+                            IsUse = true,
                         }
+                    }
                 };
 
                 _context.UserInfos.Add(userInfo);
                 _context.SaveChanges();
 
+                if(parameters.authenticationType == (short)AuthenticationType.EM)
+                {
+                    SMTP_INFO sMTP_INFO = _context.OauthInfos.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).Select(p => new SMTP_INFO()
+                    {
+                        nSMTPPort = int.Parse(p.TokenUri),
+                        sSMTPPassword = p.AuthUri,
+                        sSMTPServer = p.ClientId,
+                        sSMTPUser = p.ClientSecret
+                    }).FirstOrDefault();
 
-                response.Result = true;
-                response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
-                                 select new Ci_User()
-                                 {
-                                     AuthType = UInfo.AuthType,
-                                     Email = UInfo.Email,
-                                     Nickname = UInfo.Nickname
-                                 }).FirstOrDefault();
+                    if(sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO,userInfo,_mLogger))
+                    {
+                        UserAuthentication authentication =  userInfo.UserAuthentications.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).FirstOrDefault();
+
+                        if (authentication != null)
+                        {
+                            authentication.AuthenticationStep = 1;
+                            _context.SaveChanges();
+
+                            response.Result = true;
+                            response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                                             select new Ci_User()
+                                             {
+                                                 AuthType = UInfo.AuthType,
+                                                 Email = UInfo.Email,
+                                                 Nickname = UInfo.Nickname,
+                                                 AuthenticationStep = authentication.AuthenticationStep,
+                                             }).FirstOrDefault();
+                        }
+                        else
+                        {
+                            response = ProcessError<Ci_User>(ErrorCode.EC_EX);
+
+                        }                       
+                    }
+                    else
+                    {
+                        response = ProcessError<Ci_User>(ErrorCode.EC_EX);
+                    }
+                }
+                else
+                {
+                    response.Result = true;
+                    response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                                     select new Ci_User()
+                                     {
+                                         AuthType = UInfo.AuthType,
+                                         Email = UInfo.Email,
+                                         Nickname = UInfo.Nickname,
+                                         AuthenticationStep = 0
+                                     }).FirstOrDefault();
+                }
 
             }
             catch (Exception Exp)
@@ -371,7 +415,6 @@ namespace CiagoarS.Controllers
 
             return response;
         }
-
 
         private BaseResponse<Ci_User> ConnectUserAuthentication(int UserInfoID,REQ_USER_JOIN parameters)
         {
@@ -500,5 +543,72 @@ namespace CiagoarS.Controllers
             return response;
         }
 
+
+        /// <summary>
+        /// Email 인증 
+        /// </summary>
+        /// <remarks>
+        ///  Email 인증 
+        /// </remarks>
+        /// <param name="parameters">
+        /// <para>요청형식 설명</para>
+        /// <para>- langCode                    : 언어코드 (en-US:영어, ko-KR:한국어)</para>
+        /// <para>- email                       : 이메일주소</para>
+        /// <para>- authenticationStepKey       : 인증 키값 </para>
+        /// </param> 
+        /// <returns>리턴값 설명</returns>
+        /// <response code="200">
+        /// <para>응답형식 설명</para>
+        /// <para>Result - true/false</para>
+        /// <para>ErrorCode - 실패시 오류코드</para>
+        /// <para>ErrorMessage - 실패시 오류메세지</para>
+        /// <para>Data - 성공시 결과 true/false</para>
+        /// </response>
+        [Route("AuthenticationStepCheck")]
+        [HttpPost]
+        [Produces("application/json")]
+        public BaseResponse<bool> AuthenticationStepCheck(REQ_AUTHENTICATION_STEP parameters)
+        {
+            LogingREQ(parameters);
+
+            BaseResponse<bool> response = new();
+
+            try
+            {
+                UserInfo user =  _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse).FirstOrDefault();
+               
+                if(user != null  && parameters.authenticationStepKey.Equals(user.CreateTime.Ticks.ToString()[..6]))
+                {
+
+                    UserAuthentication authentication = user.UserAuthentications.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).FirstOrDefault();
+
+                    if (authentication != null)
+                    {
+                        authentication.AuthenticationStep = 0;
+                        _context.SaveChanges();
+
+                        response.Result = true;
+                        response.Data = true;
+                    }
+                    else
+                    {
+                        response = ProcessError<bool>(ErrorCode.EC_EX);
+                    }
+                }
+                else
+                {
+                    response = ProcessError<bool>(ErrorCode.EC_EX);
+                }
+
+            }
+            catch (Exception Exp)
+            {
+                response = ExceptionError<bool>(Exp.Message);
+            }
+
+            LogingRES(response);
+
+            return response;
+        }
     }
 }
