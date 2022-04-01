@@ -137,6 +137,14 @@ namespace CiagoarM.ViewModels.Users
                             //가입성공 
                             PWS1.Password = null;
                             PWS2.Password = null;
+
+                            string messageBoxText = $"인증 이메일이 전송되었습니다. {Environment.NewLine} 로그인시 인증키 입력이 1회 필요합니다.";// Resource.MSG_LoginFail;
+                            string caption = Resource.Caption_Warning;
+                            MessageBoxButton button = MessageBoxButton.OK;
+                            MessageBoxImage icon = MessageBoxImage.Warning;
+
+                            _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+
                             ReturnProcess();                            
                         }
                         else

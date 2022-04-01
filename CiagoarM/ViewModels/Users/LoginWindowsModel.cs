@@ -56,6 +56,7 @@ namespace CiagoarM.ViewModels.Users
 
         private JoinView _JoinView { get; set; }
 
+        private AuthenticationStepCheckView _CheckView { get; set; }
         #endregion
 
 
@@ -141,11 +142,17 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                if (param is JoinView view)
+                var values = (object[])param;
+
+                if (values[0] is JoinView joinView && values[1] is AuthenticationStepCheckView  stepCheckView)
                 {
-                    _JoinView = view;
+                    _JoinView = joinView;
                     _JoinView.Visibility = Visibility.Hidden;
                     ((IReturnAction)_JoinView.DataContext).ReturnAction += JoinViewHiden;
+
+                    _CheckView = stepCheckView;
+                    _CheckView.Visibility = Visibility.Hidden;
+                    ((IReturnAction)_CheckView.DataContext).ReturnAction += CheckViewHiden;
                 }
             }
             catch (Exception ex)
@@ -159,6 +166,19 @@ namespace CiagoarM.ViewModels.Users
             try
             {
                 _JoinView.Visibility = Visibility.Hidden;
+                IsEnableControl = true;
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+        private void CheckViewHiden()
+        {
+            try
+            {
+                _CheckView.Visibility = Visibility.Hidden;
                 IsEnableControl = true;
             }
             catch (Exception ex)
@@ -192,18 +212,28 @@ namespace CiagoarM.ViewModels.Users
 
                 if (success)
                 {
-
-                    if (IsAutoLogin)
+                    if(authentication == AuthenticationType.EM && Localproperties.LoginUser.AuthenticationStep != 0)
                     {
-
-                        Properties.Settings.Default.AutoAuthenticationType = (short)authentication;
-                        Properties.Settings.Default.AutoLoginID = Localproperties.LoginUser.Email;
-                        Properties.Settings.Default.AutoLoginPW = AuthenticationKey;
-                        Properties.Settings.Default.Save();
+                        /// AuthenticationStep 인증  
+                        success = true;
 
                     }
 
-                    ReturnAction?.Invoke();
+                    if (success)
+                    {
+                        if (IsAutoLogin)
+                        {
+
+                            Properties.Settings.Default.AutoAuthenticationType = (short)authentication;
+                            Properties.Settings.Default.AutoLoginID = Localproperties.LoginUser.Email;
+                            Properties.Settings.Default.AutoLoginPW = AuthenticationKey;
+                            Properties.Settings.Default.Save();
+
+                        }
+
+                        ReturnAction?.Invoke();
+                    }
+
                 }
                 else
                 {
@@ -221,6 +251,7 @@ namespace CiagoarM.ViewModels.Users
                 LogException(ex.Message);
             }
         }
+
 
         private void Join(object param)
         {
@@ -240,7 +271,6 @@ namespace CiagoarM.ViewModels.Users
             try
             {
                 asyncLogin(AuthenticationType.GG);
-
             }
             catch (Exception ex)
             {
