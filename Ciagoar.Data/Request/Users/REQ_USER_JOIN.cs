@@ -18,11 +18,12 @@ namespace Ciagoar.Data.Request.Users
         [Required(AllowEmptyStrings = false)]
         [StringLength(50)]
         [EmailAddress]
-        [DefaultValue("**@google.com")]
+        [DefaultValue("lwtlovelove@gmail.com")]
         public string email { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(100)]
+        [DefaultValue("TEST1")]
         public string nickname { get; set; }
 
         [Required(AllowEmptyStrings = false)]
@@ -31,7 +32,7 @@ namespace Ciagoar.Data.Request.Users
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(512)]
-        [DefaultValue("")]
+        [DefaultValue("12345678")]
         public string authenticationKey { get; set; }
     }
 }

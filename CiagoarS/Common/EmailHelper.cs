@@ -1,4 +1,5 @@
-﻿using Ciagoar.Data.HTTPS;
+﻿using Ciagoar.Core.Helper;
+using Ciagoar.Data.HTTPS;
 using CiagoarS.DataBase;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,9 +21,12 @@ namespace CiagoarS.Common
 
             try
             {
+
+                string Key = CryptographyHelper.GetHash(user.CreateTime.ToString("HHmmssfff"));
+
                 string sTitle = "CIAGOAR USER AUTHENTICATION";
                 
-                string sHTML = user.CreateTime.Ticks.ToString()[..6];
+                string Body = $"Your Authentication Key {Environment.NewLine} {Key.ToString()[..6]} {Environment.NewLine} Please Input Next Login One Time";
 
                 // 보내는 사람
                 mailMessage.From = new MailAddress(sMTP_INFO.sSMTPUser, "CIAGOAR");
@@ -34,8 +38,8 @@ namespace CiagoarS.Common
                 mailMessage.Subject = sTitle;
 
                 // 내용
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = sHTML;
+                //mailMessage.IsBodyHtml = true;
+                mailMessage.Body = Body;
 
                 // 전송
                 smtpClient.Host = sMTP_INFO.sSMTPServer;

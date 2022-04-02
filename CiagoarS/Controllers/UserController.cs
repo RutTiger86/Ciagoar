@@ -329,8 +329,11 @@ namespace CiagoarS.Controllers
         {
             BaseResponse<Ci_User> response = new();
 
+            var Transaction =  _context.Database.BeginTransaction();
             try
             {
+                string Password = CryptographyHelper.GetHash(parameters.authenticationKey);
+
                 //신규가입
                 UserInfo userInfo = new ()
                 {
@@ -343,7 +346,7 @@ namespace CiagoarS.Controllers
                         new UserAuthentication()
                         {
                             AuthenticationType = parameters.authenticationType,
-                            AuthenticationKey = parameters.authenticationKey,
+                            AuthenticationKey = Password,
                             AuthenticationStep = (short)(parameters.authenticationType == (short)AuthenticationType.EM? 2 : 0),
                             IsUse = true,
                         }
@@ -363,7 +366,10 @@ namespace CiagoarS.Controllers
                         sSMTPUser = p.ClientSecret
                     }).FirstOrDefault();
 
-                    if(sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO,userInfo,_mLogger))
+                   
+
+
+                    if (sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO,userInfo,_mLogger))
                     {
                         UserAuthentication authentication =  userInfo.UserAuthentications.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).FirstOrDefault();
 
@@ -381,16 +387,19 @@ namespace CiagoarS.Controllers
                                                  Nickname = UInfo.Nickname,
                                                  AuthenticationStep = authentication.AuthenticationStep,
                                              }).FirstOrDefault();
+
+                            Transaction.Commit();
                         }
                         else
                         {
                             response = ProcessError<Ci_User>(ErrorCode.EC_EX);
-
+                            Transaction.Rollback();
                         }                       
                     }
                     else
                     {
                         response = ProcessError<Ci_User>(ErrorCode.EC_EX);
+                        Transaction.Rollback();
                     }
                 }
                 else
@@ -404,13 +413,14 @@ namespace CiagoarS.Controllers
                                          Nickname = UInfo.Nickname,
                                          AuthenticationStep = 0
                                      }).FirstOrDefault();
+                    Transaction.Commit();
                 }
 
             }
             catch (Exception Exp)
             {
-
                 response = ExceptionError<Ci_User>(Exp.Message);
+                Transaction.Rollback();
             }
 
             return response;

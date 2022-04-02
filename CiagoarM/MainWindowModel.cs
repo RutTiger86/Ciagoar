@@ -51,7 +51,7 @@ namespace CiagoarM
             try
             {
                 LogInfo("★★★★★ MainWindowModel Start ★★★★★");
-                SettingCommand();                
+                SettingCommand();
                 LogInfo("loginWindows Show");
             }
             catch (Exception ex)

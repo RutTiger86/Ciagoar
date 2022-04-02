@@ -215,7 +215,10 @@ namespace CiagoarM.ViewModels.Users
                     if(authentication == AuthenticationType.EM && Localproperties.LoginUser.AuthenticationStep != 0)
                     {
                         /// AuthenticationStep 인증  
-                        success = true;
+
+                        _CheckView.Visibility = Visibility.Visible;
+
+                        success = false;
 
                     }
 
@@ -231,6 +234,8 @@ namespace CiagoarM.ViewModels.Users
 
                         }
 
+                        IsEnableControl = true;
+
                         ReturnAction?.Invoke();
                     }
 
@@ -243,8 +248,9 @@ namespace CiagoarM.ViewModels.Users
                     MessageBoxImage icon = MessageBoxImage.Warning;
 
                     _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                    IsEnableControl = true;
                 }
-                IsEnableControl = true;
+                
             }
             catch (Exception ex)
             {
