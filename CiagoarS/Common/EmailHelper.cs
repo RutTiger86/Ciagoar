@@ -22,11 +22,11 @@ namespace CiagoarS.Common
             try
             {
 
-                string Key = CryptographyHelper.GetHash(user.CreateTime.ToString("HHmmssfff"));
+                string Key = CryptographyHelper.GetHash(user.CreateTime.ToString("HHmmssfff")).ToString()[..6];
 
                 string sTitle = "CIAGOAR USER AUTHENTICATION";
                 
-                string Body = $"Your Authentication Key {Environment.NewLine} {Key.ToString()[..6]} {Environment.NewLine} Please Input Next Login One Time";
+                string Body = $"Your Authentication Key {Environment.NewLine} {Key} {Environment.NewLine} Please Input Next Login One Time";
 
                 // 보내는 사람
                 mailMessage.From = new MailAddress(sMTP_INFO.sSMTPUser, "CIAGOAR");

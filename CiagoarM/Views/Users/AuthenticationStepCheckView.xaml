@@ -52,18 +52,10 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Content="Cancle" HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}"  Command="{Binding CancleCommand}">
-                <Button.CommandParameter>
-                    <MultiBinding Converter="{StaticResource PWConverter}">
-                        <Binding ElementName="PWBox"/>
-                        <Binding ElementName="RePWBox"/>
-                    </MultiBinding>
-                </Button.CommandParameter>
-            </Button>
+            <Button Content="Cancle" HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}"  Command="{Binding CancleCommand}"/>
 
 
-
-            <Button Content="Check" Grid.Column="2" HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}"  Command="{Binding JoinCommand}" >
+            <Button Content="Check" Grid.Column="2" HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}"  Command="{Binding CheckCommand}" >
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource PWConverter}">
                         <Binding ElementName="PWBox"/>

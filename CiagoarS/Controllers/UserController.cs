@@ -586,11 +586,13 @@ namespace CiagoarS.Controllers
             try
             {
                 UserInfo user =  _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse).FirstOrDefault();
-               
-                if(user != null  && parameters.authenticationStepKey.Equals(user.CreateTime.Ticks.ToString()[..6]))
+
+                string Key = CryptographyHelper.GetHash(user.CreateTime.ToString("HHmmssfff")).ToString()[..6];
+
+                if (user != null  && parameters.authenticationStepKey.Equals(Key))
                 {
 
-                    UserAuthentication authentication = user.UserAuthentications.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).FirstOrDefault();
+                    UserAuthentication authentication = _context.UserAuthentications.FirstOrDefault(p => p.UserInfoId == user.Id && p.AuthenticationType == (short)AuthenticationType.EM);
 
                     if (authentication != null)
                     {

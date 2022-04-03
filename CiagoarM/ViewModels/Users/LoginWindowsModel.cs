@@ -144,7 +144,7 @@ namespace CiagoarM.ViewModels.Users
             {
                 var values = (object[])param;
 
-                if (values[0] is JoinView joinView && values[1] is AuthenticationStepCheckView  stepCheckView)
+                if (values[0] is JoinView joinView && values[1] is AuthenticationStepCheckView stepCheckView)
                 {
                     _JoinView = joinView;
                     _JoinView.Visibility = Visibility.Hidden;
@@ -212,17 +212,16 @@ namespace CiagoarM.ViewModels.Users
 
                 if (success)
                 {
-                    if(authentication == AuthenticationType.EM && Localproperties.LoginUser.AuthenticationStep != 0)
+                    if (authentication == AuthenticationType.EM && Localproperties.LoginUser.AuthenticationStep != 0)
                     {
                         /// AuthenticationStep 인증  
 
                         _CheckView.Visibility = Visibility.Visible;
 
-                        success = false;
+
 
                     }
-
-                    if (success)
+                    else
                     {
                         if (IsAutoLogin)
                         {
@@ -250,7 +249,7 @@ namespace CiagoarM.ViewModels.Users
                     _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
                     IsEnableControl = true;
                 }
-                
+
             }
             catch (Exception ex)
             {

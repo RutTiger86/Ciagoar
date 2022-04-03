@@ -202,5 +202,32 @@ namespace CiagoarM.Models
 
             return result;
         }
+
+        public async Task<BaseResponse<bool>> AuthenticationStepCheck(string Email, string AuthenticationKey)
+        {
+            BaseResponse<bool> JoinResult = new();
+            try
+            {
+                // Builds the Token request
+                REQ_AUTHENTICATION_STEP _USER_JOIN = new()
+                {
+                    langCode = Properties.Settings.Default.LangCode,
+                    email = Email,
+                    authenticationStepKey = AuthenticationKey
+                };
+
+                string URL = Properties.Settings.Default.ServerBaseAddress + "User/AuthenticationStepCheck";
+                string Stringcontent = JsonSerializer.Serialize(_USER_JOIN);
+
+                JoinResult = await HttpHelper.SendRequest<bool>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
+
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+
+            return JoinResult;
+        }
     }
 }
