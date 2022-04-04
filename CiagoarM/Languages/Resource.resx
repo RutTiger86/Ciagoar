@@ -127,8 +127,23 @@
   <data name="Main_Title" xml:space="preserve">
     <value>Ciagoar</value>
   </data>
+  <data name="MSG_AuthKeyCheckComplete" xml:space="preserve">
+    <value>All authentications have been completed. \r\n Please log in again.</value>
+  </data>
+  <data name="MSG_AuthKeyCheckFail" xml:space="preserve">
+    <value>Authentication failed. \r\n Please check the authentication key.</value>
+  </data>
+  <data name="MSG_KeyInputMiss" xml:space="preserve">
+    <value>Key input is missing.</value>
+  </data>
+  <data name="MSG_LoginEmailCheck" xml:space="preserve">
+    <value>A verification email has been sent. \r\n When logging in, you need to enter the authentication key once.</value>
+  </data>
   <data name="MSG_LoginFail" xml:space="preserve">
     <value>Login failed. Please check the input information.</value>
+  </data>
+  <data name="MSG_passwordMismatch" xml:space="preserve">
+    <value>Password and re-enter password do not match.</value>
   </data>
   <data name="Title_Auto_Login" xml:space="preserve">
     <value>Auto Login</value>
