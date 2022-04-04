@@ -9,7 +9,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Assets\" />
+	  <None Remove="Resources\btn_google_sign-in.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\btn_google_sign-in.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -22,12 +28,6 @@
 		<ProjectReference Include="..\Ciagoar.Control\Ciagoar.Control.csproj" />
 		<ProjectReference Include="..\Ciagoar.Core\Ciagoar.Core.csproj" />
 		<ProjectReference Include="..\Ciagoar.Data\Ciagoar.Data.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="..\Assets\btn_google_sign-in.png" Link="Assets\btn_google_sign-in.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Resource>
 	</ItemGroup>
 
 	<ItemGroup>

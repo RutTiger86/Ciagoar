@@ -311,7 +311,7 @@ namespace CiagoarS.Controllers
                 }
                 else
                 {
-                    response = ConnectUserAuthentication(userInfo.Id,parameters);
+                    response = ConnectUserAuthentication(userInfo,parameters);
                 }
 
             }
@@ -426,7 +426,7 @@ namespace CiagoarS.Controllers
             return response;
         }
 
-        private BaseResponse<Ci_User> ConnectUserAuthentication(int UserInfoID,REQ_USER_JOIN parameters)
+        private BaseResponse<Ci_User> ConnectUserAuthentication(UserInfo userInfo, REQ_USER_JOIN parameters)
         {
             BaseResponse<Ci_User> response = new();
 
@@ -439,6 +439,7 @@ namespace CiagoarS.Controllers
                     //사용자 정보도 있고 로그인 정보도 있음
                     if (parameters.authenticationType != (int)AuthenticationType.EM)
                     {
+                                                
                         // RefrashCodeUpdate
                         userAuthentication.AuthenticationKey = parameters.authenticationKey;
                         _context.SaveChanges();
@@ -460,26 +461,71 @@ namespace CiagoarS.Controllers
                 }
                 else
                 {
+
+
+
                     //사용자 정보는 있으나 로그인 정보는 없음 계정 연결 
-                    UserAuthentication authentication = new ()
+                    UserAuthentication authentication = new()
                     {
                         AuthenticationType = parameters.authenticationType,
-                        AuthenticationKey = parameters.authenticationKey,
-                        UserInfoId = UserInfoID,
+                        AuthenticationKey = parameters.authenticationType == (int)AuthenticationType.EM ? CryptographyHelper.GetHash(parameters.authenticationKey) : parameters.authenticationKey,
+                        UserInfoId = userInfo.Id,
                         IsUse = true,
                     };
 
                     _context.UserAuthentications.Add(authentication);
                     _context.SaveChanges();
 
-                    response.Result = true;
-                    response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
-                                     select new Ci_User()
-                                     {
-                                         AuthType = UInfo.AuthType,
-                                         Email = UInfo.Email,
-                                         Nickname = UInfo.Nickname
-                                     }).FirstOrDefault();
+
+                    if (parameters.authenticationType == (short)AuthenticationType.EM)
+                    {
+                        SMTP_INFO sMTP_INFO = _context.OauthInfos.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).Select(p => new SMTP_INFO()
+                        {
+                            nSMTPPort = int.Parse(p.TokenUri),
+                            sSMTPPassword = p.AuthUri,
+                            sSMTPServer = p.ClientId,
+                            sSMTPUser = p.ClientSecret
+                        }).FirstOrDefault();
+
+                        if (sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO, userInfo, _mLogger))
+                        {
+                            if (authentication != null)
+                            {
+                                authentication.AuthenticationStep = 1;
+                                _context.SaveChanges();
+
+                                response.Result = true;
+                                response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                                                 select new Ci_User()
+                                                 {
+                                                     AuthType = UInfo.AuthType,
+                                                     Email = UInfo.Email,
+                                                     Nickname = UInfo.Nickname,
+                                                     AuthenticationStep = authentication.AuthenticationStep,
+                                                 }).FirstOrDefault();
+                            }
+                            else
+                            {
+                                response = ProcessError<Ci_User>(ErrorCode.EC_EX);
+                            }
+                        }
+                        else
+                        {
+                            response = ProcessError<Ci_User>(ErrorCode.EC_EX);
+                        }
+                    }
+                    else
+                    {
+                        response.Result = true;
+                        response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                                         select new Ci_User()
+                                         {
+                                             AuthType = UInfo.AuthType,
+                                             Email = UInfo.Email,
+                                             Nickname = UInfo.Nickname
+                                         }).FirstOrDefault();
+                    }
+
                 }
 
             }

@@ -77,7 +77,7 @@
 
 
             <Button Grid.Row="4" Background="Transparent" Width="206" Height="46" BorderThickness="0" Padding="0" Command="{Binding GoogleStartCommand}">
-                <Image Source="/Assets/btn_google_sign-in.png" Stretch="UniformToFill"/>
+                <Image  Stretch="UniformToFill" Source="/Resources/btn_google_sign-in.png"/>
             </Button>
 
             <CheckBox Grid.Row="5" Content="{x:Static Lang:Resource.Title_Auto_Login}" IsChecked="{Binding IsAutoLogin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MediumCheckBox}"/>
