@@ -9,7 +9,7 @@
         xmlns:converter ="clr-namespace:CiagoarM.Commons.Converter"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="{x:Static Lang:Resource.Main_Title}" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="{x:Static Lang:Resource.Main_Title}" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
 
     <Window.DataContext>
         <Views:LoginWindowsModel></Views:LoginWindowsModel>
@@ -71,8 +71,8 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Row="2" Grid.Column="0" Content="Login"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PWBox}"/>
-                <Button Grid.Row="2" Grid.Column="1" Content="Join"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Command="{Binding JoinCommand}"/>
+                <Button Grid.Row="2" Grid.Column="0" Content="Join"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Command="{Binding JoinCommand}"/>
+                <Button Grid.Row="2" Grid.Column="1" Content="Login"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PWBox}"/>              
             </Grid>
 
 
@@ -84,8 +84,8 @@
 
         </Grid>
 
-        <local:JoinView x:Name="joinView" HorizontalAlignment="Center" Width="600"/>
+        <local:JoinView x:Name="joinView" HorizontalAlignment="Center" Width="600" Margin="0,0,0,25"/>
 
-        <local:AuthenticationStepCheckView x:Name="AuthCheckView" HorizontalAlignment="Center" Width="400" VerticalAlignment="Center"/>
+        <local:AuthenticationStepCheckView x:Name="AuthCheckView" HorizontalAlignment="Center" Width="400" VerticalAlignment="Center"  Margin="0,0,0,25"/>
     </Grid>
 </Window>

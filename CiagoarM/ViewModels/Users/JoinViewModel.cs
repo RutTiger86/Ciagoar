@@ -138,36 +138,23 @@ namespace CiagoarM.ViewModels.Users
                             PWS1.Password = null;
                             PWS2.Password = null;
 
-                            string messageBoxText = $"인증 이메일이 전송되었습니다. {Environment.NewLine} 로그인시 인증키 입력이 1회 필요합니다.";// Resource.MSG_LoginFail;
-                            string caption = Resource.Caption_Warning;
-                            MessageBoxButton button = MessageBoxButton.OK;
-                            MessageBoxImage icon = MessageBoxImage.Warning;
-
-                            _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                            _ = MessageBox.Show(Resource.MSG_LoginEmailCheck, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning);
 
                             ReturnProcess();                            
                         }
                         else
                         {
                             LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
-                            string messageBoxText = $"[{JoinResult.ErrorCode}]  {JoinResult.ErrorMessage}";// Resource.MSG_LoginFail;
-                            string caption = Resource.Caption_Warning;
-                            MessageBoxButton button = MessageBoxButton.OK;
-                            MessageBoxImage icon = MessageBoxImage.Warning;
 
-                            _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                            string messageBoxText = $"[{JoinResult.ErrorCode}]  {JoinResult.ErrorMessage}";
+                            _ = MessageBox.Show(messageBoxText, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
 
                         IsEnableControl = true;
                     }
                     else
                     {
-                        string messageBoxText = "Password 불일치";// Resource.MSG_LoginFail;
-                        string caption = Resource.Caption_Warning;
-                        MessageBoxButton button = MessageBoxButton.OK;
-                        MessageBoxImage icon = MessageBoxImage.Warning;
-
-                        _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                        _ = MessageBox.Show(Resource.MSG_passwordMismatch, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
                     }
                     
                 }

@@ -94,7 +94,7 @@ namespace CiagoarM.ViewModels.Users
             try
             {
                 SettingCommand();
-                //AutoLoginCheck();
+                AutoLoginCheck();
             }
             catch (Exception ex)
             {
@@ -194,8 +194,21 @@ namespace CiagoarM.ViewModels.Users
             {
                 if (param is PasswordBox passwordBox)
                 {
-                    IsEnableControl = false;
-                    asyncLogin(AuthenticationType.EM, Email, passwordBox.Password);
+                    if (!string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(passwordBox.Password))
+                    {
+                        IsEnableControl = false;
+                        asyncLogin(AuthenticationType.EM, Email, passwordBox.Password);
+                    }
+                    else
+                    {
+                        string messageBoxText = "계정정보 입력을 확인해 주십시오.";
+                        string caption = Resource.Caption_Warning;
+                        MessageBoxButton button = MessageBoxButton.OK;
+                        MessageBoxImage icon = MessageBoxImage.Warning;
+
+                        _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                        IsEnableControl = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -215,11 +228,7 @@ namespace CiagoarM.ViewModels.Users
                     if (authentication == AuthenticationType.EM && Localproperties.LoginUser.AuthenticationStep != 0)
                     {
                         /// AuthenticationStep 인증  
-
                         _CheckView.Visibility = Visibility.Visible;
-
-
-
                     }
                     else
                     {
@@ -234,7 +243,6 @@ namespace CiagoarM.ViewModels.Users
                         }
 
                         IsEnableControl = true;
-
                         ReturnAction?.Invoke();
                     }
 

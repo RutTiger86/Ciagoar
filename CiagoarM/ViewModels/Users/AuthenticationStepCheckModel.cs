@@ -155,36 +155,20 @@ namespace CiagoarM.ViewModels.Users
 
                     if (JoinResult.Result)
                     {
-                        string messageBoxText = $"모든 인증이 완료 되었습니다. {Environment.NewLine} 재 로그인을 부탁드립니다.";// Resource.MSG_LoginFail;
-                        string caption = Resource.Caption_Warning;
-                        MessageBoxButton button = MessageBoxButton.OK;
-                        MessageBoxImage icon = MessageBoxImage.Warning;
-
-                        _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
-
+                        _ = MessageBox.Show(Resource.MSG_AuthKeyCheckComplete, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
                         ReturnProcess();
                     }
                     else
                     {
                         LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
-                        string messageBoxText = $"인증이 실패 되었습니다. {Environment.NewLine} 인증Key를 확인해주세요.";// Resource.MSG_LoginFail;
-                        string caption = Resource.Caption_Warning;
-                        MessageBoxButton button = MessageBoxButton.OK;
-                        MessageBoxImage icon = MessageBoxImage.Warning;
-
-                        _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                        _ = MessageBox.Show(Resource.MSG_AuthKeyCheckFail, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
                     }
 
                     IsEnableControl = true;
                 }
                 else
                 {
-                    string messageBoxText = "Key입력이 누락되었습니다.";// Resource.MSG_LoginFail;
-                    string caption = Resource.Caption_Warning;
-                    MessageBoxButton button = MessageBoxButton.OK;
-                    MessageBoxImage icon = MessageBoxImage.Warning;
-
-                    _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                    _ = MessageBox.Show(Resource.MSG_KeyInputMiss, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
                 }
             }
             catch (Exception ex)

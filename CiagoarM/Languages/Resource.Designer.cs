@@ -89,11 +89,56 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   All authentications have been completed. \r\n Please log in again.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string MSG_AuthKeyCheckComplete {
+            get {
+                return ResourceManager.GetString("MSG_AuthKeyCheckComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Authentication failed. \r\n Please check the authentication key.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string MSG_AuthKeyCheckFail {
+            get {
+                return ResourceManager.GetString("MSG_AuthKeyCheckFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Key input is missing.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string MSG_KeyInputMiss {
+            get {
+                return ResourceManager.GetString("MSG_KeyInputMiss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A verification email has been sent. \r\n When logging in, you need to enter the authentication key once.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string MSG_LoginEmailCheck {
+            get {
+                return ResourceManager.GetString("MSG_LoginEmailCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Login failed. Please check the input information.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string MSG_LoginFail {
             get {
                 return ResourceManager.GetString("MSG_LoginFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Password and re-enter password do not match.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string MSG_passwordMismatch {
+            get {
+                return ResourceManager.GetString("MSG_passwordMismatch", resourceCulture);
             }
         }
         
