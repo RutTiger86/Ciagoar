@@ -22,7 +22,7 @@ namespace CiagoarM.Models
 {
     public class UserModel : BaseModel
     {
-        
+
 
         public async Task<bool> Login(AuthenticationType authentication, string Email, string AuthenticationKey = null)
         {
@@ -30,7 +30,7 @@ namespace CiagoarM.Models
             {
                 switch (authentication)
                 {
-                    case AuthenticationType.EM: return await TryLogin(authentication, Email, AuthenticationKey); 
+                    case AuthenticationType.EM: return await TryLogin(authentication, Email, AuthenticationKey);
                     case AuthenticationType.GG: return await TryGoogleLogin(Email);
                     default: return false;
                 }
@@ -43,18 +43,18 @@ namespace CiagoarM.Models
             return false;
         }
 
-        private async Task<bool> TryLogin(AuthenticationType AuthType, string Email, string Password = null )
+        private async Task<bool> TryLogin(AuthenticationType AuthType, string Email, string Password = null)
         {
 
             try
             {
                 // Builds the Token request
-                REQ_USER_LOGIN _USER_LOGIN = new ()
+                REQ_USER_LOGIN _USER_LOGIN = new()
                 {
                     langCode = Properties.Settings.Default.LangCode,
                     authenticationType = (int)AuthType,
                     authenticationKey = Password,
-                    email=Email
+                    email = Email
                 };
 
                 string URL = Properties.Settings.Default.ServerBaseAddress + "User/userLogin";
@@ -62,7 +62,7 @@ namespace CiagoarM.Models
 
                 BaseResponse<Ci_User> response = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
 
-                if(response.Result)
+                if (response.Result)
                 {
                     Localproperties.LoginUser = response.Data;
                     return true;
@@ -85,7 +85,7 @@ namespace CiagoarM.Models
         {
             try
             {
-                if(String.IsNullOrEmpty(Email))
+                if (String.IsNullOrEmpty(Email))
                 {
                     return await ConnectGoogle();
                 }
@@ -106,42 +106,44 @@ namespace CiagoarM.Models
         {
             try
             {
+                bool isError = false;                
+                BaseResponse<GoogleUserInfo> response = new();
+                BaseResponse<Ci_User> JoinResult = new();
+
                 BaseResponse<Ci_OAuth> OAuthKey = await GetOAuthInfo(AuthenticationType.GG);
-
-                if (OAuthKey.Result)
-                {
-                    BaseResponse<GoogleUserInfo> response = await Google.TryLogin(OAuthKey.Data);
-
-                    if (response.Result)
-                    {
-
-                        BaseResponse<Ci_User> JoinResult =  await JoinUser(AuthenticationType.GG, response.Data.email, response.Data.refresh_token, response.Data.name);
-
-                        if (JoinResult.Result)
-                        {
-
-                            Localproperties.LoginUser = JoinResult.Data;
-                            //가입성공 진입
-                            return true;
-                        }
-                        else
-                        {
-                            LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
-                            return false;
-                        }
-
-                    }
-                    else
-                    {
-                        LogError($"{response.ErrorCode} : {response.ErrorMessage}");
-                        return false;
-                    }
-                }
-                else
+                if (!OAuthKey.Result)
                 {
                     LogError($"{OAuthKey.ErrorCode} : {OAuthKey.ErrorMessage}");
-                    return false;
+                    isError = true;
                 }
+
+                if (!isError)
+                {
+                    response = await Google.TryLogin(OAuthKey.Data);
+
+                    if (!response.Result)
+                    {
+                        LogError($"{response.ErrorCode} : {response.ErrorMessage}");
+                        isError = true;
+                    }
+                }
+
+                if (!isError)
+                {
+                    JoinResult = await JoinUser(AuthenticationType.GG, response.Data.email, response.Data.refresh_token, response.Data.name);
+
+                    if (JoinResult.Result)
+                    {
+                        LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
+                        isError = true;
+                    }
+                }
+
+                if(!isError)
+                {
+                    Localproperties.LoginUser = JoinResult.Data;
+                    return true;
+                }                  
 
             }
             catch (Exception ex)
@@ -151,7 +153,7 @@ namespace CiagoarM.Models
             return false;
         }
 
-        public async Task<BaseResponse<Ci_User>> JoinUser(AuthenticationType authentication ,string Email, string AuthenticationKey, string nickname)
+        public async Task<BaseResponse<Ci_User>> JoinUser(AuthenticationType authentication, string Email, string AuthenticationKey, string nickname)
         {
             BaseResponse<Ci_User> JoinResult = new();
             try
@@ -174,7 +176,7 @@ namespace CiagoarM.Models
             }
             catch (Exception ex)
             {
-                LogException(ex.Message);       
+                LogException(ex.Message);
             }
 
             return JoinResult;

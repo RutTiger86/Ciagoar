@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CiagoarM"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:LP ="clr-namespace:CiagoarM.Commons"
         mc:Ignorable="d" x:Name="mainwindow"
-        Title="MainWindow" Height="450" Width="800" WindowState="Maximized" Visibility="Hidden" >
-    
+        Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
+
     <Window.DataContext >
         <local:MainWindowModel/>
     </Window.DataContext>
@@ -19,6 +20,25 @@
     </i:Interaction.Triggers>
     
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
 
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="1" Content="NickName" ContentStringFormat="User : {0}" Style="{StaticResource DetailContentLabel}"/>
+
+            <Button Grid.Column="2" Content="Logout" Style="{StaticResource ConfirmMediumButton}" Width="auto"  Height="auto"/>
+
+
+        </Grid>
+        
     </Grid>
 </Window>

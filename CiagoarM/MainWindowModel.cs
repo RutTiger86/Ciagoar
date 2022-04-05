@@ -22,12 +22,9 @@ namespace CiagoarM
             private set;
         }
 
-        
-
-
         #endregion
 
-        #region Variable
+        #region  Binding Value
 
         LoginWindows _loginWindows;
         private LoginWindows loginWindows
