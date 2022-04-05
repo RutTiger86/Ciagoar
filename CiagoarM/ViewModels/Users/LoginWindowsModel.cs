@@ -108,13 +108,9 @@ namespace CiagoarM.ViewModels.Users
             {
                 if (Properties.Settings.Default.IsAutoLogin && !string.IsNullOrWhiteSpace(Properties.Settings.Default.AutoLoginID))
                 {
-                    switch (Properties.Settings.Default.AutoAuthenticationType)
-                    {
-                        case (int)AuthenticationType.EM: asyncLogin(AuthenticationType.EM, Properties.Settings.Default.AutoLoginID, Properties.Settings.Default.AutoLoginPW); break;
-                        case (int)AuthenticationType.GG: asyncLogin(AuthenticationType.GG, Properties.Settings.Default.AutoLoginID); break;
-                    }
+                    IsEnableControl = false;
+                    asyncLogin((AuthenticationType)Properties.Settings.Default.AutoAuthenticationType, Properties.Settings.Default.AutoLoginID, Properties.Settings.Default.AutoLoginPW);
                 }
-
             }
             catch (Exception ex)
             {
@@ -201,12 +197,7 @@ namespace CiagoarM.ViewModels.Users
                     }
                     else
                     {
-                        string messageBoxText = "계정정보 입력을 확인해 주십시오.";
-                        string caption = Resource.Caption_Warning;
-                        MessageBoxButton button = MessageBoxButton.OK;
-                        MessageBoxImage icon = MessageBoxImage.Warning;
-
-                        _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                        _ = MessageBox.Show(Resource.MSG_Input_User_Info, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
                         IsEnableControl = true;
                     }
                 }
@@ -249,12 +240,7 @@ namespace CiagoarM.ViewModels.Users
                 }
                 else
                 {
-                    string messageBoxText = Resource.MSG_LoginFail;
-                    string caption = Resource.Caption_Warning;
-                    MessageBoxButton button = MessageBoxButton.OK;
-                    MessageBoxImage icon = MessageBoxImage.Warning;
-
-                    _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                    _ = MessageBox.Show(Resource.MSG_LoginFail, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
                     IsEnableControl = true;
                 }
 

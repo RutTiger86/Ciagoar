@@ -11,6 +11,7 @@ using CiagoarS.Common.Enums;
 using CiagoarS.DataBase;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -149,8 +150,6 @@ namespace CiagoarS.Controllers
 
                 if (userInfo != default)
                 {
-                    string AuthRefrashTokken = userInfo.Item2;
-
                     Ci_OAuth ci_OAuth = _context.OauthInfos.Where(p => p.AuthenticationType == (int)AuthenticationType.GG).Select(p => new Ci_OAuth()
                     {
                         AuthenticationType = p.AuthenticationType,
@@ -160,7 +159,8 @@ namespace CiagoarS.Controllers
                         TokenUri = p.TokenUri
                     }).FirstOrDefault();
 
-                    BaseResponse<GoogleOAuth> response = await Google.RefrashAccessToken(ci_OAuth, AuthRefrashTokken);
+                    BaseResponse<GoogleOAuth> response = await Google.RefrashAccessToken(ci_OAuth, userInfo.Item2);
+
                     if (response.Result)
                     {
                         //엑세스 토큰 성공 호출 로그인 진행 
@@ -202,8 +202,6 @@ namespace CiagoarS.Controllers
         }
 
 
-        
-
         /// <summary>
         /// OAuth지원 3rdParty 정보
         /// </summary>
@@ -235,7 +233,7 @@ namespace CiagoarS.Controllers
         {
             LogingREQ(parameters);
 
-            BaseResponse<Ci_OAuth> response = new BaseResponse<Ci_OAuth>();
+            BaseResponse<Ci_OAuth> response = new();
 
             try
             {
@@ -250,7 +248,7 @@ namespace CiagoarS.Controllers
 
                 if (ci_OAuth != null)
                 {
-                    response = new BaseResponse<Ci_OAuth>() { Result = true, Data = ci_OAuth };
+                    response = new () { Result = true, Data = ci_OAuth };
                 }
                 else
                 {
@@ -328,8 +326,9 @@ namespace CiagoarS.Controllers
         private BaseResponse<Ci_User> InsertUserInfo(REQ_USER_JOIN parameters)
         {
             BaseResponse<Ci_User> response = new();
+            
+            IDbContextTransaction Transaction =  _context.Database.BeginTransaction();
 
-            var Transaction =  _context.Database.BeginTransaction();
             try
             {
                 string Password = CryptographyHelper.GetHash(parameters.authenticationKey);
@@ -358,49 +357,7 @@ namespace CiagoarS.Controllers
 
                 if(parameters.authenticationType == (short)AuthenticationType.EM)
                 {
-                    SMTP_INFO sMTP_INFO = _context.OauthInfos.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).Select(p => new SMTP_INFO()
-                    {
-                        nSMTPPort = int.Parse(p.TokenUri),
-                        sSMTPPassword = p.AuthUri,
-                        sSMTPServer = p.ClientId,
-                        sSMTPUser = p.ClientSecret
-                    }).FirstOrDefault();
-
-                   
-
-
-                    if (sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO,userInfo,_mLogger))
-                    {
-                        UserAuthentication authentication =  userInfo.UserAuthentications.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).FirstOrDefault();
-
-                        if (authentication != null)
-                        {
-                            authentication.AuthenticationStep = 1;
-                            _context.SaveChanges();
-
-                            response.Result = true;
-                            response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
-                                             select new Ci_User()
-                                             {
-                                                 AuthType = UInfo.AuthType,
-                                                 Email = UInfo.Email,
-                                                 Nickname = UInfo.Nickname,
-                                                 AuthenticationStep = authentication.AuthenticationStep,
-                                             }).FirstOrDefault();
-
-                            Transaction.Commit();
-                        }
-                        else
-                        {
-                            response = ProcessError<Ci_User>(ErrorCode.EC_EX);
-                            Transaction.Rollback();
-                        }                       
-                    }
-                    else
-                    {
-                        response = ProcessError<Ci_User>(ErrorCode.EC_EX);
-                        Transaction.Rollback();
-                    }
+                    response = SendEmailProcess(Transaction, userInfo);
                 }
                 else
                 {
@@ -429,17 +386,18 @@ namespace CiagoarS.Controllers
         private BaseResponse<Ci_User> ConnectUserAuthentication(UserInfo userInfo, REQ_USER_JOIN parameters)
         {
             BaseResponse<Ci_User> response = new();
-
+            IDbContextTransaction Transaction = _context.Database.BeginTransaction();
             try
             {
                 UserAuthentication userAuthentication = _context.UserAuthentications.FirstOrDefault(p => p.AuthenticationType.Equals(parameters.authenticationType));
+
+               
 
                 if (userAuthentication != null)
                 {
                     //사용자 정보도 있고 로그인 정보도 있음
                     if (parameters.authenticationType != (int)AuthenticationType.EM)
-                    {
-                                                
+                    {                                                
                         // RefrashCodeUpdate
                         userAuthentication.AuthenticationKey = parameters.authenticationKey;
                         _context.SaveChanges();
@@ -461,9 +419,6 @@ namespace CiagoarS.Controllers
                 }
                 else
                 {
-
-
-
                     //사용자 정보는 있으나 로그인 정보는 없음 계정 연결 
                     UserAuthentication authentication = new()
                     {
@@ -479,40 +434,8 @@ namespace CiagoarS.Controllers
 
                     if (parameters.authenticationType == (short)AuthenticationType.EM)
                     {
-                        SMTP_INFO sMTP_INFO = _context.OauthInfos.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).Select(p => new SMTP_INFO()
-                        {
-                            nSMTPPort = int.Parse(p.TokenUri),
-                            sSMTPPassword = p.AuthUri,
-                            sSMTPServer = p.ClientId,
-                            sSMTPUser = p.ClientSecret
-                        }).FirstOrDefault();
 
-                        if (sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO, userInfo, _mLogger))
-                        {
-                            if (authentication != null)
-                            {
-                                authentication.AuthenticationStep = 1;
-                                _context.SaveChanges();
-
-                                response.Result = true;
-                                response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
-                                                 select new Ci_User()
-                                                 {
-                                                     AuthType = UInfo.AuthType,
-                                                     Email = UInfo.Email,
-                                                     Nickname = UInfo.Nickname,
-                                                     AuthenticationStep = authentication.AuthenticationStep,
-                                                 }).FirstOrDefault();
-                            }
-                            else
-                            {
-                                response = ProcessError<Ci_User>(ErrorCode.EC_EX);
-                            }
-                        }
-                        else
-                        {
-                            response = ProcessError<Ci_User>(ErrorCode.EC_EX);
-                        }
+                        response =  SendEmailProcess(Transaction, userInfo);
                     }
                     else
                     {
@@ -524,6 +447,8 @@ namespace CiagoarS.Controllers
                                              Email = UInfo.Email,
                                              Nickname = UInfo.Nickname
                                          }).FirstOrDefault();
+
+                        Transaction.Commit();
                     }
 
                 }
@@ -532,11 +457,68 @@ namespace CiagoarS.Controllers
             catch (Exception Exp)
             {
                 response = ExceptionError<Ci_User>(Exp.Message);
+                Transaction.Rollback();
             }
 
             return response;
         }
 
+        private BaseResponse<Ci_User> SendEmailProcess(IDbContextTransaction Transaction, UserInfo userInfo)
+        {
+            BaseResponse<Ci_User> response = new();
+
+            try
+            {
+                SMTP_INFO sMTP_INFO = _context.OauthInfos.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).Select(p => new SMTP_INFO()
+                {
+                    nSMTPPort = int.Parse(p.TokenUri),
+                    sSMTPPassword = p.AuthUri,
+                    sSMTPServer = p.ClientId,
+                    sSMTPUser = p.ClientSecret
+                }).FirstOrDefault();
+
+                if (sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO, userInfo, _mLogger))
+                {
+                    UserAuthentication authentication = userInfo.UserAuthentications.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).FirstOrDefault();
+
+                    if (authentication != null)
+                    {
+                        authentication.AuthenticationStep = 1;
+                        _context.SaveChanges();
+
+                        response.Result = true;
+                        response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(userInfo.Email) && p.IsUse && !p.IsDelete)
+                                         select new Ci_User()
+                                         {
+                                             AuthType = UInfo.AuthType,
+                                             Email = UInfo.Email,
+                                             Nickname = UInfo.Nickname,
+                                             AuthenticationStep = authentication.AuthenticationStep,
+                                         }).FirstOrDefault();
+
+                        Transaction.Commit();
+                    }
+                    else
+                    {
+                        response = ProcessError<Ci_User>(ErrorCode.EC_EX);
+                        Transaction.Rollback();
+                    }
+                }
+                else
+                {
+                    response = ProcessError<Ci_User>(ErrorCode.EC_EX);
+                    Transaction.Rollback();
+                }
+
+            }
+            catch (Exception Exp)
+            {
+                response = ExceptionError<Ci_User>(Exp.Message);
+                Transaction.Rollback();
+            }
+
+            return response;
+        }
 
         /// <summary>
         /// 인증 방법 key변경 (비밀번호 /Refrash Tokken ) 

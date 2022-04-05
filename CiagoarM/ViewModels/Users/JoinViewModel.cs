@@ -134,18 +134,16 @@ namespace CiagoarM.ViewModels.Users
 
                         if (JoinResult.Result)
                         {
+                            _ = MessageBox.Show(Resource.MSG_LoginEmailCheck, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning);
+
                             //가입성공 
                             PWS1.Password = null;
                             PWS2.Password = null;
-
-                            _ = MessageBox.Show(Resource.MSG_LoginEmailCheck, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning);
-
                             ReturnProcess();                            
                         }
                         else
                         {
                             LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
-
                             string messageBoxText = $"[{JoinResult.ErrorCode}]  {JoinResult.ErrorMessage}";
                             _ = MessageBox.Show(messageBoxText, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning);
                         }

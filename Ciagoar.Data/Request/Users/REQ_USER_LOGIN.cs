@@ -22,7 +22,7 @@ namespace Ciagoar.Data.Request.Users
         [Required(AllowEmptyStrings = false)]
         [StringLength(50)]
         [EmailAddress]
-        [DefaultValue("**@google.com")]
+        [DefaultValue("**@gmail.com")]
         public string email { get; set; }
 
 

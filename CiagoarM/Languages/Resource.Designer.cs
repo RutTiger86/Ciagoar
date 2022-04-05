@@ -107,6 +107,15 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   Please confirm entering your account information.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string MSG_Input_User_Info {
+            get {
+                return ResourceManager.GetString("MSG_Input_User_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Key input is missing.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string MSG_KeyInputMiss {

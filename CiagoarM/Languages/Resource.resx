@@ -133,6 +133,9 @@
   <data name="MSG_AuthKeyCheckFail" xml:space="preserve">
     <value>Authentication failed. \r\n Please check the authentication key.</value>
   </data>
+  <data name="MSG_Input_User_Info" xml:space="preserve">
+    <value>Please confirm entering your account information.</value>
+  </data>
   <data name="MSG_KeyInputMiss" xml:space="preserve">
     <value>Key input is missing.</value>
   </data>
