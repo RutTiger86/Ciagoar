@@ -35,7 +35,7 @@
 
             <Label Grid.Column="1" Content="NickName" ContentStringFormat="User : {0}" Style="{StaticResource DetailContentLabel}"/>
 
-            <Button Grid.Column="2" Content="Logout" Style="{StaticResource ConfirmMediumButton}" Width="auto"  Height="auto"  />
+            <Button Grid.Column="2" Content="Logout" Style="{StaticResource ConfirmMediumButton}" Width="auto"  Height="auto"/>
 
 
         </Grid>
