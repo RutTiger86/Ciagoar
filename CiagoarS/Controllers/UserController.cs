@@ -389,7 +389,7 @@ namespace CiagoarS.Controllers
             IDbContextTransaction Transaction = _context.Database.BeginTransaction();
             try
             {
-                UserAuthentication userAuthentication = _context.UserAuthentications.FirstOrDefault(p => p.AuthenticationType.Equals(parameters.authenticationType));
+                UserAuthentication userAuthentication = _context.UserAuthentications.FirstOrDefault(p =>p.UserInfoId == userInfo.Id && p.AuthenticationType.Equals(parameters.authenticationType));
 
                
 

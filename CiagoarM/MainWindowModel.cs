@@ -22,9 +22,19 @@ namespace CiagoarM
             private set;
         }
 
+
+        public RelayCommand LogoutCommand
+        {
+            get;
+            private set;
+        }
+
         #endregion
 
         #region  Binding Value
+
+        private string _userName = string.Empty;
+        public string UserName { get { return _userName; } set { _userName = value; onPropertyChanged(); } }
 
         LoginWindows _loginWindows;
         private LoginWindows loginWindows
@@ -62,7 +72,20 @@ namespace CiagoarM
             try
             {
                 MainClosedCommand = new RelayCommand(ProgramShutdown);
+                LogoutCommand = new RelayCommand(Logout);
                 LogInfo("SettingCommand Done");
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+        private void Logout(object param)
+        {
+            try
+            {
+                ShowLoginWindow();
             }
             catch (Exception ex)
             {
@@ -89,6 +112,7 @@ namespace CiagoarM
         {
             try
             {
+                UserName = Localproperties.LoginUser.Nickname;
                 loginWindows.Visibility = Visibility.Collapsed;
                 App.Current.MainWindow.Visibility = Visibility.Visible;
                 App.Current.MainWindow.Show();

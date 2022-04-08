@@ -87,7 +87,22 @@ namespace CiagoarM.Models
             {
                 if (String.IsNullOrEmpty(Email))
                 {
-                    return await ConnectGoogle();
+                    BaseResponse<GoogleUserInfo> googleInfo = await GetGoogleOAuth();// google 정보 가져오기 
+
+                    if (!googleInfo.Result)
+                    {
+                        LogError($"{googleInfo.ErrorCode} : {googleInfo.ErrorMessage}");
+                        return false;
+                    }
+
+                    if (!await TryLogin(AuthenticationType.GG, googleInfo.Data.email))// 로그인시도 있는지 
+                    {
+                        return await ConnectGoogle(googleInfo.Data);// 연결시도 
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 else
                 {
@@ -102,11 +117,10 @@ namespace CiagoarM.Models
             return false;
         }
 
-        private async Task<bool> ConnectGoogle()
+        private async Task<BaseResponse<GoogleUserInfo>> GetGoogleOAuth()
         {
             try
             {
-                bool isError = false;                
                 BaseResponse<GoogleUserInfo> response = new();
                 BaseResponse<Ci_User> JoinResult = new();
 
@@ -114,36 +128,32 @@ namespace CiagoarM.Models
                 if (!OAuthKey.Result)
                 {
                     LogError($"{OAuthKey.ErrorCode} : {OAuthKey.ErrorMessage}");
-                    isError = true;
                 }
+                return await Google.TryLogin(OAuthKey.Data);
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+            return new BaseResponse<GoogleUserInfo>() {Result = false};
+        }
 
-                if (!isError)
-                {
-                    response = await Google.TryLogin(OAuthKey.Data);
+        private async Task<bool> ConnectGoogle(GoogleUserInfo UserInfo)
+        {
+            try
+            {
+                BaseResponse<Ci_User> JoinResult = await JoinUser(AuthenticationType.GG, UserInfo.email, UserInfo.refresh_token, UserInfo.name);
 
-                    if (!response.Result)
-                    {
-                        LogError($"{response.ErrorCode} : {response.ErrorMessage}");
-                        isError = true;
-                    }
-                }
-
-                if (!isError)
-                {
-                    JoinResult = await JoinUser(AuthenticationType.GG, response.Data.email, response.Data.refresh_token, response.Data.name);
-
-                    if (JoinResult.Result)
-                    {
-                        LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
-                        isError = true;
-                    }
-                }
-
-                if(!isError)
+                if (JoinResult.Result)
                 {
                     Localproperties.LoginUser = JoinResult.Data;
                     return true;
-                }                  
+                }
+                else
+                {
+                    LogError($"{JoinResult.ErrorCode} : {JoinResult.ErrorMessage}");
+                    return false;
+                }
 
             }
             catch (Exception ex)
