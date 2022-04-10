@@ -29,6 +29,12 @@ namespace CiagoarM
             private set;
         }
 
+        public RelayCommand MenuClickCommand
+        {
+            get;
+            private set;
+        }
+
         #endregion
 
         #region  Binding Value
@@ -36,7 +42,7 @@ namespace CiagoarM
         private string _userName = string.Empty;
         public string UserName { get { return _userName; } set { _userName = value; onPropertyChanged(); } }
 
-        LoginWindows _loginWindows;
+        private LoginWindows _loginWindows;
         private LoginWindows loginWindows
         {
             get
@@ -49,6 +55,22 @@ namespace CiagoarM
                 }
 
                 return _loginWindows;
+            }
+        }
+
+
+        private object _mainView = null;
+
+        public object MainView
+        {
+            get
+            { 
+                return _mainView; 
+            }
+            set
+            {
+                _mainView = value;
+                onPropertyChanged();
             }
         }
 
@@ -73,7 +95,20 @@ namespace CiagoarM
             {
                 MainClosedCommand = new RelayCommand(ProgramShutdown);
                 LogoutCommand = new RelayCommand(Logout);
+                MenuClickCommand = new RelayCommand(MenuClick);
                 LogInfo("SettingCommand Done");
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+        private void MenuClick(object parm)
+        {
+            try
+            {
+                MainView = parm;
             }
             catch (Exception ex)
             {

@@ -5,6 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CiagoarM"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:IncomingV="clr-namespace:CiagoarM.Views.Incoming"
+        xmlns:OutgoingV="clr-namespace:CiagoarM.Views.Outgoing"
+        xmlns:ReportV="clr-namespace:CiagoarM.Views.Report"
+        xmlns:SettingV="clr-namespace:CiagoarM.Views.Setting"
+        
         mc:Ignorable="d" x:Name="mainwindow"
         Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
 
@@ -12,12 +17,19 @@
         <local:MainWindowModel/>
     </Window.DataContext>
 
+    <Window.Resources>
+        <IncomingV:IncomingMainView x:Key="IncomingView"/>
+        <OutgoingV:OutGoingMainView x:Key="OutgoingView"/>
+        <ReportV:ReportMainView x:Key="ReportView"/>
+        <SettingV:SettingMainView x:Key="SettingView"/>
+    </Window.Resources>
+
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closed">
             <i:InvokeCommandAction Command="{Binding MainClosedCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -32,12 +44,26 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource ConfirmMediumButton}" Content="{Binding Source={StaticResource IncomingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource IncomingView}"></Button>
+                <Button Style="{StaticResource ConfirmMediumButton}" Content="{Binding Source={StaticResource OutgoingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource OutgoingView}"></Button>
+                <Button Style="{StaticResource ConfirmMediumButton}" Content="{Binding Source={StaticResource ReportView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource ReportView}"></Button>
+                <Button Style="{StaticResource ConfirmMediumButton}" Content="{Binding Source={StaticResource SettingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource SettingView}"></Button>
+            </StackPanel>
+
             <Label Grid.Column="1" Content="{Binding UserName,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentStringFormat="User : {0}" Style="{StaticResource DetailContentLabel}"/>
 
             <Button Grid.Column="2" Content="Logout" Style="{StaticResource ConfirmMediumButton}" Width="auto"  Height="auto" Command="{Binding LogoutCommand}"/>
 
 
         </Grid>
-        
+
+        <ContentPresenter Grid.Row="1" Content="{Binding MainView,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+
+
+
+
+
+
     </Grid>
 </Window>
