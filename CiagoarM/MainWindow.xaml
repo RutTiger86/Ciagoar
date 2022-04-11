@@ -11,7 +11,7 @@
         xmlns:SettingV="clr-namespace:CiagoarM.Views.Setting"
         
         mc:Ignorable="d" x:Name="mainwindow"
-        Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
+        Title="MainWindow" Height="450" Width="800" WindowState="Maximized" MinWidth="1000" MinHeight="800">
 
     <Window.DataContext >
         <local:MainWindowModel/>
@@ -30,7 +30,7 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
@@ -41,19 +41,19 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal">
-                <Button Style="{StaticResource ConfirmMediumButton}" Content="{Binding Source={StaticResource IncomingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource IncomingView}"></Button>
-                <Button Style="{StaticResource ConfirmMediumButton}" Content="{Binding Source={StaticResource OutgoingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource OutgoingView}"></Button>
-                <Button Style="{StaticResource ConfirmMediumButton}" Content="{Binding Source={StaticResource ReportView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource ReportView}"></Button>
-                <Button Style="{StaticResource ConfirmMediumButton}" Content="{Binding Source={StaticResource SettingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource SettingView}"></Button>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <RadioButton Template="{StaticResource LeftMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource IncomingView},Path=Title}" IsChecked="True" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource IncomingView}"/>
+                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource OutgoingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource OutgoingView}"/>
+                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource ReportView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource ReportView}"/>
+                <RadioButton Template="{StaticResource RightMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource SettingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource SettingView}"/>
             </StackPanel>
 
-            <Label Grid.Column="1" Content="{Binding UserName,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentStringFormat="User : {0}" Style="{StaticResource DetailContentLabel}"/>
+            <Label Grid.Column="1" Content="{Binding UserName,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentStringFormat="User : {0}" Style="{StaticResource ContentLabel}"/>
 
-            <Button Grid.Column="2" Content="Logout" Style="{StaticResource ConfirmMediumButton}" Width="auto"  Height="auto" Command="{Binding LogoutCommand}"/>
+            <Button Grid.Column="2" Content="Logout" Style="{StaticResource MediumFont}" Template="{StaticResource CommonButton}" Command="{Binding LogoutCommand}" Margin="5"/>
 
 
         </Grid>

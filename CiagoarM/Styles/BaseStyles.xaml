@@ -1,6 +1,34 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Color x:Key="UnSelectMenuColor1">#f7f7ff</Color>
+    <Color x:Key="UnSelectMenuColor2">#a8a9a8</Color>
+
+    <Color x:Key="SelectMenuColor1">#00ce46</Color>
+    <Color x:Key="SelectMenuColor2">#42ff82</Color>
+
+    <Color x:Key="MouseOverMenuColor1">#3c773c</Color>
+    <Color x:Key="MouseOverMenuColor2">#66b266</Color>
+
+    <LinearGradientBrush x:Key="SelectMenuBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="{DynamicResource SelectMenuColor1}" Offset="0" />
+        <GradientStop Color="{DynamicResource SelectMenuColor2}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource SelectMenuColor1}" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="UnSelectMenuBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="{DynamicResource UnSelectMenuColor1}" Offset="0" />
+        <GradientStop Color="{DynamicResource UnSelectMenuColor2}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource UnSelectMenuColor1}" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="MouseOverMenuBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="{DynamicResource MouseOverMenuColor1}" Offset="0" />
+        <GradientStop Color="{DynamicResource MouseOverMenuColor2}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource MouseOverMenuColor1}" Offset="1" />
+    </LinearGradientBrush>
+
+
     <Style x:Key="SmallFont" TargetType="{x:Type Control}">
         <Setter Property="FontFamily" Value="Arial"/>
         <Setter Property="FontSize" Value="12"/>
@@ -15,7 +43,7 @@
         <Setter Property="FontFamily" Value="Arial"/>
         <Setter Property="FontSize" Value="36"/>
     </Style>
-  
+
 
     <Style x:Key="TitleLabel" TargetType="{x:Type Label}" BasedOn="{StaticResource LargeFont}">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -45,7 +73,16 @@
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Width" Value="150"/>
         <Setter Property="Height" Value="45"/>
-        <Setter Property="Margin" Value="2"/>        
+        <Setter Property="Margin" Value="2"/>
+    </Style>
+    
+     <Style x:Key="ConfirmSmallButton" TargetType="{x:Type Button}" BasedOn="{StaticResource SmallFont}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="Height" Value="45"/>
+        <Setter Property="Margin" Value="2"/>
     </Style>
 
     <Style x:Key="MediumTextBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MediumFont}">
@@ -75,4 +112,69 @@
         <Setter Property="Margin" Value="2"/>
     </Style>
 
+    <ControlTemplate TargetType="{x:Type RadioButton}" x:Key="LeftMenuButton">
+        <Border Name="border" BorderBrush="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Background="{StaticResource ResourceKey=UnSelectMenuBrush}" CornerRadius="10,0,0,10" BorderThickness="0.5" Width="150">
+            <ContentPresenter Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="border" Property="Background" Value="{StaticResource ResourceKey=MouseOverMenuBrush}"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="border" Property="BorderThickness" Value="3" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter TargetName="border" Property="Background" Value="{StaticResource ResourceKey=SelectMenuBrush}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate TargetType="{x:Type RadioButton}" x:Key="CenterMenuButton">
+        <Border Name="border" BorderBrush="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Background="{StaticResource ResourceKey=UnSelectMenuBrush}" CornerRadius="0" BorderThickness="0.5" Width="150">
+            <ContentPresenter Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="border" Property="Background" Value="{StaticResource ResourceKey=MouseOverMenuBrush}"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="border" Property="BorderThickness" Value="3" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter TargetName="border" Property="Background" Value="{StaticResource ResourceKey=SelectMenuBrush}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate TargetType="{x:Type RadioButton}" x:Key="RightMenuButton">
+        <Border Name="border" BorderBrush="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Background="{StaticResource ResourceKey=UnSelectMenuBrush}" CornerRadius="0,10,10,0" BorderThickness="0.5" Width="150">
+            <ContentPresenter Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="border" Property="Background" Value="{StaticResource ResourceKey=MouseOverMenuBrush}"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="border" Property="BorderThickness" Value="3" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter TargetName="border" Property="Background" Value="{StaticResource ResourceKey=SelectMenuBrush}"/>
+            </Trigger>            
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate TargetType="{x:Type Button}" x:Key="CommonButton">
+        <Border Name="border" BorderBrush="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Background="{StaticResource ResourceKey=UnSelectMenuBrush}" CornerRadius="5,5,5,5" BorderThickness="0.5" Width="150">
+            <ContentPresenter Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="border" Property="Background" Value="{StaticResource ResourceKey=MouseOverMenuBrush}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="border" Property="BorderThickness" Value="3" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter TargetName="border" Property="Background" Value="{StaticResource ResourceKey=SelectMenuBrush}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    
 </ResourceDictionary>

@@ -71,8 +71,8 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Row="2" Grid.Column="0" Content="Join"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Command="{Binding JoinCommand}"/>
-                <Button Grid.Row="2" Grid.Column="1" Content="Login"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PWBox}"/>              
+                <Button Grid.Row="2" Grid.Column="0" Content="Join"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Template="{StaticResource CommonButton}" Command="{Binding JoinCommand}"/>
+                <Button Grid.Row="2" Grid.Column="1" Content="Login"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Template="{StaticResource CommonButton}" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PWBox}"/>              
             </Grid>
 
 
