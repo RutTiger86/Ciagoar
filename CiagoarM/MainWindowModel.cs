@@ -16,6 +16,9 @@ namespace CiagoarM
     {
         #region Command
 
+        /// <summary>
+        /// 메인윈도우 닫힘 커멘드
+        /// </summary>
         public RelayCommand MainClosedCommand
         {
             get;
