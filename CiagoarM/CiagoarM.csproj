@@ -11,11 +11,15 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\btn_google_sign-in.png" />
+	  <None Remove="Resources\Search_icon.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Content Include="ciagoar_icone.ico" />
 	  <Content Include="Resources\btn_google_sign-in.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\Search_icon.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>

@@ -152,6 +152,16 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static byte[] Search_icon {
+            get {
+                object obj = ResourceManager.GetObject("Search_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Auto Login과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Title_Auto_Login {
