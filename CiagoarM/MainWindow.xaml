@@ -9,7 +9,7 @@
         xmlns:OutgoingV="clr-namespace:CiagoarM.Views.Outgoing"
         xmlns:ReportV="clr-namespace:CiagoarM.Views.Report"
         xmlns:SettingV="clr-namespace:CiagoarM.Views.Setting"
-        
+        xmlns:DashboardV="clr-namespace:CiagoarM.Views.Dashboard"
         mc:Ignorable="d" x:Name="mainwindow"
         Title="MainWindow" Height="450" Width="800" WindowState="Maximized" MinWidth="1000" MinHeight="800">
 
@@ -18,6 +18,7 @@
     </Window.DataContext>
 
     <Window.Resources>
+        <DashboardV:DashboardMainView x:Key="DashboardView"/>
         <IncomingV:IncomingMainView x:Key="IncomingView"/>
         <OutgoingV:OutGoingMainView x:Key="OutgoingView"/>
         <ReportV:ReportMainView x:Key="ReportView"/>
@@ -45,7 +46,8 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Orientation="Horizontal" Margin="5">
-                <RadioButton Template="{StaticResource LeftMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource IncomingView},Path=Title}" IsChecked="True" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource IncomingView}"/>
+                <RadioButton Template="{StaticResource LeftMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource DashboardView},Path=Title}" IsChecked="True" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource DashboardView}"/>
+                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource IncomingView},Path=Title}" IsChecked="True" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource IncomingView}"/>
                 <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource OutgoingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource OutgoingView}"/>
                 <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource ReportView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource ReportView}"/>
                 <RadioButton Template="{StaticResource RightMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource SettingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource SettingView}"/>

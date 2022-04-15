@@ -21,36 +21,9 @@ namespace CiagoarM.ViewModels.Setting
             private set;
         }
 
-        private ObservableCollection<MenuView> _subMenuList = new ObservableCollection<MenuView>();
-        public ObservableCollection<MenuView> SubMenuList
-        {
-            get => _subMenuList;
-            set { _subMenuList = value; onPropertyChanged(); }
-        }
-
-
         public SettingMainViewModel()
         {
             SettingCommand();
-            SettingSubMenuList();
-        }
-        private void SettingSubMenuList()
-        {
-            try
-            {
-                SubMenuList = new ObservableCollection<MenuView>()
-                {
-                    new MenuView(),
-                    new MenuView(),
-                    new MenuView(),
-                    new MenuView(),
-                    new MenuView(),
-                };
-            }
-            catch (Exception ex)
-            {
-                LogException(ex.Message);
-            }
         }
 
         private void SettingCommand()

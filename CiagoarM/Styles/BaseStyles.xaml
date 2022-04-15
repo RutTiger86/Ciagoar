@@ -1,6 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:convert="clr-namespace:CiagoarM.Commons.Converter"
+                    >
+    <convert:SettingMenuConverter x:Key="SetingConverter"/>
+
+
 
     <Color x:Key="UnSelectMenuColor1">#f7f7ff</Color>
     <Color x:Key="UnSelectMenuColor2">#a8a9a8</Color>
@@ -226,6 +231,48 @@
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Cursor" Value="Hand"/>
             </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+
+    <ControlTemplate TargetType="{x:Type RadioButton}" x:Key="SettingMenuButton">
+        <Border Name="border" CornerRadius="0,25,25,0" Background="Transparent">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="/Resources/Search_icon.png"/>
+                <ContentPresenter Grid.Column="1" Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            
+            <Trigger Property="IsMouseOver" Value="True" >
+                <Setter TargetName="border" Property="Background" Value="LightGray"/>
+            </Trigger>
+            
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsChecked" Value="True"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter TargetName="border" Property="Background" Value="#B4CEF3"/>
+                <Setter TargetName="border" Property="TextBlock.FontWeight" Value="Bold"/>
+                <Setter TargetName="border" Property="TextBlock.Foreground" Value="#1967D2"/>
+            </MultiTrigger>
+
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="False"/>
+                    <Condition Property="IsChecked" Value="True"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter TargetName="border" Property="Background" Value="#E8F0FE"/>
+                <Setter TargetName="border" Property="TextBlock.FontWeight" Value="Bold"/>
+                <Setter TargetName="border" Property="TextBlock.Foreground" Value="#1967D2"/>
+            </MultiTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 

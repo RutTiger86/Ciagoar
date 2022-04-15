@@ -41,7 +41,13 @@
                 </Grid>
             </Border>
 
-            <ListBox Grid.Row="2" ItemsSource="{Binding SubMenuList}" Margin="0,3,0,3" BorderThickness="0"/>
+            <StackPanel Grid.Row="2" Margin="3">
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>                
+            </StackPanel>
 
 
 
