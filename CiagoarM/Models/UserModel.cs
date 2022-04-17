@@ -24,14 +24,14 @@ namespace CiagoarM.Models
     {
 
 
-        public async Task<bool> Login(AuthenticationType authentication, string Email, string AuthenticationKey = null)
+        public async Task<bool> Login(AuthType authentication, string Email, string AuthenticationKey = null)
         {
             try
             {
                 switch (authentication)
                 {
-                    case AuthenticationType.EM: return await TryLogin(authentication, Email, AuthenticationKey);
-                    case AuthenticationType.GG: return await TryGoogleLogin(Email);
+                    case AuthType.EM: return await TryLogin(authentication, Email, AuthenticationKey);
+                    case AuthType.GG: return await TryGoogleLogin(Email);
                     default: return false;
                 }
             }
@@ -43,7 +43,7 @@ namespace CiagoarM.Models
             return false;
         }
 
-        private async Task<bool> TryLogin(AuthenticationType AuthType, string Email, string Password = null)
+        private async Task<bool> TryLogin(AuthType AuthType, string Email, string Password = null)
         {
 
             try
@@ -52,8 +52,8 @@ namespace CiagoarM.Models
                 REQ_USER_LOGIN _USER_LOGIN = new()
                 {
                     langCode = Properties.Settings.Default.LangCode,
-                    authenticationType = (int)AuthType,
-                    authenticationKey = Password,
+                    authType = (int)AuthType,
+                    authKey = Password,
                     email = Email
                 };
 
@@ -95,7 +95,7 @@ namespace CiagoarM.Models
                         return false;
                     }
 
-                    if (!await TryLogin(AuthenticationType.GG, googleInfo.Data.email))// 로그인시도 있는지 
+                    if (!await TryLogin(AuthType.GG, googleInfo.Data.email))// 로그인시도 있는지 
                     {
                         return await ConnectGoogle(googleInfo.Data);// 연결시도 
                     }
@@ -106,7 +106,7 @@ namespace CiagoarM.Models
                 }
                 else
                 {
-                    return await TryLogin(AuthenticationType.GG, Email);
+                    return await TryLogin(AuthType.GG, Email);
                 }
 
             }
@@ -124,7 +124,7 @@ namespace CiagoarM.Models
                 BaseResponse<GoogleUserInfo> response = new();
                 BaseResponse<Ci_User> JoinResult = new();
 
-                BaseResponse<Ci_OAuth> OAuthKey = await GetOAuthInfo(AuthenticationType.GG);
+                BaseResponse<Ci_OAuth> OAuthKey = await GetOAuthInfo(AuthType.GG);
                 if (!OAuthKey.Result)
                 {
                     LogError($"{OAuthKey.ErrorCode} : {OAuthKey.ErrorMessage}");
@@ -142,7 +142,7 @@ namespace CiagoarM.Models
         {
             try
             {
-                BaseResponse<Ci_User> JoinResult = await JoinUser(AuthenticationType.GG, UserInfo.email, UserInfo.refresh_token, UserInfo.name);
+                BaseResponse<Ci_User> JoinResult = await JoinUser(AuthType.GG, UserInfo.email, UserInfo.refresh_token, UserInfo.name);
 
                 if (JoinResult.Result)
                 {
@@ -163,7 +163,7 @@ namespace CiagoarM.Models
             return false;
         }
 
-        public async Task<BaseResponse<Ci_User>> JoinUser(AuthenticationType authentication, string Email, string AuthenticationKey, string nickname)
+        public async Task<BaseResponse<Ci_User>> JoinUser(AuthType authentication, string Email, string AuthenticationKey, string nickname)
         {
             BaseResponse<Ci_User> JoinResult = new();
             try
@@ -172,9 +172,9 @@ namespace CiagoarM.Models
                 REQ_USER_JOIN _USER_JOIN = new()
                 {
                     langCode = Properties.Settings.Default.LangCode,
-                    authenticationType = (short)authentication,
+                    authType = (short)authentication,
                     email = Email,
-                    authenticationKey = AuthenticationKey,
+                    authKey = AuthenticationKey,
                     nickname = nickname
                 };
 
@@ -192,7 +192,7 @@ namespace CiagoarM.Models
             return JoinResult;
         }
 
-        private async Task<BaseResponse<Ci_OAuth>> GetOAuthInfo(AuthenticationType authenticationType)
+        private async Task<BaseResponse<Ci_OAuth>> GetOAuthInfo(AuthType authType)
         {
             BaseResponse<Ci_OAuth> result = new BaseResponse<Ci_OAuth>();
             try
@@ -200,7 +200,7 @@ namespace CiagoarM.Models
                 Dictionary<string, string> pQueryParm = new()
                 {
                     ["langCode"] = Properties.Settings.Default.LangCode,
-                    ["authenticationType"] = ((int)authenticationType).ToString()
+                    ["authType"] = ((int)authType).ToString()
                 };
 
                 string URL = Properties.Settings.Default.ServerBaseAddress + "User/oAuthInfo";
@@ -221,11 +221,11 @@ namespace CiagoarM.Models
             try
             {
                 // Builds the Token request
-                REQ_AUTHENTICATION_STEP _USER_JOIN = new()
+                REQ_AUTH_STEP _USER_JOIN = new()
                 {
                     langCode = Properties.Settings.Default.LangCode,
                     email = Email,
-                    authenticationStepKey = AuthenticationKey
+                    authStepKey = AuthenticationKey
                 };
 
                 string URL = Properties.Settings.Default.ServerBaseAddress + "User/AuthenticationStepCheck";

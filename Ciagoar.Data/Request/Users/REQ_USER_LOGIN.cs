@@ -17,7 +17,7 @@ namespace Ciagoar.Data.Request.Users
 
         [Required(AllowEmptyStrings = false)]
         [DefaultValue(0)]
-        public int authenticationType { get; set; }
+        public int authType { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(50)]
@@ -28,7 +28,7 @@ namespace Ciagoar.Data.Request.Users
 
         [StringLength(512)]
         [DefaultValue("")]
-        public string authenticationKey { get; set; }
+        public string authKey { get; set; }
 
     }
 }

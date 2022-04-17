@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace CiagoarS.DataBase
+{
+    public partial class DeliveryItem
+    {
+        public DeliveryItem()
+        {
+            DeliveryInventories = new HashSet<DeliveryInventory>();
+        }
+
+        public int Id { get; set; }
+        public int DeliveryInfoId { get; set; }
+        public int ItemInfoId { get; set; }
+        public string OrderPrice { get; set; }
+        public int PriceUnitType { get; set; }
+        public DateTime OrderQty { get; set; }
+        public bool Isdelete { get; set; }
+        public DateTime Createtime { get; set; }
+        public DateTime? Updatetime { get; set; }
+
+        public virtual DeliveryInfo DeliveryInfo { get; set; }
+        public virtual ItemInfo ItemInfo { get; set; }
+        public virtual ICollection<DeliveryInventory> DeliveryInventories { get; set; }
+    }
+}

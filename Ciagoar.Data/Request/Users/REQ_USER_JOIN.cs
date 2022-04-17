@@ -28,11 +28,11 @@ namespace Ciagoar.Data.Request.Users
 
         [Required(AllowEmptyStrings = false)]
         [DefaultValue(0)]
-        public short authenticationType { get; set; }
+        public short authType { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(512)]
         [DefaultValue("")]
-        public string authenticationKey { get; set; }
+        public string authKey { get; set; }
     }
 }

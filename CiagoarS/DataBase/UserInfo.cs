@@ -7,19 +7,28 @@ namespace CiagoarS.DataBase
     {
         public UserInfo()
         {
-            UserAuthentications = new HashSet<UserAuthentication>();
+            DeliveryInfoApplyUsers = new HashSet<DeliveryInfo>();
+            DeliveryInfoMgrUsers = new HashSet<DeliveryInfo>();
+            OrderInfos = new HashSet<OrderInfo>();
+            ReturnInfoApplyUsers = new HashSet<ReturnInfo>();
+            ReturnInfoMgrUsers = new HashSet<ReturnInfo>();
+            UserAuths = new HashSet<UserAuth>();
         }
 
         public int Id { get; set; }
         public string Email { get; set; }
-        public short AuthType { get; set; }
+        public short TypeCode { get; set; }
         public string Nickname { get; set; }
-        public bool IsUse { get; set; }
-        public bool IsDelete { get; set; }
-        public DateTime CreateTime { get; set; }
-        public DateTime? UpdateTime { get; set; }
-        public int? UpdateUserId { get; set; }
+        public bool? Isuse { get; set; }
+        public bool Isdelete { get; set; }
+        public DateTime Createtime { get; set; }
+        public DateTime? Updatetime { get; set; }
 
-        public virtual ICollection<UserAuthentication> UserAuthentications { get; set; }
+        public virtual ICollection<DeliveryInfo> DeliveryInfoApplyUsers { get; set; }
+        public virtual ICollection<DeliveryInfo> DeliveryInfoMgrUsers { get; set; }
+        public virtual ICollection<OrderInfo> OrderInfos { get; set; }
+        public virtual ICollection<ReturnInfo> ReturnInfoApplyUsers { get; set; }
+        public virtual ICollection<ReturnInfo> ReturnInfoMgrUsers { get; set; }
+        public virtual ICollection<UserAuth> UserAuths { get; set; }
     }
 }

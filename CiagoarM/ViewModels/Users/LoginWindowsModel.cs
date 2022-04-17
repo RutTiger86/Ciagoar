@@ -109,7 +109,7 @@ namespace CiagoarM.ViewModels.Users
                 if (Properties.Settings.Default.IsAutoLogin && !string.IsNullOrWhiteSpace(Properties.Settings.Default.AutoLoginID))
                 {
                     IsEnableControl = false;
-                    asyncLogin((AuthenticationType)Properties.Settings.Default.AutoAuthenticationType, Properties.Settings.Default.AutoLoginID, Properties.Settings.Default.AutoLoginPW);
+                    asyncLogin((AuthType)Properties.Settings.Default.AutoAuthenticationType, Properties.Settings.Default.AutoLoginID, Properties.Settings.Default.AutoLoginPW);
                 }
             }
             catch (Exception ex)
@@ -193,7 +193,7 @@ namespace CiagoarM.ViewModels.Users
                     if (!string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(passwordBox.Password))
                     {
                         IsEnableControl = false;
-                        asyncLogin(AuthenticationType.EM, Email, passwordBox.Password);
+                        asyncLogin(AuthType.EM, Email, passwordBox.Password);
                     }
                     else
                     {
@@ -208,7 +208,7 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        private async void asyncLogin(AuthenticationType authentication, string Email = null, string AuthenticationKey = null)
+        private async void asyncLogin(AuthType authentication, string Email = null, string AuthenticationKey = null)
         {
             try
             {
@@ -216,7 +216,7 @@ namespace CiagoarM.ViewModels.Users
 
                 if (success)
                 {
-                    if (authentication == AuthenticationType.EM && Localproperties.LoginUser.AuthenticationStep != 0)
+                    if (authentication == AuthType.EM && Localproperties.LoginUser.AuthStep != 0)
                     {
                         /// AuthenticationStep 인증  
                         _CheckView.Visibility = Visibility.Visible;
@@ -269,7 +269,7 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                asyncLogin(AuthenticationType.GG);
+                asyncLogin(AuthType.GG);
             }
             catch (Exception ex)
             {

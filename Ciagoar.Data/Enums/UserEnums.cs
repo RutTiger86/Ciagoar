@@ -7,21 +7,21 @@ using System.ComponentModel;
 
 namespace Ciagoar.Data.Enums
 {
-    public enum AuthenticationType
-    {
-
-        [Description("Email")]
-        EM,
-        [Description("Google")]
-        GG
-    }
-
     public enum AuthType
     {
 
+        [Description("Email")]
+        EM =0,
+        [Description("Google")]
+        GG =1
+    }
+
+    public enum UserType
+    {
+
         [Description("Admin")]
-        Admin,
+        Admin = 0,
         [Description("User")]
-        User
+        User = 1
     }
 }

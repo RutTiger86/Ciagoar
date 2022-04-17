@@ -17,6 +17,6 @@ namespace Ciagoar.Data.Request.Users
 
         [Required(AllowEmptyStrings = false)]
         [DefaultValue(1)]
-        public int authenticationType { get; set; }
+        public int authType { get; set; }
     }
 }

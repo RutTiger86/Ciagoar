@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ciagoar.Data.Request.Users
 {
-    public class REQ_AUTHENTICATION_STEP
+    public class REQ_AUTH_STEP
     {
         [Required(AllowEmptyStrings = false)]
         [StringLength(5)]
@@ -24,6 +24,6 @@ namespace Ciagoar.Data.Request.Users
         [Required(AllowEmptyStrings = false)]
         [StringLength(6)]
         [DefaultValue("")]
-        public string authenticationStepKey { get; set; }
+        public string authStepKey { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Ciagoar.Data.Response.Users
 {
     public class Ci_OAuth
     {
-        public int AuthenticationType { get; set; }
+        public int TypeCode { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string AuthUri { get; set; }

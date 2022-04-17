@@ -22,7 +22,7 @@ namespace CiagoarS.Common
             try
             {
 
-                string Key = CryptographyHelper.GetHash(user.CreateTime.ToString("HHmmssfff")).ToString()[..6];
+                string Key = CryptographyHelper.GetHash(user.Createtime.ToString("HHmmssfff")).ToString()[..6];
 
                 string sTitle = "CIAGOAR USER AUTHENTICATION";
                 

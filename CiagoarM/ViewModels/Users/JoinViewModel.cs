@@ -130,7 +130,7 @@ namespace CiagoarM.ViewModels.Users
                     {
                         IsEnableControl = false;
 
-                        BaseResponse<Ci_User> JoinResult = await new UserModel().JoinUser(Ciagoar.Data.Enums.AuthenticationType.EM, Email, PWS1.Password, NickName);
+                        BaseResponse<Ci_User> JoinResult = await new UserModel().JoinUser(Ciagoar.Data.Enums.AuthType.EM, Email, PWS1.Password, NickName);
 
                         if (JoinResult.Result)
                         {

@@ -47,9 +47,9 @@ namespace CiagoarS.Controllers
         /// <param name="parameters">
         /// <para>요청형식 설명</para>
         /// <para>- langCode                    : 언어코드 (en-US:영어, ko-KR:한국어)</para>
-        /// <para>- authenticationType          : 인증방법 </para>
+        /// <para>- authType          : 인증방법 </para>
         /// <para>- email                       : 이메일주소</para>
-        /// <para>- authenticationKey           : 가입 Key(EM 일경우 패스워드/ 3rd Party일경우 Tokken) </para>
+        /// <para>- authKey           : 가입 Key(EM 일경우 패스워드/ 3rd Party일경우 Tokken) </para>
         /// </param> 
         /// <returns>리턴값 설명</returns>
         /// <response code="200">
@@ -73,10 +73,10 @@ namespace CiagoarS.Controllers
 
             try
             {
-                switch ((AuthenticationType)parameters.authenticationType)
+                switch ((AuthType)parameters.authType)
                 {
-                    case AuthenticationType.EM: response = SetUserLogin_Email(parameters.email, parameters.authenticationKey); break;
-                    case AuthenticationType.GG: response = await SetUserLogin_Google(parameters.email); break;
+                    case AuthType.EM: response = SetUserLogin_Email(parameters.email, parameters.authKey); break;
+                    case AuthType.GG: response = await SetUserLogin_Google(parameters.email); break;
                     default: break;
                 }
 
@@ -97,15 +97,15 @@ namespace CiagoarS.Controllers
             {
                 Password = CryptographyHelper.GetHash(Password);
 
-                Ci_User userInfo = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(Email) && p.IsUse && !p.IsDelete)
-                                    join UAuthentications in _context.UserAuthentications.Where(p => p.AuthenticationKey.Equals(Password) && p.AuthenticationType == (int)AuthenticationType.EM && p.IsUse && !p.IsDelete)
+                Ci_User userInfo = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(Email) && (bool)p.Isuse && !p.Isdelete)
+                                    join UAuthentications in _context.UserAuths.Where(p => p.AuthKey.Equals(Password) && p.TypeCode == (int)AuthType.EM && (bool)p.Isuse && !p.Isdelete)
                                     on UInfo.Id equals UAuthentications.UserInfoId
                                     select new Ci_User()
                                     {
-                                        AuthType = UInfo.AuthType,
+                                        TypeCode = UInfo.TypeCode,
                                         Email = UInfo.Email,
                                         Nickname = UInfo.Nickname,
-                                        AuthenticationStep = UAuthentications.AuthenticationStep
+                                        AuthStep = UAuthentications.AuthStep
                                     }).FirstOrDefault();
 
                 if (userInfo != null)
@@ -136,50 +136,67 @@ namespace CiagoarS.Controllers
         {
             try
             {
-                Tuple<Ci_User, string> userInfo = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(Email) && p.IsUse && !p.IsDelete)
-                                                   join UAuthentications in _context.UserAuthentications.Where(p => p.AuthenticationType == (int)AuthenticationType.GG && p.IsUse && !p.IsDelete)
+                Tuple<Ci_User, string> userInfo = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(Email) && (bool)p.Isuse && !p.Isdelete)
+                                                   join UAuthentications in _context.UserAuths.Where(p => p.TypeCode == (int)AuthType.GG && (bool)p.Isuse && !p.Isdelete)
                                                    on UInfo.Id equals UAuthentications.UserInfoId
                                                    select new Tuple<Ci_User, string>(new Ci_User()
                                                    {
-                                                       AuthType = UInfo.AuthType,
+                                                       TypeCode = UInfo.TypeCode,
                                                        Email = UInfo.Email,
                                                        Nickname = UInfo.Nickname,
-                                                       AuthenticationStep = 0
-                                                   }, UAuthentications.AuthenticationKey)
+                                                       AuthStep = 0
+                                                   }, UAuthentications.AuthKey)
                                                    ).FirstOrDefault();
 
                 if (userInfo != default)
                 {
-                    Ci_OAuth ci_OAuth = _context.OauthInfos.Where(p => p.AuthenticationType == (int)AuthenticationType.GG).Select(p => new Ci_OAuth()
-                    {
-                        AuthenticationType = p.AuthenticationType,
-                        AuthUri = p.AuthUri,
-                        ClientId = p.ClientId,
-                        ClientSecret = p.ClientSecret,
-                        TokenUri = p.TokenUri
-                    }).FirstOrDefault();
 
-                    BaseResponse<GoogleOAuth> response = await Google.RefrashAccessToken(ci_OAuth, userInfo.Item2);
+                    List<AuthInfo> oAuth_Info_List = _context.AuthInfos.Where(p => p.TypeCode == (short)AuthType.GG).ToList();
 
-                    if (response.Result)
+                    if (oAuth_Info_List.Count > 3
+                        && oAuth_Info_List.Any(p => p.FieldName.Equals("authuri"))
+                        && oAuth_Info_List.Any(p => p.FieldName.Equals("clientid"))
+                        && oAuth_Info_List.Any(p => p.FieldName.Equals("clientsecret"))
+                        && oAuth_Info_List.Any(p => p.FieldName.Equals("tokenuri")))
                     {
-                        //엑세스 토큰 성공 호출 로그인 진행 
-                        return new BaseResponse<Ci_User>
+
+                        Ci_OAuth ci_OAuth = new()
                         {
-                            Result = true,
-                            Data = userInfo.Item1
+                            TypeCode = (short)AuthType.GG,
+                            AuthUri = oAuth_Info_List.Where(p => p.FieldName.Equals("authuri")).First().FieldValue,
+                            ClientId = oAuth_Info_List.Where(p => p.FieldName.Equals("clientid")).First().FieldValue,
+                            ClientSecret = oAuth_Info_List.Where(p => p.FieldName.Equals("clientsecret")).First().FieldValue,
+                            TokenUri = oAuth_Info_List.Where(p => p.FieldName.Equals("tokenuri")).First().FieldValue
                         };
+
+                        BaseResponse<GoogleOAuth> response = await Google.RefrashAccessToken(ci_OAuth, userInfo.Item2);
+
+                        if (response.Result)
+                        {
+                            //엑세스 토큰 성공 호출 로그인 진행 
+                            return new BaseResponse<Ci_User>
+                            {
+                                Result = true,
+                                Data = userInfo.Item1
+                            };
+                        }
+                        else
+                        {
+                            // 리프레쉬 토큰 만료 재 로그인 필요
+                            return ProcessError<Ci_User>(ErrorCode.RE_OAUTH_REFRASH_TOKKEN_EXPIRED);
+                        }
+
                     }
                     else
                     {
-                        // 리프레쉬 토큰 만료 재 로그인 필요
-                        return ProcessError<Ci_User>(ErrorCode.RE_OAUTH_REFRASH_TOKKEN_EXPIRED);
+                        return ProcessError<Ci_User>(ErrorCode.RE_OAUTH_UNSUPPORTED_3RDPARTY_LOGIN);
                     }
+                   
                 }
                 else
                 {
                     // 구글 로그인 사용자 없음 
-                    if (_context.UserInfos.Any(p => p.Email.Equals(Email) && p.IsUse && !p.IsDelete))
+                    if (_context.UserInfos.Any(p => p.Email.Equals(Email) && (bool)p.Isuse && !p.Isdelete))
                     {
                         //해당 계정 존재 ( 연결 확인 필요 ) 
                         return ProcessError<Ci_User>(ErrorCode.RE_EXIST_USER_NEXIST_OAUTH);
@@ -211,7 +228,7 @@ namespace CiagoarS.Controllers
         /// <param name="parameters">
         /// <para>요청형식 설명</para>
         /// <para>- langCode                    : 언어코드 (en-US:영어, ko-KR:한국어)</para>
-        /// <para>- authenticationType          : 인증방법 </para>
+        /// <para>- authType          : 인증방법 </para>
         /// </param> 
         /// <returns>리턴값 설명</returns>
         /// <response code="200">
@@ -237,18 +254,26 @@ namespace CiagoarS.Controllers
 
             try
             {
-                Ci_OAuth ci_OAuth = _context.OauthInfos.Where(p => p.AuthenticationType == parameters.authenticationType).Select(p => new Ci_OAuth()
-                {
-                    AuthenticationType = p.AuthenticationType,
-                    AuthUri = p.AuthUri,
-                    ClientId = p.ClientId,
-                    ClientSecret = p.ClientSecret,
-                    TokenUri = p.TokenUri
-                }).FirstOrDefault();
 
-                if (ci_OAuth != null)
+                List<AuthInfo> oAuth_Info_List = _context.AuthInfos.Where(p => p.TypeCode == (short)parameters.authType).ToList();
+
+                if (oAuth_Info_List.Count > 3
+                    && oAuth_Info_List.Any(p => p.FieldName.Equals("authuri"))
+                    && oAuth_Info_List.Any(p => p.FieldName.Equals("clientid"))
+                    && oAuth_Info_List.Any(p => p.FieldName.Equals("clientsecret"))
+                    && oAuth_Info_List.Any(p => p.FieldName.Equals("tokenuri")))
                 {
-                    response = new () { Result = true, Data = ci_OAuth };
+
+                    Ci_OAuth ci_OAuth = new()
+                    {
+                        TypeCode = (short)parameters.authType,
+                        AuthUri = oAuth_Info_List.Where(p => p.FieldName.Equals("authuri")).First().FieldValue,
+                        ClientId = oAuth_Info_List.Where(p => p.FieldName.Equals("clientid")).First().FieldValue,
+                        ClientSecret = oAuth_Info_List.Where(p => p.FieldName.Equals("clientsecret")).First().FieldValue,
+                        TokenUri = oAuth_Info_List.Where(p => p.FieldName.Equals("tokenuri")).First().FieldValue
+                    };
+                    
+                    response = new() { Result = true, Data = ci_OAuth };
                 }
                 else
                 {
@@ -275,7 +300,7 @@ namespace CiagoarS.Controllers
         /// <param name="parameters">
         /// <para>요청형식 설명</para>
         /// <para>- langCode                    : 언어코드 (en-US:영어, ko-KR:한국어)</para>
-        /// <para>- authenticationType          : 인증방법 </para>
+        /// <para>- authType          : 인증방법 </para>
         /// </param> 
         /// <returns>리턴값 설명</returns>
         /// <response code="200">
@@ -331,23 +356,23 @@ namespace CiagoarS.Controllers
 
             try
             {
-                string Password = CryptographyHelper.GetHash(parameters.authenticationKey);
+                string Password = CryptographyHelper.GetHash(parameters.authKey);
 
                 //신규가입
                 UserInfo userInfo = new ()
                 {
                     Email = parameters.email,
-                    AuthType = (int)AuthType.User,
+                    TypeCode = (int)UserType.User,
                     Nickname = parameters.nickname,
-                    IsUse = true,
-                    UserAuthentications = new List<UserAuthentication>()
+                    Isuse = true,
+                    UserAuths = new List<UserAuth>()
                     {
-                        new UserAuthentication()
+                        new UserAuth()
                         {
-                            AuthenticationType = parameters.authenticationType,
-                            AuthenticationKey = Password,
-                            AuthenticationStep = (short)(parameters.authenticationType == (short)AuthenticationType.EM? 2 : 0),
-                            IsUse = true,
+                            TypeCode = parameters.authType,
+                            AuthKey = Password,
+                            AuthStep = (short)(parameters.authType == (short)AuthType.EM? 2 : 0),
+                            Isuse = true,
                         }
                     }
                 };
@@ -355,20 +380,20 @@ namespace CiagoarS.Controllers
                 _context.UserInfos.Add(userInfo);
                 _context.SaveChanges();
 
-                if(parameters.authenticationType == (short)AuthenticationType.EM)
+                if(parameters.authType == (short)AuthType.EM)
                 {
                     response = SendEmailProcess(Transaction, userInfo);
                 }
                 else
                 {
                     response.Result = true;
-                    response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                    response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
                                      select new Ci_User()
                                      {
-                                         AuthType = UInfo.AuthType,
+                                         TypeCode = UInfo.TypeCode,
                                          Email = UInfo.Email,
                                          Nickname = UInfo.Nickname,
-                                         AuthenticationStep = 0
+                                         AuthStep = 0
                                      }).FirstOrDefault();
                     Transaction.Commit();
                 }
@@ -389,24 +414,24 @@ namespace CiagoarS.Controllers
             IDbContextTransaction Transaction = _context.Database.BeginTransaction();
             try
             {
-                UserAuthentication userAuthentication = _context.UserAuthentications.FirstOrDefault(p =>p.UserInfoId == userInfo.Id && p.AuthenticationType.Equals(parameters.authenticationType));
+                UserAuth userAuthentication = _context.UserAuths.FirstOrDefault(p =>p.UserInfoId == userInfo.Id && p.TypeCode == parameters.authType);
 
                
 
                 if (userAuthentication != null)
                 {
                     //사용자 정보도 있고 로그인 정보도 있음
-                    if (parameters.authenticationType != (int)AuthenticationType.EM)
+                    if (parameters.authType != (int)AuthType.EM)
                     {                                                
                         // RefrashCodeUpdate
-                        userAuthentication.AuthenticationKey = parameters.authenticationKey;
+                        userAuthentication.AuthKey = parameters.authKey;
                         _context.SaveChanges();
 
                         response.Result = true;
-                        response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                        response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
                                          select new Ci_User()
                                          {
-                                             AuthType = UInfo.AuthType,
+                                             TypeCode = UInfo.TypeCode,
                                              Email = UInfo.Email,
                                              Nickname = UInfo.Nickname
                                          }).FirstOrDefault();
@@ -420,19 +445,19 @@ namespace CiagoarS.Controllers
                 else
                 {
                     //사용자 정보는 있으나 로그인 정보는 없음 계정 연결 
-                    UserAuthentication authentication = new()
+                    UserAuth userAuth = new()
                     {
-                        AuthenticationType = parameters.authenticationType,
-                        AuthenticationKey = parameters.authenticationType == (int)AuthenticationType.EM ? CryptographyHelper.GetHash(parameters.authenticationKey) : parameters.authenticationKey,
+                        TypeCode = parameters.authType,
+                        AuthKey = parameters.authType == (int)AuthType.EM ? CryptographyHelper.GetHash(parameters.authKey) : parameters.authKey,
                         UserInfoId = userInfo.Id,
-                        IsUse = true,
+                        Isuse = true,
                     };
 
-                    _context.UserAuthentications.Add(authentication);
+                    _context.UserAuths.Add(userAuth);
                     _context.SaveChanges();
 
 
-                    if (parameters.authenticationType == (short)AuthenticationType.EM)
+                    if (parameters.authType == (short)AuthType.EM)
                     {
 
                         response =  SendEmailProcess(Transaction, userInfo);
@@ -440,10 +465,10 @@ namespace CiagoarS.Controllers
                     else
                     {
                         response.Result = true;
-                        response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                        response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
                                          select new Ci_User()
                                          {
-                                             AuthType = UInfo.AuthType,
+                                             TypeCode = UInfo.TypeCode,
                                              Email = UInfo.Email,
                                              Nickname = UInfo.Nickname
                                          }).FirstOrDefault();
@@ -469,34 +494,50 @@ namespace CiagoarS.Controllers
 
             try
             {
-                SMTP_INFO sMTP_INFO = _context.OauthInfos.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).Select(p => new SMTP_INFO()
-                {
-                    nSMTPPort = int.Parse(p.TokenUri),
-                    sSMTPPassword = p.AuthUri,
-                    sSMTPServer = p.ClientId,
-                    sSMTPUser = p.ClientSecret
-                }).FirstOrDefault();
+                List<AuthInfo> SMTP_Info_List =  _context.AuthInfos.Where(p => p.TypeCode == (short)AuthType.EM).ToList();
 
-                if (sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO, userInfo, _mLogger))
+                if (SMTP_Info_List.Count > 3
+                    && SMTP_Info_List.Any(p => p.FieldName.Equals("smtpport"))
+                    && SMTP_Info_List.Any(p => p.FieldName.Equals("smtppassword"))
+                    && SMTP_Info_List.Any(p => p.FieldName.Equals("smtpserver"))
+                    && SMTP_Info_List.Any(p => p.FieldName.Equals("smtpuser")))
                 {
-                    UserAuthentication authentication = userInfo.UserAuthentications.Where(p => p.AuthenticationType == (short)AuthenticationType.EM).FirstOrDefault();
 
-                    if (authentication != null)
+                    SMTP_INFO sMTP_INFO = new()
                     {
-                        authentication.AuthenticationStep = 1;
-                        _context.SaveChanges();
+                        nSMTPPort = Convert.ToInt32(SMTP_Info_List.Where(p => p.FieldName.Equals("smtpport")).First().FieldValue),
+                        sSMTPPassword = SMTP_Info_List.Where(p => p.FieldName.Equals("smtppassword")).First().FieldValue,
+                        sSMTPServer = SMTP_Info_List.Where(p => p.FieldName.Equals("smtpserver")).First().FieldValue,
+                        sSMTPUser = SMTP_Info_List.Where(p => p.FieldName.Equals("smtpuser")).First().FieldValue
 
-                        response.Result = true;
-                        response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(userInfo.Email) && p.IsUse && !p.IsDelete)
-                                         select new Ci_User()
-                                         {
-                                             AuthType = UInfo.AuthType,
-                                             Email = UInfo.Email,
-                                             Nickname = UInfo.Nickname,
-                                             AuthenticationStep = authentication.AuthenticationStep,
-                                         }).FirstOrDefault();
+                    };
 
-                        Transaction.Commit();
+                    if (sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO, userInfo, _mLogger))
+                    {
+                        UserAuth auth = userInfo.UserAuths.Where(p => p.TypeCode == (short)AuthType.EM).FirstOrDefault();
+
+                        if (auth != null)
+                        {
+                            auth.AuthStep = 1;
+                            _context.SaveChanges();
+
+                            response.Result = true;
+                            response.Data = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(userInfo.Email) && (bool)p.Isuse && !p.Isdelete)
+                                             select new Ci_User()
+                                             {
+                                                 TypeCode = UInfo.TypeCode,
+                                                 Email = UInfo.Email,
+                                                 Nickname = UInfo.Nickname,
+                                                 AuthStep = auth.AuthStep,
+                                             }).FirstOrDefault();
+
+                            Transaction.Commit();
+                        }
+                        else
+                        {
+                            response = ProcessError<Ci_User>(ErrorCode.EC_EX);
+                            Transaction.Rollback();
+                        }
                     }
                     else
                     {
@@ -529,9 +570,9 @@ namespace CiagoarS.Controllers
         /// <param name="parameters">
         /// <para>요청형식 설명</para>
         /// <para>- langCode                    : 언어코드 (en-US:영어, ko-KR:한국어)</para>
-        /// <para>- authenticationType          : 인증방법 </para>
+        /// <para>- authType          : 인증방법 </para>
         /// <para>- email                       : 이메일주소</para>
-        /// <para>- authenticationKey           : 가입 Key(EM 일경우 패스워드/ 3rd Party일경우 Tokken) </para>
+        /// <para>- authKey           : 가입 Key(EM 일경우 패스워드/ 3rd Party일경우 Tokken) </para>
         /// </param> 
         /// <returns>리턴값 설명</returns>
         /// <response code="200">
@@ -544,7 +585,7 @@ namespace CiagoarS.Controllers
         [Route("UpdateAuthentication")]
         [HttpPost]
         [Produces("application/json")]
-        public BaseResponse<bool> UpdateAuthentication(REQ_AUTHENTICATION parameters)
+        public BaseResponse<bool> UpdateAuthentication(REQ_AUTH parameters)
         {
             LogingREQ(parameters);
 
@@ -552,16 +593,16 @@ namespace CiagoarS.Controllers
 
             try
             {
-                UserAuthentication userAuthentication = (from UAuthentications in _context.UserAuthentications.Where(p => p.AuthenticationType == (int)parameters.authenticationType && p.IsUse && !p.IsDelete)
-                                                         join UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse && !p.IsDelete)
+                UserAuth userAuth = (from UAuthentications in _context.UserAuths.Where(p => p.TypeCode == (int)parameters.authType && (bool)p.Isuse && !p.Isdelete)
+                                                         join UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
                                                          on UAuthentications.UserInfoId equals UInfo.Id
                                                          select UAuthentications
                                                  ).FirstOrDefault();
 
-                if (userAuthentication != null)
+                if (userAuth != null)
                 {
-                    userAuthentication.AuthenticationKey = parameters.authenticationKey;
-                    userAuthentication.UpdateTime = DateTime.Now;
+                    userAuth.AuthKey = parameters.authKey;
+                    userAuth.Updatetime = DateTime.Now;
                     _context.SaveChanges();
                 }
                 else
@@ -592,7 +633,7 @@ namespace CiagoarS.Controllers
         /// <para>요청형식 설명</para>
         /// <para>- langCode                    : 언어코드 (en-US:영어, ko-KR:한국어)</para>
         /// <para>- email                       : 이메일주소</para>
-        /// <para>- authenticationStepKey       : 인증 키값 </para>
+        /// <para>- authStepKey       : 인증 키값 </para>
         /// </param> 
         /// <returns>리턴값 설명</returns>
         /// <response code="200">
@@ -605,7 +646,7 @@ namespace CiagoarS.Controllers
         [Route("AuthenticationStepCheck")]
         [HttpPost]
         [Produces("application/json")]
-        public BaseResponse<bool> AuthenticationStepCheck(REQ_AUTHENTICATION_STEP parameters)
+        public BaseResponse<bool> AuthenticationStepCheck(REQ_AUTH_STEP parameters)
         {
             LogingREQ(parameters);
 
@@ -613,18 +654,18 @@ namespace CiagoarS.Controllers
 
             try
             {
-                UserInfo user =  _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && p.IsUse).FirstOrDefault();
+                UserInfo user =  _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse).FirstOrDefault();
 
-                string Key = CryptographyHelper.GetHash(user.CreateTime.ToString("HHmmssfff")).ToString()[..6];
+                string Key = CryptographyHelper.GetHash(user.Createtime.ToString("HHmmssfff")).ToString()[..6];
 
-                if (user != null  && parameters.authenticationStepKey.Equals(Key))
+                if (user != null  && parameters.authStepKey.Equals(Key))
                 {
 
-                    UserAuthentication authentication = _context.UserAuthentications.FirstOrDefault(p => p.UserInfoId == user.Id && p.AuthenticationType == (short)AuthenticationType.EM);
+                    UserAuth auth = _context.UserAuths.FirstOrDefault(p => p.UserInfoId == user.Id && p.TypeCode == (short)AuthType.EM);
 
-                    if (authentication != null)
+                    if (auth != null)
                     {
-                        authentication.AuthenticationStep = 0;
+                        auth.AuthStep = 0;
                         _context.SaveChanges();
 
                         response.Result = true;
