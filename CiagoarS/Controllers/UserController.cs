@@ -9,13 +9,16 @@ using Ciagoar.Data.Response.Users;
 using CiagoarS.Common;
 using CiagoarS.Common.Enums;
 using CiagoarS.DataBase;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CiagoarS.Controllers
@@ -27,6 +30,10 @@ namespace CiagoarS.Controllers
     [ApiController]
     public class UserController : BaseController
     {
+        private const string _salt = "ciagoar";
+        private const int _it_count = 5;
+        private const int _length = 128;
+
         /// <summary>
         /// 
         /// </summary>
@@ -95,7 +102,7 @@ namespace CiagoarS.Controllers
         {
             try
             {
-                Password = CryptographyHelper.GetHash(Password);
+                Password = CryptographyHelper.GetPbkdf2(Password, _salt, _it_count, _length);
 
                 Ci_User userInfo = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(Email) && (bool)p.Isuse && !p.Isdelete)
                                     join UAuthentications in _context.UserAuths.Where(p => p.AuthKey.Equals(Password) && p.TypeCode == (int)AuthType.EM && (bool)p.Isuse && !p.Isdelete)
@@ -191,7 +198,7 @@ namespace CiagoarS.Controllers
                     {
                         return ProcessError<Ci_User>(ErrorCode.RE_OAUTH_UNSUPPORTED_3RDPARTY_LOGIN);
                     }
-                   
+
                 }
                 else
                 {
@@ -272,7 +279,7 @@ namespace CiagoarS.Controllers
                         ClientSecret = oAuth_Info_List.Where(p => p.FieldName.Equals("clientsecret")).First().FieldValue,
                         TokenUri = oAuth_Info_List.Where(p => p.FieldName.Equals("tokenuri")).First().FieldValue
                     };
-                    
+
                     response = new() { Result = true, Data = ci_OAuth };
                 }
                 else
@@ -334,7 +341,7 @@ namespace CiagoarS.Controllers
                 }
                 else
                 {
-                    response = ConnectUserAuthentication(userInfo,parameters);
+                    response = ConnectUserAuthentication(userInfo, parameters);
                 }
 
             }
@@ -351,15 +358,15 @@ namespace CiagoarS.Controllers
         private BaseResponse<Ci_User> InsertUserInfo(REQ_USER_JOIN parameters)
         {
             BaseResponse<Ci_User> response = new();
-            
-            IDbContextTransaction Transaction =  _context.Database.BeginTransaction();
+
+            IDbContextTransaction Transaction = _context.Database.BeginTransaction();
 
             try
             {
-                string Password = CryptographyHelper.GetHash(parameters.authKey);
-
+                string Password = CryptographyHelper.GetPbkdf2(parameters.authKey, _salt, _it_count, _length);
+              
                 //신규가입
-                UserInfo userInfo = new ()
+                UserInfo userInfo = new()
                 {
                     Email = parameters.email,
                     TypeCode = (int)UserType.User,
@@ -380,7 +387,7 @@ namespace CiagoarS.Controllers
                 _context.UserInfos.Add(userInfo);
                 _context.SaveChanges();
 
-                if(parameters.authType == (short)AuthType.EM)
+                if (parameters.authType == (short)AuthType.EM)
                 {
                     response = SendEmailProcess(Transaction, userInfo);
                 }
@@ -414,15 +421,15 @@ namespace CiagoarS.Controllers
             IDbContextTransaction Transaction = _context.Database.BeginTransaction();
             try
             {
-                UserAuth userAuthentication = _context.UserAuths.FirstOrDefault(p =>p.UserInfoId == userInfo.Id && p.TypeCode == parameters.authType);
+                UserAuth userAuthentication = _context.UserAuths.FirstOrDefault(p => p.UserInfoId == userInfo.Id && p.TypeCode == parameters.authType);
 
-               
+
 
                 if (userAuthentication != null)
                 {
                     //사용자 정보도 있고 로그인 정보도 있음
                     if (parameters.authType != (int)AuthType.EM)
-                    {                                                
+                    {
                         // RefrashCodeUpdate
                         userAuthentication.AuthKey = parameters.authKey;
                         _context.SaveChanges();
@@ -448,7 +455,7 @@ namespace CiagoarS.Controllers
                     UserAuth userAuth = new()
                     {
                         TypeCode = parameters.authType,
-                        AuthKey = parameters.authType == (int)AuthType.EM ? CryptographyHelper.GetHash(parameters.authKey) : parameters.authKey,
+                        AuthKey = parameters.authType == (int)AuthType.EM ? CryptographyHelper.GetPbkdf2(parameters.authKey, _salt, _it_count, _length) : parameters.authKey,
                         UserInfoId = userInfo.Id,
                         Isuse = true,
                     };
@@ -460,7 +467,7 @@ namespace CiagoarS.Controllers
                     if (parameters.authType == (short)AuthType.EM)
                     {
 
-                        response =  SendEmailProcess(Transaction, userInfo);
+                        response = SendEmailProcess(Transaction, userInfo);
                     }
                     else
                     {
@@ -494,7 +501,7 @@ namespace CiagoarS.Controllers
 
             try
             {
-                List<AuthInfo> SMTP_Info_List =  _context.AuthInfos.Where(p => p.TypeCode == (short)AuthType.EM).ToList();
+                List<AuthInfo> SMTP_Info_List = _context.AuthInfos.Where(p => p.TypeCode == (short)AuthType.EM).ToList();
 
                 if (SMTP_Info_List.Count > 3
                     && SMTP_Info_List.Any(p => p.FieldName.Equals("smtpport"))
@@ -594,9 +601,9 @@ namespace CiagoarS.Controllers
             try
             {
                 UserAuth userAuth = (from UAuthentications in _context.UserAuths.Where(p => p.TypeCode == (int)parameters.authType && (bool)p.Isuse && !p.Isdelete)
-                                                         join UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
-                                                         on UAuthentications.UserInfoId equals UInfo.Id
-                                                         select UAuthentications
+                                     join UInfo in _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
+                                     on UAuthentications.UserInfoId equals UInfo.Id
+                                     select UAuthentications
                                                  ).FirstOrDefault();
 
                 if (userAuth != null)
@@ -654,11 +661,11 @@ namespace CiagoarS.Controllers
 
             try
             {
-                UserInfo user =  _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse).FirstOrDefault();
+                UserInfo user = _context.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse).FirstOrDefault();
 
                 string Key = CryptographyHelper.GetHash(user.Createtime.ToString("HHmmssfff")).ToString()[..6];
 
-                if (user != null  && parameters.authStepKey.Equals(Key))
+                if (user != null && parameters.authStepKey.Equals(Key))
                 {
 
                     UserAuth auth = _context.UserAuths.FirstOrDefault(p => p.UserInfoId == user.Id && p.TypeCode == (short)AuthType.EM);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -72,5 +73,27 @@ namespace Ciagoar.Core.Helper
             // Return the hexadecimal string.
             return sBuilder.ToString();
         }
+
+        public static string GetPbkdf2(string input, string salt, int it_count, int length)
+        {
+            // Convert the input string to a byte array and compute the hash.
+            byte[] data = KeyDerivation.Pbkdf2(input, Encoding.UTF8.GetBytes(salt), KeyDerivationPrf.HMACSHA256, it_count, length);
+
+            // Create a new Stringbuilder to collect the bytes
+            // and create a string.
+            var sBuilder = new StringBuilder();
+
+            // Loop through each byte of the hashed data
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            // Return the hexadecimal string.
+            return sBuilder.ToString();
+        }
+
+
     }
 }
