@@ -124,6 +124,12 @@
   <data name="Caption_Warning" xml:space="preserve">
     <value>Warning</value>
   </data>
+  <data name="Company_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Company_icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Item_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Item_icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Main_Title" xml:space="preserve">
     <value>Ciagoar</value>
   </data>
@@ -151,10 +157,28 @@
   <data name="Search_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Search_icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="System_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\System_icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Title_Auto_Login" xml:space="preserve">
     <value>Auto Login</value>
   </data>
+  <data name="Title_Setting_Item" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="Title_Setting_Relative_Company" xml:space="preserve">
+    <value>Relative Company</value>
+  </data>
+  <data name="Title_Setting_System" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="Title_Setting_User" xml:space="preserve">
+    <value>User</value>
+  </data>
   <data name="Title_Total_Text" xml:space="preserve">
     <value>Come In And Go Out And Record</value>
+  </data>
+  <data name="User_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\User_icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

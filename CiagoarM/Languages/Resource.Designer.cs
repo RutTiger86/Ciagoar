@@ -80,6 +80,26 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static byte[] Company_icon {
+            get {
+                object obj = ResourceManager.GetObject("Company_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static byte[] Item_icon {
+            get {
+                object obj = ResourceManager.GetObject("Item_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Ciagoar과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Main_Title {
@@ -162,6 +182,16 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static byte[] System_icon {
+            get {
+                object obj = ResourceManager.GetObject("System_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Auto Login과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Title_Auto_Login {
@@ -171,11 +201,57 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   Item과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Setting_Item {
+            get {
+                return ResourceManager.GetString("Title_Setting_Item", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Relative Company과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Setting_Relative_Company {
+            get {
+                return ResourceManager.GetString("Title_Setting_Relative_Company", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Setting_System {
+            get {
+                return ResourceManager.GetString("Title_Setting_System", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   User과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Setting_User {
+            get {
+                return ResourceManager.GetString("Title_Setting_User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Come In And Go Out And Record과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Title_Total_Text {
             get {
                 return ResourceManager.GetString("Title_Total_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static byte[] User_icon {
+            get {
+                object obj = ResourceManager.GetObject("User_icon", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

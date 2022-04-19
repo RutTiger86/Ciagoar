@@ -1,4 +1,4 @@
-﻿using CiagoarM.Views;
+﻿using CiagoarM.Commons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,18 +14,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CiagoarM
+namespace CiagoarM.Views.Setting
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// ItemSettingView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ItemSettingView : BaseView
     {
-        public MainWindow()
+        public ItemSettingView()
         {
             InitializeComponent();
-            
-            ((MainWindowModel)this.DataContext).ShowLoginWindow();
         }
     }
 }

@@ -6,11 +6,26 @@
              xmlns:Base="clr-namespace:CiagoarM.Commons"
              xmlns:local="clr-namespace:CiagoarM.Views.Setting"
              xmlns:model="clr-namespace:CiagoarM.ViewModels.Setting"
+             xmlns:Lang ="clr-namespace:CiagoarM.Languages"               
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1924" Title="Setting">
+    
     <UserControl.DataContext>
         <model:SettingMainViewModel/>
     </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <local:ItemSettingView x:Key="ItemSetting"/>
+    </UserControl.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding MenuSelectCommand}" CommandParameter="{StaticResource ItemSetting}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
+
     <Grid d:Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
@@ -42,19 +57,17 @@
             </Border>
 
             <StackPanel Grid.Row="2" Margin="3">
-                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>
-                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>
-                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>
-                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>
-                <RadioButton Template="{StaticResource SettingMenuButton}" Content="Menu1"/>                
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{x:Static Lang:Resource.Title_Setting_Item}" Style="{StaticResource MediumFont}" FontWeight="Bold" Command="{Binding MenuSelectCommand}" CommandParameter="{StaticResource ItemSetting}"  IsChecked="True"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{x:Static Lang:Resource.Title_Setting_Relative_Company}" Style="{StaticResource MediumFont}"  FontWeight="Bold"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{x:Static Lang:Resource.Title_Setting_System}" Style="{StaticResource MediumFont}"  FontWeight="Bold"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{x:Static Lang:Resource.Title_Setting_User}" Style="{StaticResource MediumFont}"  FontWeight="Bold"/>         
             </StackPanel>
 
 
 
         </Grid>
 
-    
-
+        <ContentPresenter Grid.Column="1" Margin="10" Content="{Binding SettingView,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
 
     </Grid>
 </Base:BaseView>

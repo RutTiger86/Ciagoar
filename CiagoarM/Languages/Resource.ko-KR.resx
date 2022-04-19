@@ -147,6 +147,18 @@
   <data name="Title_Auto_Login" xml:space="preserve">
     <value>자동 로그인</value>
   </data>
+  <data name="Title_Setting_Item" xml:space="preserve">
+    <value>물품</value>
+  </data>
+  <data name="Title_Setting_Relative_Company" xml:space="preserve">
+    <value>관계사</value>
+  </data>
+  <data name="Title_Setting_System" xml:space="preserve">
+    <value>시스템</value>
+  </data>
+  <data name="Title_Setting_User" xml:space="preserve">
+    <value>사용자</value>
+  </data>
   <data name="Title_Total_Text" xml:space="preserve">
     <value>들어오고 나가고 기록하고 (Come In And Go Out And Record)</value>
   </data>

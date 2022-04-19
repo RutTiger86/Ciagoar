@@ -442,6 +442,8 @@ namespace CiagoarS.Controllers
                                              Email = UInfo.Email,
                                              Nickname = UInfo.Nickname
                                          }).FirstOrDefault();
+
+                        Transaction.Commit();
                     }
                     else
                     {

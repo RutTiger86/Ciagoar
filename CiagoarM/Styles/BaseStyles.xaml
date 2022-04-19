@@ -4,6 +4,7 @@
                     xmlns:convert="clr-namespace:CiagoarM.Commons.Converter"
                     >
     <convert:SettingMenuConverter x:Key="SetingConverter"/>
+    <convert:SettingMenuImgConverter x:Key="SettingImgConverter"/>
 
 
 
@@ -242,12 +243,11 @@
                     <ColumnDefinition Width="50"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Source="/Resources/Search_icon.png"/>
-                <ContentPresenter Grid.Column="1" Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                <Image Source="{TemplateBinding Property=ContentControl.Content, Converter={StaticResource SettingImgConverter }}" Margin="5"/>
+                <ContentPresenter Grid.Column="1" Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Left"  VerticalAlignment="Center" Margin="20,0,0,0"/>
             </Grid>
         </Border>
-        <ControlTemplate.Triggers>
-            
+        <ControlTemplate.Triggers>            
             <Trigger Property="IsMouseOver" Value="True" >
                 <Setter TargetName="border" Property="Background" Value="LightGray"/>
             </Trigger>

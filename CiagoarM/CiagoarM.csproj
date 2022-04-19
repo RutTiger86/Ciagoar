@@ -11,7 +11,11 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\btn_google_sign-in.png" />
+	  <None Remove="Resources\Company_icon.png" />
+	  <None Remove="Resources\Item_icon.png" />
 	  <None Remove="Resources\Search_icon.png" />
+	  <None Remove="Resources\System_icon.png" />
+	  <None Remove="Resources\User_icon.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -19,7 +23,19 @@
 	  <Content Include="Resources\btn_google_sign-in.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="Resources\Company_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\Item_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="Resources\Search_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\System_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\User_icon.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
