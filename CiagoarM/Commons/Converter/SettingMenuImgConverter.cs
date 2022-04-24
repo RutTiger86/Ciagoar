@@ -20,7 +20,7 @@ namespace CiagoarM.Commons.Converter
             {
                 return "/Resources/Item_icon.png";
             }
-            else if (StettingTitle == Resource.Title_Setting_Relative_Company)
+            else if (StettingTitle == Resource.Title_Setting_Company)
             {
                 return "/Resources/Company_icon.png";
             }

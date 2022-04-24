@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CiagoarM.ViewModels.Inventory
+namespace CiagoarM.ViewModels.Order
 {
-    public  class InventoryMainViewModel : BaseModel
+    public  class OrderMainViewModel : BaseModel
     {
     }
 }

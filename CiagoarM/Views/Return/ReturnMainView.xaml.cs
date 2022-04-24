@@ -14,14 +14,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CiagoarM.Views.Report
+namespace CiagoarM.Views.Return
 {
     /// <summary>
-    /// ReportMainView.xaml에 대한 상호 작용 논리
+    /// OrderMainView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class ReportMainView : BaseView
+    public partial class ReturnMainView : BaseView
     {
-        public ReportMainView()
+        public ReturnMainView()
         {
             InitializeComponent();
         }

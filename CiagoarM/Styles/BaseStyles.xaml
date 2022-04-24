@@ -168,7 +168,7 @@
     </ControlTemplate>
 
     <ControlTemplate TargetType="{x:Type Button}" x:Key="CommonButton">
-        <Border Name="border" BorderBrush="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Background="{StaticResource ResourceKey=UnSelectMenuBrush}" CornerRadius="5,5,5,5" BorderThickness="0.5" Width="150">
+        <Border Name="border" BorderBrush="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Background="{StaticResource ResourceKey=UnSelectMenuBrush}" CornerRadius="5,5,5,5" BorderThickness="0.5">
             <ContentPresenter Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
         </Border>
         <ControlTemplate.Triggers>

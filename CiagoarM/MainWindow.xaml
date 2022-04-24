@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CiagoarM"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:IncomingV="clr-namespace:CiagoarM.Views.Incoming"
-        xmlns:OutgoingV="clr-namespace:CiagoarM.Views.Outgoing"
-        xmlns:ReportV="clr-namespace:CiagoarM.Views.Report"
+        xmlns:InventoryV="clr-namespace:CiagoarM.Views.Inventory"
+        xmlns:OrderV="clr-namespace:CiagoarM.Views.Order"
+        xmlns:DeliveryV="clr-namespace:CiagoarM.Views.Delivery"
         xmlns:SettingV="clr-namespace:CiagoarM.Views.Setting"
         xmlns:DashboardV="clr-namespace:CiagoarM.Views.Dashboard"
+        xmlns:ReturnV="clr-namespace:CiagoarM.Views.Return"
         mc:Ignorable="d" x:Name="mainwindow"
         Title="MainWindow" Height="450" Width="800" WindowState="Maximized" MinWidth="1000" MinHeight="800">
 
@@ -19,9 +20,10 @@
 
     <Window.Resources>
         <DashboardV:DashboardMainView x:Key="DashboardView"/>
-        <IncomingV:IncomingMainView x:Key="IncomingView"/>
-        <OutgoingV:OutGoingMainView x:Key="OutgoingView"/>
-        <ReportV:ReportMainView x:Key="ReportView"/>
+        <InventoryV:InventoryMainView x:Key="InventoryView"/>
+        <OrderV:OrderMainView x:Key="OrderView"/>
+        <DeliveryV:DeliveryMainView x:Key="DeliveryView"/>
+        <ReturnV:ReturnMainView x:Key="ReturnView"/>
         <SettingV:SettingMainView x:Key="SettingView"/>
     </Window.Resources>
 
@@ -46,19 +48,26 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
             <StackPanel Orientation="Horizontal" Margin="5">
                 <RadioButton Template="{StaticResource LeftMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource DashboardView},Path=Title}"  Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource DashboardView}" IsChecked="True"/>
-                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource IncomingView},Path=Title}"  Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource IncomingView}"/>
-                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource OutgoingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource OutgoingView}"/>
-                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource ReportView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource ReportView}"/>
+                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource InventoryView},Path=Title}"  Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource InventoryView}"/>
+                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource OrderView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource OrderView}"/>
+                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource DeliveryView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource DeliveryView}"/>
+                <RadioButton Template="{StaticResource CenterMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource ReturnView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource ReturnView}"/>
                 <RadioButton Template="{StaticResource RightMenuButton}" Style="{StaticResource MediumFont}" Content="{Binding Source={StaticResource SettingView},Path=Title}" Command="{Binding MenuClickCommand}" CommandParameter="{StaticResource SettingView}"/>
             </StackPanel>
 
-            <Label Grid.Column="1" Content="{Binding UserName,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentStringFormat="User : {0}" Style="{StaticResource ContentLabel}"/>
 
-            <Button Grid.Column="2" Content="Logout" Style="{StaticResource MediumFont}" Template="{StaticResource CommonButton}" Command="{Binding LogoutCommand}" Margin="5"/>
+            <Image Grid.Column="1" Source="/Resources/User_icon.png" Margin="2"/>
+            
+            <Label Grid.Column="2" Content="{Binding UserName,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentLabel}"/>
+
+            <Button Grid.Column="3" Template="{StaticResource CommonButton}" Width="auto" Command="{Binding LogoutCommand}" Margin="5">
+                <Image Source="/Resources/Logout_icon.png" Margin="2"/>
+            </Button>
 
 
         </Grid>

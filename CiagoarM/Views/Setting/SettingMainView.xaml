@@ -9,7 +9,7 @@
              xmlns:Lang ="clr-namespace:CiagoarM.Languages"               
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
-             d:DesignHeight="1080" d:DesignWidth="1924" Title="Setting">
+             d:DesignHeight="1080" d:DesignWidth="1924" Title="{x:Static Lang:Resource.Title_Menu_Setting}">
     
     <UserControl.DataContext>
         <model:SettingMainViewModel/>
@@ -17,6 +17,9 @@
 
     <UserControl.Resources>
         <local:ItemSettingView x:Key="ItemSetting"/>
+        <local:CompanySettingView x:Key="CompanySetting"/>
+        <local:UserSettingView x:Key="UserSetting"/>
+        <local:SystemSettingView x:Key="SystemSetting"/>
     </UserControl.Resources>
 
     <i:Interaction.Triggers>
@@ -57,10 +60,10 @@
             </Border>
 
             <StackPanel Grid.Row="2" Margin="3">
-                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{x:Static Lang:Resource.Title_Setting_Item}" Style="{StaticResource MediumFont}" FontWeight="Bold" Command="{Binding MenuSelectCommand}" CommandParameter="{StaticResource ItemSetting}"  IsChecked="True"/>
-                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{x:Static Lang:Resource.Title_Setting_Relative_Company}" Style="{StaticResource MediumFont}"  FontWeight="Bold"/>
-                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{x:Static Lang:Resource.Title_Setting_System}" Style="{StaticResource MediumFont}"  FontWeight="Bold"/>
-                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{x:Static Lang:Resource.Title_Setting_User}" Style="{StaticResource MediumFont}"  FontWeight="Bold"/>         
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{Binding Source={StaticResource ItemSetting},Path=Title}" Style="{StaticResource MediumFont}" FontWeight="Bold" Command="{Binding MenuSelectCommand}" CommandParameter="{StaticResource ItemSetting}"  IsChecked="True"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{Binding Source={StaticResource CompanySetting},Path=Title}" Style="{StaticResource MediumFont}"  FontWeight="Bold" Command="{Binding MenuSelectCommand}" CommandParameter="{StaticResource CompanySetting}"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{Binding Source={StaticResource UserSetting},Path=Title}" Style="{StaticResource MediumFont}"  FontWeight="Bold" Command="{Binding MenuSelectCommand}" CommandParameter="{StaticResource UserSetting}"/>
+                <RadioButton Template="{StaticResource SettingMenuButton}" Content="{Binding Source={StaticResource SystemSetting},Path=Title}" Style="{StaticResource MediumFont}"  FontWeight="Bold" Command="{Binding MenuSelectCommand}" CommandParameter="{StaticResource SystemSetting}"/>
             </StackPanel>
 
 

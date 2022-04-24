@@ -71,11 +71,31 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static byte[] Cancle_icon {
+            get {
+                object obj = ResourceManager.GetObject("Cancle_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Warning과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Caption_Warning {
             get {
                 return ResourceManager.GetString("Caption_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static byte[] Check_icon {
+            get {
+                object obj = ResourceManager.GetObject("Check_icon", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -92,9 +112,39 @@ namespace CiagoarM.Languages {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        public static byte[] Confirm_icon {
+            get {
+                object obj = ResourceManager.GetObject("Confirm_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static byte[] Delete_icon {
+            get {
+                object obj = ResourceManager.GetObject("Delete_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         public static byte[] Item_icon {
             get {
                 object obj = ResourceManager.GetObject("Item_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        public static byte[] Logout_icon {
+            get {
+                object obj = ResourceManager.GetObject("Logout_icon", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -174,6 +224,16 @@ namespace CiagoarM.Languages {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        public static byte[] Password_icon {
+            get {
+                object obj = ResourceManager.GetObject("Password_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         public static byte[] Search_icon {
             get {
                 object obj = ResourceManager.GetObject("Search_icon", resourceCulture);
@@ -201,20 +261,92 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   Join과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Join {
+            get {
+                return ResourceManager.GetString("Title_Join", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Login과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Login {
+            get {
+                return ResourceManager.GetString("Title_Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   DashBoard과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Menu_DashBoard {
+            get {
+                return ResourceManager.GetString("Title_Menu_DashBoard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Delivery과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Menu_Delivery {
+            get {
+                return ResourceManager.GetString("Title_Menu_Delivery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Inventory과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Menu_Inventory {
+            get {
+                return ResourceManager.GetString("Title_Menu_Inventory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Order과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Menu_Order {
+            get {
+                return ResourceManager.GetString("Title_Menu_Order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Return과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Menu_Return {
+            get {
+                return ResourceManager.GetString("Title_Menu_Return", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Setting과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Menu_Setting {
+            get {
+                return ResourceManager.GetString("Title_Menu_Setting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Company과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Setting_Company {
+            get {
+                return ResourceManager.GetString("Title_Setting_Company", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Item과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Title_Setting_Item {
             get {
                 return ResourceManager.GetString("Title_Setting_Item", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Relative Company과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        public static string Title_Setting_Relative_Company {
-            get {
-                return ResourceManager.GetString("Title_Setting_Relative_Company", resourceCulture);
             }
         }
         

@@ -59,10 +59,11 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Content="ID : " Style="{StaticResource ContentLabel}" HorizontalAlignment="Right" ></Label>
+
+                <Image Grid.Row="0" Grid.Column="0" Source="/Resources/User_icon.png" HorizontalAlignment="Right" Margin="5"/>
                 <TextBox Grid.Row="0" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumTextBox}" Text="{Binding Email}"/>
 
-                <Label Grid.Row="1" Grid.Column="0" Content="PW : " Style="{StaticResource ContentLabel}" HorizontalAlignment="Right" ></Label>
+                <Image Grid.Row="1" Grid.Column="0" Source="/Resources/Password_icon.png" HorizontalAlignment="Right"  Margin="5"/>
                 <PasswordBox x:Name="PWBox" Grid.Row="1" Grid.Column="1" Width="350" HorizontalAlignment="Left" Style="{StaticResource MediumPasswordBox}"/>
             </Grid>
 
@@ -71,8 +72,8 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Row="2" Grid.Column="0" Content="Join"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Template="{StaticResource CommonButton}" Command="{Binding JoinCommand}"/>
-                <Button Grid.Row="2" Grid.Column="1" Content="Login"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Template="{StaticResource CommonButton}" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PWBox}"/>              
+                <Button Grid.Row="2" Grid.Column="0" Content="{x:Static Lang:Resource.Title_Join}"  HorizontalAlignment="Right" Style="{StaticResource ConfirmMediumButton}" Template="{StaticResource CommonButton}" Command="{Binding JoinCommand}"/>
+                <Button Grid.Row="2" Grid.Column="1" Content="{x:Static Lang:Resource.Title_Login}"  HorizontalAlignment="Left" Style="{StaticResource ConfirmMediumButton}" Template="{StaticResource CommonButton}" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PWBox}"/>              
             </Grid>
 
 

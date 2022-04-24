@@ -14,14 +14,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CiagoarM.Views.Incoming
+namespace CiagoarM.Views.Setting
 {
     /// <summary>
-    /// IncomingMainView.xaml에 대한 상호 작용 논리
+    /// ItemSettingView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class IncomingMainView : BaseView
+    public partial class SystemSettingView : BaseView
     {
-        public IncomingMainView()
+        public SystemSettingView()
         {
             InitializeComponent();
         }

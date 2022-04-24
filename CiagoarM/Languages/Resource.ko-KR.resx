@@ -147,11 +147,41 @@
   <data name="Title_Auto_Login" xml:space="preserve">
     <value>자동 로그인</value>
   </data>
+  <data name="Title_Cancle" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="Title_Confirm" xml:space="preserve">
+    <value>확인</value>
+  </data>
+  <data name="Title_Join" xml:space="preserve">
+    <value>회원가입</value>
+  </data>
+  <data name="Title_Login" xml:space="preserve">
+    <value>로그인</value>
+  </data>
+  <data name="Title_Menu_DashBoard" xml:space="preserve">
+    <value>대쉬보드</value>
+  </data>
+  <data name="Title_Menu_Delivery" xml:space="preserve">
+    <value>납품</value>
+  </data>
+  <data name="Title_Menu_Inventory" xml:space="preserve">
+    <value>재고</value>
+  </data>
+  <data name="Title_Menu_Order" xml:space="preserve">
+    <value>발주</value>
+  </data>
+  <data name="Title_Menu_Return" xml:space="preserve">
+    <value>반납</value>
+  </data>
+  <data name="Title_Menu_Setting" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="Title_Setting_Company" xml:space="preserve">
+    <value>관계사</value>
+  </data>
   <data name="Title_Setting_Item" xml:space="preserve">
     <value>물품</value>
-  </data>
-  <data name="Title_Setting_Relative_Company" xml:space="preserve">
-    <value>관계사</value>
   </data>
   <data name="Title_Setting_System" xml:space="preserve">
     <value>시스템</value>

@@ -11,8 +11,14 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\btn_google_sign-in.png" />
+	  <None Remove="Resources\Cancle_icon.png" />
+	  <None Remove="Resources\Check_icon.png" />
 	  <None Remove="Resources\Company_icon.png" />
+	  <None Remove="Resources\Confirm_icon.png" />
+	  <None Remove="Resources\Delete_icon.png" />
 	  <None Remove="Resources\Item_icon.png" />
+	  <None Remove="Resources\Logout_icon.png" />
+	  <None Remove="Resources\Password_icon.png" />
 	  <None Remove="Resources\Search_icon.png" />
 	  <None Remove="Resources\System_icon.png" />
 	  <None Remove="Resources\User_icon.png" />
@@ -23,10 +29,28 @@
 	  <Content Include="Resources\btn_google_sign-in.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="Resources\Cancle_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\Check_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="Resources\Company_icon.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="Resources\Confirm_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\Delete_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="Resources\Item_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\Logout_icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\Password_icon.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="Resources\Search_icon.png">
@@ -63,6 +87,18 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>Settings.settings</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\Return\ReturnMainView.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\Setting\SystemSettingView.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\Setting\UserSettingView.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\Setting\CompanySettingView.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
 	  <Compile Update="Views\Users\AuthenticationStepCheckView.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
@@ -86,6 +122,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Views\Return\ReturnMainView.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Views\Setting\SystemSettingView.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Views\Setting\UserSettingView.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Views\Setting\CompanySettingView.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Views\Users\AuthenticationStepCheckView.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	    <SubType>Designer</SubType>

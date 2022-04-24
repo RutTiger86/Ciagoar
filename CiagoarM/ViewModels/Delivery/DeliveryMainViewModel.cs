@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CiagoarM.ViewModels.Outgoing
+namespace CiagoarM.ViewModels.Delivery
 {
-    public  class OutGoingMainViewModel : BaseModel
+    public class DeliveryMainViewModel : BaseModel
     {
     }
 }

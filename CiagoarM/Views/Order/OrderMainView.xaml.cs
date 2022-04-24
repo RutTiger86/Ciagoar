@@ -14,14 +14,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CiagoarM.Views.Outgoing
+namespace CiagoarM.Views.Order
 {
     /// <summary>
-    /// OutGoingMainView.xaml에 대한 상호 작용 논리
+    /// OrderMainView.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class OutGoingMainView : BaseView
+    public partial class OrderMainView : BaseView
     {
-        public OutGoingMainView()
+        public OrderMainView()
         {
             InitializeComponent();
         }
