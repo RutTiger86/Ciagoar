@@ -26,9 +26,7 @@ namespace CiagoarS.Controllers
     /// <summary>
     /// 사용자 관련 API
     /// </summary>
-    [Route("User")]
-    [ApiController]
-    public class UserController : BaseController
+    public class UsersController : BaseController
     {
         private const string _salt = "ciagoar";
         private const int _it_count = 5;
@@ -39,7 +37,7 @@ namespace CiagoarS.Controllers
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="context"></param>
-        public UserController(ILogger<UserController> logger, CiagoarContext context)
+        public UsersController(ILogger<UsersController> logger, CiagoarContext context)
         {
             _mLogger = logger;
             _context = context;

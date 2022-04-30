@@ -11,6 +11,8 @@ using System.Text.Json;
 
 namespace CiagoarS.Common
 {
+    [ApiController]
+    [Route("[controller]")]
     public class BaseController : ControllerBase
     {
         protected ILogger<BaseController> _mLogger;
@@ -46,7 +48,7 @@ namespace CiagoarS.Common
                 Result = false,
                 ErrorCode = nameof(Resource.EC_EX),
                 ErrorMessage = Resource.EC_EX,
-                Data = default(T)
+                Data = default
             };
 
             _mLogger.LogError($"[{ModuleName}]  RESPONSE DATA  [{Serialize(response)}]{Environment.NewLine} Detail- {sDetail}{Environment.NewLine}");
@@ -61,7 +63,7 @@ namespace CiagoarS.Common
                 Result = false,
                 ErrorCode = nameof(Resource.EC_DB),
                 ErrorMessage = Resource.EC_DB,
-                Data = default(T)
+                Data = default
             };
 
             _mLogger.LogError($"[{ModuleName}]  RESPONSE DATA  [{Serialize(response)}]{Environment.NewLine} Detail- {sDetail}{Environment.NewLine}");
@@ -75,7 +77,7 @@ namespace CiagoarS.Common
                 Result = false,
                 ErrorCode = ECode.ToString(),
                 ErrorMessage = Resource.ResourceManager.GetString(ECode.ToString()),
-                Data = default(T)
+                Data = default
             };
 
             _mLogger.LogInformation($"[{ModuleName}]  RESPONSE DATA  [{Serialize(response)}]{Environment.NewLine}");

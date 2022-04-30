@@ -132,6 +132,9 @@
   <data name="RE_NEXIST_AUTHENTICATION" xml:space="preserve">
     <value>존재하지 않는 인증방식 입니다.</value>
   </data>
+  <data name="RE_NEXIST_RELATIVECOMPANY_ID" xml:space="preserve">
+    <value>해당 관계사는 존재하지 않습니다.</value>
+  </data>
   <data name="RE_NEXIST_USER" xml:space="preserve">
     <value>해당 사용자는 존재하지 않습니다.</value>
   </data>

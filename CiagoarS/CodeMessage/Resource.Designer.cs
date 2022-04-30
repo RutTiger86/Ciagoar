@@ -106,6 +106,15 @@ namespace CiagoarS.CodeMessage {
         }
         
         /// <summary>
+        ///   This relative company does not exist과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string RE_NEXIST_RELATIVECOMPANY_ID {
+            get {
+                return ResourceManager.GetString("RE_NEXIST_RELATIVECOMPANY_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   The user does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string RE_NEXIST_USER {

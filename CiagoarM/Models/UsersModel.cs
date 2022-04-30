@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace CiagoarM.Models
 {
-    public class UserModel : BaseModel
+    public class UsersModel : BaseModel
     {
 
 
@@ -57,7 +57,7 @@ namespace CiagoarM.Models
                     email = Email
                 };
 
-                string URL = Properties.Settings.Default.ServerBaseAddress + "User/userLogin";
+                string URL = Properties.Settings.Default.ServerBaseAddress + "Users/userLogin";
                 string Stringcontent = JsonSerializer.Serialize(_USER_LOGIN);
 
                 BaseResponse<Ci_User> response = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
@@ -178,7 +178,7 @@ namespace CiagoarM.Models
                     nickname = nickname
                 };
 
-                string URL = Properties.Settings.Default.ServerBaseAddress + "User/SetJoinUser";
+                string URL = Properties.Settings.Default.ServerBaseAddress + "Users/SetJoinUser";
                 string Stringcontent = JsonSerializer.Serialize(_USER_JOIN);
 
                 JoinResult = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
@@ -203,7 +203,7 @@ namespace CiagoarM.Models
                     ["authType"] = ((int)authType).ToString()
                 };
 
-                string URL = Properties.Settings.Default.ServerBaseAddress + "User/oAuthInfo";
+                string URL = Properties.Settings.Default.ServerBaseAddress + "Users/oAuthInfo";
 
                 result = await HttpHelper.SendRequest<Ci_OAuth>(URL, null, HttpMethod.Get, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, pQueryParm);
             }
@@ -228,7 +228,7 @@ namespace CiagoarM.Models
                     authStepKey = AuthenticationKey
                 };
 
-                string URL = Properties.Settings.Default.ServerBaseAddress + "User/AuthenticationStepCheck";
+                string URL = Properties.Settings.Default.ServerBaseAddress + "Users/AuthenticationStepCheck";
                 string Stringcontent = JsonSerializer.Serialize(_USER_JOIN);
 
                 JoinResult = await HttpHelper.SendRequest<bool>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);

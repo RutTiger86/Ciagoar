@@ -212,7 +212,7 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                bool success = await new UserModel().Login(authentication, Email, AuthenticationKey);
+                bool success = await new UsersModel().Login(authentication, Email, AuthenticationKey);
 
                 if (success)
                 {

@@ -151,7 +151,7 @@ namespace CiagoarM.ViewModels.Users
                 {
                     IsEnableControl = false;
 
-                    BaseResponse<bool> JoinResult = await new UserModel().AuthenticationStepCheck(Localproperties.LoginUser.Email, CheckNum_Key);
+                    BaseResponse<bool> JoinResult = await new UsersModel().AuthenticationStepCheck(Localproperties.LoginUser.Email, CheckNum_Key);
 
                     if (JoinResult.Result)
                     {
