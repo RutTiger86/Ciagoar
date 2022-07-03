@@ -1,10 +1,10 @@
-﻿using Ciagoar.Control.Command;
-using Ciagoar.Data.Response;
+﻿using Ciagoar.Data.Response;
 using Ciagoar.Data.Response.Users;
 using CiagoarM.Commons;
 using CiagoarM.Commons.Interface;
 using CiagoarM.Languages;
 using CiagoarM.Models;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,78 +21,50 @@ namespace CiagoarM.ViewModels.Users
         public string _checkNum_1 = String.Empty;
         public string CheckNum_1
         {
-            get { return _checkNum_1; }
-            set
-            {
-                _checkNum_1 = value;
-                onPropertyChanged();
-            }
+            get => _checkNum_1;
+            set => SetProperty(ref _checkNum_1, value);
         }
 
         public string _checkNum_2 = String.Empty;
         public string CheckNum_2
         {
-            get { return _checkNum_2; }
-            set
-            {
-                _checkNum_2 = value;
-                onPropertyChanged();
-            }
+            get => _checkNum_2;
+            set => SetProperty(ref _checkNum_2, value);
         }
 
         public string _checkNum_3 = String.Empty;
         public string CheckNum_3
         {
-            get { return _checkNum_3; }
-            set
-            {
-                _checkNum_3 = value;
-                onPropertyChanged();
-            }
+            get => _checkNum_3;
+            set => SetProperty(ref _checkNum_3, value);
         }
 
         public string _checkNum_4 = String.Empty;
         public string CheckNum_4
         {
-            get { return _checkNum_4; }
-            set
-            {
-                _checkNum_4 = value;
-                onPropertyChanged();
-            }
+            get => _checkNum_4;
+            set => SetProperty(ref _checkNum_4, value);
         }
 
         public string _checkNum_5 = String.Empty;
         public string CheckNum_5
         {
-            get { return _checkNum_5; }
-            set
-            {
-                _checkNum_5 = value;
-                onPropertyChanged();
-            }
+            get => _checkNum_5;
+            set => SetProperty(ref _checkNum_5, value);
         }
 
         public string _checkNum_6 = String.Empty;
         public string CheckNum_6
         {
-            get { return _checkNum_6; }
-            set
-            {
-                _checkNum_6 = value;
-                onPropertyChanged();
-            }
+            get => _checkNum_6;
+            set => SetProperty(ref _checkNum_6, value);
         }
 
         private bool _isEnableControl = true;
         public bool IsEnableControl
         {
-            get { return _isEnableControl; }
-            set
-            {
-                _isEnableControl = value;
-                onPropertyChanged();
-            }
+            get => _isEnableControl;
+            set => SetProperty(ref _isEnableControl, value);
         }
 
         #endregion
@@ -141,7 +113,7 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        private async void Check(object param)
+        private async void Check()
         {
             try
             {
@@ -179,7 +151,7 @@ namespace CiagoarM.ViewModels.Users
 
 
 
-        private void Cancle(object param)
+        private void Cancle()
         {
             try
             {

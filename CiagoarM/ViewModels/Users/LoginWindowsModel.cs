@@ -1,10 +1,10 @@
-﻿using Ciagoar.Control.Command;
-using Ciagoar.Data.Enums;
+﻿using Ciagoar.Data.Enums;
 using CiagoarM.Commons;
 using CiagoarM.Commons.Interface;
 using CiagoarM.Languages;
 using CiagoarM.Models;
 using CiagoarM.Views.Users;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,23 +22,15 @@ namespace CiagoarM.ViewModels.Users
         private string _email;
         public string Email
         {
-            get { return _email; }
-            set
-            {
-                _email = value;
-                onPropertyChanged();
-            }
+            get => _email;
+            set => SetProperty(ref _email, value);  
         }
 
         private bool _isEnableControl = true;
         public bool IsEnableControl
         {
-            get { return _isEnableControl; }
-            set
-            {
-                _isEnableControl = value;
-                onPropertyChanged();
-            }
+            get => _isEnableControl;
+            set => SetProperty(ref _isEnableControl, value);
         }
 
         private bool _isAutoLogin = Properties.Settings.Default.IsAutoLogin;
@@ -50,7 +42,7 @@ namespace CiagoarM.ViewModels.Users
                 _isAutoLogin = value;
                 Properties.Settings.Default.IsAutoLogin = value;
                 Properties.Settings.Default.Save();
-                onPropertyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -61,7 +53,7 @@ namespace CiagoarM.ViewModels.Users
 
 
         #region Command
-        public RelayCommand LoginCommand
+        public RelayCommand<PasswordBox> LoginCommand
         {
             get;
             private set;
@@ -79,7 +71,7 @@ namespace CiagoarM.ViewModels.Users
             private set;
         }
 
-        public RelayCommand LoadedCommand
+        public RelayCommand<UserControl[]> LoadedCommand
         {
             get;
             private set;
@@ -122,10 +114,10 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                LoginCommand = new RelayCommand(Login);
+                LoginCommand = new RelayCommand<PasswordBox>(p=> Login(p));
                 JoinCommand = new RelayCommand(Join);
                 GoogleStartCommand = new RelayCommand(GoogleStart);
-                LoadedCommand = new RelayCommand(Loaded);
+                LoadedCommand = new RelayCommand<UserControl[]>(p=>Loaded(p));
             }
             catch (Exception ex)
             {
@@ -134,13 +126,11 @@ namespace CiagoarM.ViewModels.Users
 
         }
 
-        private void Loaded(object param)
+        private void Loaded(UserControl[] param)
         {
             try
             {
-                var values = (object[])param;
-
-                if (values[0] is JoinView joinView && values[1] is AuthenticationStepCheckView stepCheckView)
+                if (param[0] is JoinView joinView && param[1] is AuthenticationStepCheckView stepCheckView)
                 {
                     _JoinView = joinView;
                     _JoinView.Visibility = Visibility.Hidden;
@@ -184,22 +174,19 @@ namespace CiagoarM.ViewModels.Users
         }
 
 
-        private void Login(object param)
+        private void Login(PasswordBox param)
         {
             try
             {
-                if (param is PasswordBox passwordBox)
+                if (!string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(param.Password))
                 {
-                    if (!string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(passwordBox.Password))
-                    {
-                        IsEnableControl = false;
-                        asyncLogin(AuthType.EM, Email, passwordBox.Password);
-                    }
-                    else
-                    {
-                        _ = MessageBox.Show(Resource.MSG_Input_User_Info, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
-                        IsEnableControl = true;
-                    }
+                    IsEnableControl = false;
+                    asyncLogin(AuthType.EM, Email, param.Password);
+                }
+                else
+                {
+                    _ = MessageBox.Show(Resource.MSG_Input_User_Info, Resource.Caption_Warning, MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
+                    IsEnableControl = true;
                 }
             }
             catch (Exception ex)
@@ -252,7 +239,7 @@ namespace CiagoarM.ViewModels.Users
         }
 
 
-        private void Join(object param)
+        private void Join()
         {
             try
             {
@@ -265,7 +252,7 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        private void GoogleStart(object param)
+        private void GoogleStart()
         {
             try
             {

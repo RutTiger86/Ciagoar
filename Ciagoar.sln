@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ciagoar.Data", "Ciagoar.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ciagoar.Core", "Ciagoar.Core\Ciagoar.Core.csproj", "{39CAAA83-05B2-4D16-9CBF-0C58333C2E57}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ciagoar.Control", "Ciagoar.Control\Ciagoar.Control.csproj", "{484A5F71-5EB8-4664-9599-C45907771C81}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{468AE02E-8F7D-4201-ABE6-E67BFFCEA60D}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -45,10 +43,6 @@ Global
 		{39CAAA83-05B2-4D16-9CBF-0C58333C2E57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39CAAA83-05B2-4D16-9CBF-0C58333C2E57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39CAAA83-05B2-4D16-9CBF-0C58333C2E57}.Release|Any CPU.Build.0 = Release|Any CPU
-		{484A5F71-5EB8-4664-9599-C45907771C81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{484A5F71-5EB8-4664-9599-C45907771C81}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{484A5F71-5EB8-4664-9599-C45907771C81}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{484A5F71-5EB8-4664-9599-C45907771C81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

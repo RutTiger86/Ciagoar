@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Ciagoar.Data\Ciagoar.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Base\" />
+  </ItemGroup>
+
 </Project>

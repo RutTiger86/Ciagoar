@@ -1,5 +1,4 @@
-﻿using Ciagoar.Control.Command;
-using CiagoarM.Commons;
+﻿using CiagoarM.Commons;
 using CiagoarM.Commons.Interface;
 using CiagoarM.Views.Users;
 using System;
@@ -9,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Diagnostics;
+using CommunityToolkit.Mvvm.Input;
 
 namespace CiagoarM
 {
@@ -32,7 +32,7 @@ namespace CiagoarM
             private set;
         }
 
-        public RelayCommand MenuClickCommand
+        public RelayCommand<BaseView> MenuClickCommand
         {
             get;
             private set;
@@ -43,7 +43,11 @@ namespace CiagoarM
         #region  Binding Value
 
         private string _userName = string.Empty;
-        public string UserName { get { return _userName; } set { _userName = value; onPropertyChanged(); } }
+        public string UserName 
+        {
+            get => _userName;
+            set => SetProperty(ref _userName, value);
+        }
 
         private LoginWindows _loginWindows;
         private LoginWindows loginWindows
@@ -53,7 +57,7 @@ namespace CiagoarM
                 if (_loginWindows == null)
                 {
                     _loginWindows = new LoginWindows();
-                    _loginWindows.Closed += (s, arg) => { ProgramShutdown(null); };
+                    _loginWindows.Closed += (s, arg) => { ProgramShutdown(); };
                     ((IReturnAction)_loginWindows.DataContext).ReturnAction += SuccessLogin;
                 }
 
@@ -66,15 +70,8 @@ namespace CiagoarM
 
         public object MainView
         {
-            get
-            { 
-                return _mainView; 
-            }
-            set
-            {
-                _mainView = value;
-                onPropertyChanged();
-            }
+            get => _mainView;
+            set => SetProperty(ref _mainView, value);            
         }
 
         #endregion
@@ -98,7 +95,7 @@ namespace CiagoarM
             {
                 MainClosedCommand = new RelayCommand(ProgramShutdown);
                 LogoutCommand = new RelayCommand(Logout);
-                MenuClickCommand = new RelayCommand(MenuClick);
+                MenuClickCommand = new RelayCommand<BaseView>(p=> MenuClick(p));
                 LogInfo("SettingCommand Done");
             }
             catch (Exception ex)
@@ -107,7 +104,7 @@ namespace CiagoarM
             }
         }
 
-        private void MenuClick(object parm)
+        private void MenuClick(BaseView parm)
         {
             try
             {
@@ -119,7 +116,7 @@ namespace CiagoarM
             }
         }
 
-        private void Logout(object param)
+        private void Logout()
         {
             try
             {
@@ -162,7 +159,7 @@ namespace CiagoarM
         }
 
 
-        private void ProgramShutdown(object param)
+        private void ProgramShutdown()
         {
             try
             {

@@ -1,6 +1,6 @@
-﻿using Ciagoar.Control.Command;
-using CiagoarM.Commons;
+﻿using CiagoarM.Commons;
 using CiagoarM.Views.Setting;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,26 +18,19 @@ namespace CiagoarM.ViewModels.Setting
             private set;
         }
 
-        public RelayCommand MenuSelectCommand
+        public RelayCommand<BaseView> MenuSelectCommand
         {
             get;
             private set;
         }
 
 
-        private object _settingView = null;
+        private BaseView _settingView = null;
 
-        public object SettingView
+        public BaseView SettingView
         {
-            get
-            {
-                return _settingView;
-            }
-            set
-            {
-                _settingView = value;
-                onPropertyChanged();
-            }
+            get => _settingView;
+            set => SetProperty(ref _settingView, value);
         }
 
         public SettingMainViewModel()
@@ -50,7 +43,7 @@ namespace CiagoarM.ViewModels.Setting
             try
             {
                 SearchCommand = new RelayCommand(Search);
-                MenuSelectCommand = new RelayCommand(MenuSelect);
+                MenuSelectCommand = new RelayCommand<BaseView>(p=> MenuSelect(p));
             }
             catch (Exception ex)
             {
@@ -58,7 +51,7 @@ namespace CiagoarM.ViewModels.Setting
             }
         }
 
-        private void Search(object parm)
+        private void Search()
         {
             try
             {
@@ -70,7 +63,7 @@ namespace CiagoarM.ViewModels.Setting
             }
         }
 
-        private void MenuSelect(object parm)
+        private void MenuSelect(BaseView parm)
         {
             try
             {

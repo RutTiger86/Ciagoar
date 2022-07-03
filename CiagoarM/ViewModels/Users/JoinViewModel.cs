@@ -1,11 +1,11 @@
-﻿using Ciagoar.Control.Command;
-using Ciagoar.Data.Request.Users;
+﻿using Ciagoar.Data.Request.Users;
 using Ciagoar.Data.Response;
 using Ciagoar.Data.Response.Users;
 using CiagoarM.Commons;
 using CiagoarM.Commons.Interface;
 using CiagoarM.Languages;
 using CiagoarM.Models;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,13 +26,13 @@ namespace CiagoarM.ViewModels.Users
 
         public string Email
         {
-            get { return _email; }
+            get => _email;
             set
             {
                 if (Regex.IsMatch(value, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase))
                 {
                     _email = value;
-                    onPropertyChanged();
+                    OnPropertyChanged();
                 }
                 else
                 {
@@ -46,7 +46,7 @@ namespace CiagoarM.ViewModels.Users
                         _ = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
                     }
                     _email = String.Empty;
-                    onPropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -54,35 +54,28 @@ namespace CiagoarM.ViewModels.Users
         private string _nickName;
         public string NickName
         {
-            get { return _nickName; }
-            set
-            {
-                _nickName = value;
-                onPropertyChanged();
-            }
+            get => _nickName;
+            set => SetProperty(ref _nickName, value);
         }
 
         private bool _isEnableControl = true;
         public bool IsEnableControl
         {
-            get { return _isEnableControl; }
-            set
-            {
-                _isEnableControl = value;
-                onPropertyChanged();
-            }
+
+            get => _isEnableControl;
+            set => SetProperty(ref _isEnableControl, value);
         }
         #endregion
 
         #region Command
 
-        public RelayCommand JoinCommand
+        public RelayCommand<PasswordBox[]> JoinCommand
         {
             get;
             private set;
         }
 
-        public RelayCommand CancleCommand
+        public RelayCommand<PasswordBox[]> CancleCommand
         {
             get;
             private set;
@@ -108,8 +101,8 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                CancleCommand = new RelayCommand(Cancle);
-                JoinCommand = new RelayCommand(Join);
+                CancleCommand = new RelayCommand<PasswordBox[]>(p=>Cancle(p));
+                JoinCommand = new RelayCommand<PasswordBox[]>(p=>Join(p));
             }
             catch (Exception ex)
             {
@@ -118,13 +111,11 @@ namespace CiagoarM.ViewModels.Users
         }
 
 
-        private async void Join(object param)
+        private async void Join(PasswordBox[] param)
         {
             try
             {
-                var values = (object[])param;
-
-                if (values[0] is PasswordBox PWS1 && values[1] is PasswordBox PWS2)
+                if (param[0] is PasswordBox PWS1 && param[1] is PasswordBox PWS2)
                 {
                     if(PWS1.Password == PWS2.Password)
                     {
@@ -165,13 +156,11 @@ namespace CiagoarM.ViewModels.Users
 
         
 
-        private void Cancle(object param)
+        private void Cancle(PasswordBox[] param)
         {
             try
             {
-                var values = (object[])param;
-
-                if (values[0] is PasswordBox PWS1 && values[1] is PasswordBox PWS2)
+                if (param[0] is PasswordBox PWS1 && param[1] is PasswordBox PWS2)
                 {
                     PWS1.Password = null;
                     PWS2.Password = null;

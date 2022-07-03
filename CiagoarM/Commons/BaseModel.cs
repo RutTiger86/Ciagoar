@@ -1,5 +1,4 @@
-﻿using Ciagoar.Core.Base;
-using log4net;
+﻿using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +6,12 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace CiagoarM.Commons
 {
-    public class BaseModel : PropertyChangeBase
+    public class BaseModel :ObservableObject
     {
         private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
