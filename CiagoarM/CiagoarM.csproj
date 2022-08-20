@@ -147,13 +147,14 @@
 
 	<ItemGroup>
 	  <Folder Include="Commons\Interface\" />
+	  <Folder Include="Views\Setting\Company\" />
 	</ItemGroup>
 
   <Target Name="RemoveDuplicateAnalyzers" BeforeTargets="CoreCompile">
     <!-- Work around https://github.com/dotnet/wpf/issues/6792 -->
 
     <ItemGroup>
-      <FilteredAnalyzer Include="@(Analyzer->Distinct())" />
+      <FilteredAnalyzer Include="@(Analyzer-&gt;Distinct())" />
       <Analyzer Remove="@(Analyzer)" />
       <Analyzer Include="@(FilteredAnalyzer)" />
     </ItemGroup>

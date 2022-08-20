@@ -3,11 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:CiagoarM.Views.Setting"               
+             xmlns:local="clr-namespace:CiagoarM.Views.Setting"            
+             xmlns:Model="clr-namespace:CiagoarM.ViewModels.Setting"        
              xmlns:Lang ="clr-namespace:CiagoarM.Languages"
              xmlns:Base="clr-namespace:CiagoarM.Commons"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Margin="10" Title="{x:Static Lang:Resource.Title_Setting_Company}">
+    <Base:BaseView.DataContext>
+        <Model:CompanySettingViewModel/>
+    </Base:BaseView.DataContext>
+    
     <Grid d:Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -15,9 +20,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="P" Width="37" Margin="3"/>
-            <Button Content="-" Width="37" Margin="3"/>
-            <Button Content="+" Width="37" Margin="3"/>
+            <Button Content="-" Width="37" Margin="3" Command="{Binding DeleteCompanyCommand}"/>
+            <Button Content="+" Width="37" Margin="3" Command="{Binding AddCompanyCommand}"/>
         </StackPanel>
 
         <DataGrid Grid.Row="1"/>
