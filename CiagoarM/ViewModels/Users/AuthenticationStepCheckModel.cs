@@ -1,10 +1,11 @@
 ﻿using Ciagoar.Data.Response;
 using Ciagoar.Data.Response.Users;
 using CiagoarM.Commons;
-using CiagoarM.Commons.Interface;
+using CiagoarM.Commons.Messenger;
 using CiagoarM.Languages;
 using CiagoarM.Models;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ using System.Windows;
 
 namespace CiagoarM.ViewModels.Users
 {
-    public class AuthenticationStepCheckModel : BaseModel, IReturnAction
+    public class AuthenticationStepCheckModel : BaseModel
     {
 
         #region Bindeing Value
@@ -83,9 +84,6 @@ namespace CiagoarM.ViewModels.Users
         }
 
         #endregion
-
-
-        public Action ReturnAction { get; set; }
 
 
         public AuthenticationStepCheckModel()
@@ -177,7 +175,7 @@ namespace CiagoarM.ViewModels.Users
                 IsEnableControl = true;
 
 
-                ReturnAction?.Invoke();
+                WeakReferenceMessenger.Default.Send(new CheckViewHiddenMessage(true));
 
             }
             catch (Exception ex)

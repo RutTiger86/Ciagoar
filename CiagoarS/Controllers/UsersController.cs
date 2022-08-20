@@ -590,7 +590,7 @@ namespace CiagoarS.Controllers
         /// <para>Data - 성공시 결과 true/false</para>
         /// </response>
         [Route("UpdateAuthentication")]
-        [HttpPost]
+        [HttpPut]
         [Produces("application/json")]
         public BaseResponse<bool> UpdateAuthentication(REQ_AUTH parameters)
         {
@@ -651,7 +651,7 @@ namespace CiagoarS.Controllers
         /// <para>Data - 성공시 결과 true/false</para>
         /// </response>
         [Route("AuthenticationStepCheck")]
-        [HttpPost]
+        [HttpPut]
         [Produces("application/json")]
         public BaseResponse<bool> AuthenticationStepCheck(REQ_AUTH_STEP parameters)
         {

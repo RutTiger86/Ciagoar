@@ -137,7 +137,7 @@ namespace CiagoarS.Controllers
         /// <para>Data - 입력된 Company ID </para>
         /// </response>
         [Route("RelativeCompany")]
-        [HttpPut]
+        [HttpPost]
         [Produces("application/json")]
         public BaseResponse<int> InserRelativeCompany([FromBody] REQ_RELATVE_CO_PUT parameters)
         {
@@ -204,7 +204,7 @@ namespace CiagoarS.Controllers
         /// <para>Data - 수정된 Company ID </para>
         /// </response>
         [Route("RelativeCompany")]
-        [HttpPost]
+        [HttpPut]
         [Produces("application/json")]
         public BaseResponse<int> UpdateRelativeCompany([FromBody] REQ_RELATVE_CO_POST parameters)
         {

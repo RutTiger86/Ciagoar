@@ -1,5 +1,4 @@
 ﻿using CiagoarM.Commons;
-using CiagoarM.Commons.Interface;
 using CiagoarM.Views.Users;
 using System;
 using System.Collections.Generic;
@@ -9,10 +8,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
+using CiagoarM.Commons.Messenger;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace CiagoarM
 {
-    public class MainWindowModel : BaseModel
+    public class MainWindowModel : BaseModel,IRecipient<LoginMessage>
     {
         #region Command
 
@@ -58,7 +59,6 @@ namespace CiagoarM
                 {
                     _loginWindows = new LoginWindows();
                     _loginWindows.Closed += (s, arg) => { ProgramShutdown(); };
-                    ((IReturnAction)_loginWindows.DataContext).ReturnAction += SuccessLogin;
                 }
 
                 return _loginWindows;
@@ -81,6 +81,7 @@ namespace CiagoarM
             {
                 LogInfo("★★★★★ MainWindowModel Start ★★★★★");
                 SettingCommand();
+                SettingMessage();
                 LogInfo("loginWindows Show");
             }
             catch (Exception ex)
@@ -97,6 +98,18 @@ namespace CiagoarM
                 LogoutCommand = new RelayCommand(Logout);
                 MenuClickCommand = new RelayCommand<BaseView>(p=> MenuClick(p));
                 LogInfo("SettingCommand Done");
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
+
+        private void SettingMessage()
+        {
+            try
+            {
+                WeakReferenceMessenger.Default.Register<LoginMessage>(this);
             }
             catch (Exception ex)
             {
@@ -143,7 +156,7 @@ namespace CiagoarM
             }
         }
 
-        private void SuccessLogin()
+        public void Receive(LoginMessage message)
         {
             try
             {
@@ -157,7 +170,6 @@ namespace CiagoarM
                 LogException(ex.Message);
             }
         }
-
 
         private void ProgramShutdown()
         {
@@ -174,7 +186,6 @@ namespace CiagoarM
             }
         }
 
-
-
+       
     }
 }

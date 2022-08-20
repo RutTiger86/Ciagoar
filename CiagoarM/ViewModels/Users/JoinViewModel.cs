@@ -2,10 +2,11 @@
 using Ciagoar.Data.Response;
 using Ciagoar.Data.Response.Users;
 using CiagoarM.Commons;
-using CiagoarM.Commons.Interface;
+using CiagoarM.Commons.Messenger;
 using CiagoarM.Languages;
 using CiagoarM.Models;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +19,7 @@ using System.Windows.Controls;
 
 namespace CiagoarM.ViewModels.Users
 {
-    public class JoinViewModel : BaseModel, IReturnAction
+    public class JoinViewModel : BaseModel
     {
         #region Binding Value
 
@@ -69,19 +70,18 @@ namespace CiagoarM.ViewModels.Users
 
         #region Command
 
-        public RelayCommand<PasswordBox[]> JoinCommand
+        public RelayCommand<object[]> JoinCommand
         {
             get;
             private set;
         }
 
-        public RelayCommand<PasswordBox[]> CancleCommand
+        public RelayCommand<object[]> CancleCommand
         {
             get;
             private set;
         }
 
-        public Action ReturnAction { get; set; }
 
         #endregion
 
@@ -101,8 +101,8 @@ namespace CiagoarM.ViewModels.Users
         {
             try
             {
-                CancleCommand = new RelayCommand<PasswordBox[]>(p=>Cancle(p));
-                JoinCommand = new RelayCommand<PasswordBox[]>(p=>Join(p));
+                CancleCommand = new RelayCommand<object[]>(p=>Cancle(p));
+                JoinCommand = new RelayCommand<object[]>(p=>Join(p));
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace CiagoarM.ViewModels.Users
         }
 
 
-        private async void Join(PasswordBox[] param)
+        private async void Join(object[] param)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace CiagoarM.ViewModels.Users
 
         
 
-        private void Cancle(PasswordBox[] param)
+        private void Cancle(object[] param)
         {
             try
             {
@@ -181,8 +181,7 @@ namespace CiagoarM.ViewModels.Users
                 Email = String.Empty;
                 NickName = String.Empty;
                 IsEnableControl = true;
-
-                ReturnAction?.Invoke();
+                WeakReferenceMessenger.Default.Send(new JoinViewHiddenMessage(true));
 
             }
             catch (Exception ex)

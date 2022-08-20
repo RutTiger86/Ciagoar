@@ -1,10 +1,11 @@
 ﻿using Ciagoar.Data.Enums;
 using CiagoarM.Commons;
-using CiagoarM.Commons.Interface;
+using CiagoarM.Commons.Messenger;
 using CiagoarM.Languages;
 using CiagoarM.Models;
 using CiagoarM.Views.Users;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ using System.Windows.Controls;
 
 namespace CiagoarM.ViewModels.Users
 {
-    public class LoginWindowsModel : BaseModel, IReturnAction
+    public class LoginWindowsModel : BaseModel, IRecipient<CheckViewHiddenMessage>, IRecipient<JoinViewHiddenMessage>
     {
         #region Binding Value
 
@@ -71,12 +72,12 @@ namespace CiagoarM.ViewModels.Users
             private set;
         }
 
-        public RelayCommand<UserControl[]> LoadedCommand
+        public RelayCommand<object[]> LoadedCommand
         {
             get;
             private set;
         }
-        public Action ReturnAction { get; set; }
+
 
         #endregion
 
@@ -86,6 +87,7 @@ namespace CiagoarM.ViewModels.Users
             try
             {
                 SettingCommand();
+                SettingMessage();
                 AutoLoginCheck();
             }
             catch (Exception ex)
@@ -117,7 +119,7 @@ namespace CiagoarM.ViewModels.Users
                 LoginCommand = new RelayCommand<PasswordBox>(p=> Login(p));
                 JoinCommand = new RelayCommand(Join);
                 GoogleStartCommand = new RelayCommand(GoogleStart);
-                LoadedCommand = new RelayCommand<UserControl[]>(p=>Loaded(p));
+                LoadedCommand = new RelayCommand<object[]>(p=>Loaded(p));
             }
             catch (Exception ex)
             {
@@ -125,8 +127,20 @@ namespace CiagoarM.ViewModels.Users
             }
 
         }
+        private void SettingMessage()
+        {
+            try
+            {
+                WeakReferenceMessenger.Default.Register<CheckViewHiddenMessage>(this);
+                WeakReferenceMessenger.Default.Register<JoinViewHiddenMessage>(this);
+            }
+            catch (Exception ex)
+            {
+                LogException(ex.Message);
+            }
+        }
 
-        private void Loaded(UserControl[] param)
+        private void Loaded(object[] param)
         {
             try
             {
@@ -134,11 +148,9 @@ namespace CiagoarM.ViewModels.Users
                 {
                     _JoinView = joinView;
                     _JoinView.Visibility = Visibility.Hidden;
-                    ((IReturnAction)_JoinView.DataContext).ReturnAction += JoinViewHiden;
 
                     _CheckView = stepCheckView;
                     _CheckView.Visibility = Visibility.Hidden;
-                    ((IReturnAction)_CheckView.DataContext).ReturnAction += CheckViewHiden;
                 }
             }
             catch (Exception ex)
@@ -147,12 +159,21 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        private void JoinViewHiden()
+
+        public void Receive(CheckViewHiddenMessage message)
         {
             try
             {
-                _JoinView.Visibility = Visibility.Hidden;
-                IsEnableControl = true;
+                if (message.Value)
+                {
+                    _CheckView.Visibility = Visibility.Hidden;
+                    IsEnableControl = true;
+                }
+                else
+                {
+                    _CheckView.Visibility = Visibility.Visible;
+                    IsEnableControl = false;
+                }
             }
             catch (Exception ex)
             {
@@ -160,19 +181,27 @@ namespace CiagoarM.ViewModels.Users
             }
         }
 
-        private void CheckViewHiden()
+        public void Receive(JoinViewHiddenMessage message)
         {
             try
             {
-                _CheckView.Visibility = Visibility.Hidden;
-                IsEnableControl = true;
+                if (message.Value)
+                {
+                    _JoinView.Visibility = Visibility.Hidden;
+                    IsEnableControl = true;
+                }
+                else
+                {
+                    _JoinView.Visibility = Visibility.Visible;
+                    IsEnableControl = false;
+                }
+
             }
             catch (Exception ex)
             {
                 LogException(ex.Message);
             }
         }
-
 
         private void Login(PasswordBox param)
         {
@@ -221,7 +250,7 @@ namespace CiagoarM.ViewModels.Users
                         }
 
                         IsEnableControl = true;
-                        ReturnAction?.Invoke();
+                        WeakReferenceMessenger.Default.Send(new LoginMessage(true));
                     }
 
                 }
@@ -263,8 +292,6 @@ namespace CiagoarM.ViewModels.Users
                 LogException(ex.Message);
             }
         }
-
-
 
     }
 }
