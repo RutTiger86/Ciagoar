@@ -261,6 +261,15 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   ID과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_ID {
+            get {
+                return ResourceManager.GetString("Title_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Join과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Title_Join {

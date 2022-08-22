@@ -77,16 +77,23 @@ namespace CiagoarS.Controllers
                     || p.CoAddress.Contains(parameters.searchString));
                 }
 
-                switch (parameters.sortOrder.ToUpper())
+                if (!string.IsNullOrWhiteSpace(parameters.sortOrder))
                 {
-                    case "ID_DESC": relativeCos = relativeCos.OrderByDescending(p => p.Id); break;
-                    case "CONAME": relativeCos = relativeCos.OrderBy(p => p.CoName); break;
-                    case "CONAME_DESC": relativeCos = relativeCos.OrderByDescending(p => p.CoName); break;
-                    case "COADDRESS": relativeCos = relativeCos.OrderBy(p => p.CoAddress); break;
-                    case "COADDRESS_DESC": relativeCos = relativeCos.OrderByDescending(p => p.CoAddress); break;
-                    case "PHONENUMBER": relativeCos = relativeCos.OrderBy(p => p.PhoneNumber); break;
-                    case "PHONENUMBER_DESC": relativeCos = relativeCos.OrderByDescending(p => p.PhoneNumber); break;
-                    default: relativeCos = relativeCos.OrderBy(p => p.Id); break;
+                    switch (parameters.sortOrder.ToUpper())
+                    {
+                        case "ID_DESC": relativeCos = relativeCos.OrderByDescending(p => p.Id); break;
+                        case "CONAME": relativeCos = relativeCos.OrderBy(p => p.CoName); break;
+                        case "CONAME_DESC": relativeCos = relativeCos.OrderByDescending(p => p.CoName); break;
+                        case "COADDRESS": relativeCos = relativeCos.OrderBy(p => p.CoAddress); break;
+                        case "COADDRESS_DESC": relativeCos = relativeCos.OrderByDescending(p => p.CoAddress); break;
+                        case "PHONENUMBER": relativeCos = relativeCos.OrderBy(p => p.PhoneNumber); break;
+                        case "PHONENUMBER_DESC": relativeCos = relativeCos.OrderByDescending(p => p.PhoneNumber); break;
+                        default: relativeCos = relativeCos.OrderBy(p => p.Id); break;
+                    }
+                }
+                else
+                {
+                    relativeCos = relativeCos.OrderBy(p => p.Id);
                 }
 
                 response.Result = true;
@@ -99,7 +106,9 @@ namespace CiagoarS.Controllers
                         CoName = p.CoName,
                         ConnectUrl = p.ConnectUrl,
                         Memo = p.Memo,
-                        PhoneNumber = p.PhoneNumber
+                        PhoneNumber = p.PhoneNumber,
+                        CreateTime = p.Createtime,
+                        UpdateTime = p.Updatetime
                     }).ToList();
             }
             catch (Exception Exp)

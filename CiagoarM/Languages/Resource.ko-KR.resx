@@ -153,6 +153,9 @@
   <data name="Title_Confirm" xml:space="preserve">
     <value>확인</value>
   </data>
+  <data name="Title_ID" xml:space="preserve">
+    <value>아이디</value>
+  </data>
   <data name="Title_Join" xml:space="preserve">
     <value>회원가입</value>
   </data>

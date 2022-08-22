@@ -14,5 +14,7 @@ namespace Ciagoar.Data.Response.RelativecCompanies
         public string PhoneNumber { get; set; }
         public string ConnectUrl { get; set; }
         public string Memo { get; set; }
+        public DateTime CreateTime { get; set; }
+        public DateTime? UpdateTime { get; set; }
     }
 }

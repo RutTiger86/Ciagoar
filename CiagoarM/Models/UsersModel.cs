@@ -60,7 +60,7 @@ namespace CiagoarM.Models
                 string URL = Properties.Settings.Default.ServerBaseAddress + "Users/userLogin";
                 string Stringcontent = JsonSerializer.Serialize(_USER_LOGIN);
 
-                BaseResponse<Ci_User> response = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
+                BaseResponse<Ci_User> response = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post);
 
                 if (response.Result)
                 {
@@ -181,7 +181,7 @@ namespace CiagoarM.Models
                 string URL = Properties.Settings.Default.ServerBaseAddress + "Users/SetJoinUser";
                 string Stringcontent = JsonSerializer.Serialize(_USER_JOIN);
 
-                JoinResult = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
+                JoinResult = await HttpHelper.SendRequest<Ci_User>(URL, Stringcontent, HttpMethod.Post);
 
             }
             catch (Exception ex)
@@ -205,7 +205,7 @@ namespace CiagoarM.Models
 
                 string URL = Properties.Settings.Default.ServerBaseAddress + "Users/oAuthInfo";
 
-                result = await HttpHelper.SendRequest<Ci_OAuth>(URL, null, HttpMethod.Get, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, pQueryParm);
+                result = await HttpHelper.SendRequest<Ci_OAuth>(URL, null, HttpMethod.Get, pQueryParm);
             }
             catch (Exception ex)
             {
@@ -231,7 +231,7 @@ namespace CiagoarM.Models
                 string URL = Properties.Settings.Default.ServerBaseAddress + "Users/AuthenticationStepCheck";
                 string Stringcontent = JsonSerializer.Serialize(_USER_JOIN);
 
-                JoinResult = await HttpHelper.SendRequest<bool>(URL, Stringcontent, HttpMethod.Put, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, null);
+                JoinResult = await HttpHelper.SendRequest<bool>(URL, Stringcontent, HttpMethod.Put);
 
             }
             catch (Exception ex)

@@ -7,12 +7,20 @@
              xmlns:Model="clr-namespace:CiagoarM.ViewModels.Setting"        
              xmlns:Lang ="clr-namespace:CiagoarM.Languages"
              xmlns:Base="clr-namespace:CiagoarM.Commons"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:control="clr-namespace:CiagoarM.Commons.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Margin="10" Title="{x:Static Lang:Resource.Title_Setting_Company}">
     <Base:BaseView.DataContext>
         <Model:CompanySettingViewModel/>
     </Base:BaseView.DataContext>
-    
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid d:Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -24,7 +32,7 @@
             <Button Content="+" Width="37" Margin="3" Command="{Binding AddCompanyCommand}"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="1"/>
+        <control:CustomDataGrid Grid.Row="1" ItemsSource="{Binding CompanyList, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" AutoGenerateColumns="True"/>
 
     </Grid>
 

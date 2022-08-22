@@ -15,7 +15,7 @@ namespace Ciagoar.Core.Helper
 {
     public class HttpHelper
     {
-        public async static Task<BaseResponse<T>> SendRequest<T>(string pUrl, string pBody, HttpMethod pMethod, MediaType pAccept = MediaType.APPLICATION_JSON, MediaType pContent = MediaType.APPLICATION_JSON, Dictionary<string, string> pQueryParm = null)
+        public async static Task<BaseResponse<T>> SendRequest<T>(string pUrl, string pBody, HttpMethod pMethod, Dictionary<string, string> pQueryParm = null,MediaType pAccept = MediaType.APPLICATION_JSON, MediaType pContent = MediaType.APPLICATION_JSON)
         {
             BaseResponse<T> response = new BaseResponse<T>();
             try

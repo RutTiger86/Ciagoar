@@ -181,6 +181,9 @@
   <data name="Title_Auto_Login" xml:space="preserve">
     <value>Auto Login</value>
   </data>
+  <data name="Title_ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
   <data name="Title_Join" xml:space="preserve">
     <value>Join</value>
   </data>
