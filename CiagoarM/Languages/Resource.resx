@@ -181,6 +181,15 @@
   <data name="Title_Auto_Login" xml:space="preserve">
     <value>Auto Login</value>
   </data>
+  <data name="Title_CoAddress" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Title_CoName" xml:space="preserve">
+    <value>Company Name</value>
+  </data>
+  <data name="Title_CreateTime" xml:space="preserve">
+    <value>Create Time</value>
+  </data>
   <data name="Title_ID" xml:space="preserve">
     <value>ID</value>
   </data>
@@ -189,6 +198,9 @@
   </data>
   <data name="Title_Login" xml:space="preserve">
     <value>Login</value>
+  </data>
+  <data name="Title_Memo" xml:space="preserve">
+    <value>Memo</value>
   </data>
   <data name="Title_Menu_DashBoard" xml:space="preserve">
     <value>DashBoard</value>
@@ -208,6 +220,9 @@
   <data name="Title_Menu_Setting" xml:space="preserve">
     <value>Setting</value>
   </data>
+  <data name="Title_PhoneNumber" xml:space="preserve">
+    <value>Phone Number</value>
+  </data>
   <data name="Title_Setting_Company" xml:space="preserve">
     <value>Company</value>
   </data>
@@ -222,6 +237,9 @@
   </data>
   <data name="Title_Total_Text" xml:space="preserve">
     <value>Come In And Go Out And Record</value>
+  </data>
+  <data name="Title_UpdateTime" xml:space="preserve">
+    <value>Update Time</value>
   </data>
   <data name="User_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\User_icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

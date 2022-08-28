@@ -150,8 +150,17 @@
   <data name="Title_Cancle" xml:space="preserve">
     <value>취소</value>
   </data>
+  <data name="Title_CoAddress" xml:space="preserve">
+    <value>주소</value>
+  </data>
+  <data name="Title_CoName" xml:space="preserve">
+    <value>회사명</value>
+  </data>
   <data name="Title_Confirm" xml:space="preserve">
     <value>확인</value>
+  </data>
+  <data name="Title_CreateTime" xml:space="preserve">
+    <value>생성일자</value>
   </data>
   <data name="Title_ID" xml:space="preserve">
     <value>아이디</value>
@@ -161,6 +170,9 @@
   </data>
   <data name="Title_Login" xml:space="preserve">
     <value>로그인</value>
+  </data>
+  <data name="Title_Memo" xml:space="preserve">
+    <value>메모 </value>
   </data>
   <data name="Title_Menu_DashBoard" xml:space="preserve">
     <value>대쉬보드</value>
@@ -180,6 +192,9 @@
   <data name="Title_Menu_Setting" xml:space="preserve">
     <value>설정</value>
   </data>
+  <data name="Title_PhoneNumber" xml:space="preserve">
+    <value>전화번호</value>
+  </data>
   <data name="Title_Setting_Company" xml:space="preserve">
     <value>관계사</value>
   </data>
@@ -194,5 +209,8 @@
   </data>
   <data name="Title_Total_Text" xml:space="preserve">
     <value>들어오고 나가고 기록하고 (Come In And Go Out And Record)</value>
+  </data>
+  <data name="Title_UpdateTime" xml:space="preserve">
+    <value>수정일자</value>
   </data>
 </root>

@@ -20,6 +20,7 @@ namespace CiagoarM.Datas.Company
         private Ci_RELATVE_CO _companyInfo;
 
         [Browsable(false)]
+       
         public Ci_RELATVE_CO CompanyInfo
         {
             get => _companyInfo;
@@ -28,6 +29,7 @@ namespace CiagoarM.Datas.Company
 
 
         [LocalizedDisplayName("Title_ID", typeof(Resource))]
+        [CustomColumnAttributes(MinWidth = 60, StarWidth =60)]
         public int ID
         {
             get => _companyInfo.Id;
@@ -38,8 +40,77 @@ namespace CiagoarM.Datas.Company
             }
         }
 
+        [LocalizedDisplayName("Title_CoName", typeof(Resource))]
+        [CustomColumnAttributes(MinWidth = 120, StarWidth = 120)]
+        public string CoName
+        {
+            get => _companyInfo.CoName;
+            set
+            {
+                _companyInfo.CoName = value;
+                OnPropertyChanged();
+            }
+        }
 
+        [LocalizedDisplayName("Title_CoAddress", typeof(Resource))]
+        [Browsable(false)]
+        public string CoAddress
+        {
+            get => _companyInfo.CoAddress;
+            set
+            {
+                _companyInfo.CoAddress = value;
+                OnPropertyChanged();
+            }
+        }
 
+        [LocalizedDisplayName("Title_PhoneNumber", typeof(Resource))]
+        [CustomColumnAttributes(MinWidth = 100, StarWidth = 100)]
+        public string PhoneNumber
+        {
+            get => _companyInfo.PhoneNumber;
+            set
+            {
+                _companyInfo.PhoneNumber = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [LocalizedDisplayName("Title_Memo", typeof(Resource))]
+        [Browsable(false)]
+        public string Memo
+        {
+            get => _companyInfo.Memo;
+            set
+            {
+                _companyInfo.Memo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [LocalizedDisplayName("Title_CreateTime", typeof(Resource))]
+        [CustomColumnAttributes(MinWidth = 120, StarWidth = 120)]
+        public DateTime CreateTime
+        {
+            get => _companyInfo.CreateTime;
+            set
+            {
+                _companyInfo.CreateTime = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [LocalizedDisplayName("Title_UpdateTime", typeof(Resource))]
+        [CustomColumnAttributes(MinWidth = 120, StarWidth = 120)]
+        public DateTime? UpdateTime
+        {
+            get => _companyInfo.UpdateTime;
+            set
+            {
+                _companyInfo.UpdateTime = value;
+                OnPropertyChanged();
+            }
+        }
 
         public RelayCompInfo(Ci_RELATVE_CO MainData)
         {

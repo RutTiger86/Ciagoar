@@ -261,6 +261,33 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   Address과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_CoAddress {
+            get {
+                return ResourceManager.GetString("Title_CoAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Company Name과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_CoName {
+            get {
+                return ResourceManager.GetString("Title_CoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Create Time과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_CreateTime {
+            get {
+                return ResourceManager.GetString("Title_CreateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   ID과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Title_ID {
@@ -284,6 +311,15 @@ namespace CiagoarM.Languages {
         public static string Title_Login {
             get {
                 return ResourceManager.GetString("Title_Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Memo과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_Memo {
+            get {
+                return ResourceManager.GetString("Title_Memo", resourceCulture);
             }
         }
         
@@ -342,6 +378,15 @@ namespace CiagoarM.Languages {
         }
         
         /// <summary>
+        ///   Phone Number과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_PhoneNumber {
+            get {
+                return ResourceManager.GetString("Title_PhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Company과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         public static string Title_Setting_Company {
@@ -383,6 +428,15 @@ namespace CiagoarM.Languages {
         public static string Title_Total_Text {
             get {
                 return ResourceManager.GetString("Title_Total_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Update Time과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        public static string Title_UpdateTime {
+            get {
+                return ResourceManager.GetString("Title_UpdateTime", resourceCulture);
             }
         }
         
