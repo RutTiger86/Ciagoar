@@ -9,6 +9,7 @@ using Ciagoar.Data.Response.Users;
 using CiagoarS.Common;
 using CiagoarS.Common.Enums;
 using CiagoarS.DataBase;
+using CiagoarS.Repositorys;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -32,6 +33,7 @@ namespace CiagoarS.Controllers
         private const int _it_count = 5;
         private const int _length = 128;
 
+        private UserRepos Repos; 
         /// <summary>
         /// 
         /// </summary>
@@ -40,7 +42,10 @@ namespace CiagoarS.Controllers
         public UsersController(ILogger<UsersController> logger, CiagoarContext context)
         {
             _mLogger = logger;
+
             _context = context;
+
+            Repos = new UserRepos(context);
         }
 
         /// <summary>
@@ -102,16 +107,7 @@ namespace CiagoarS.Controllers
             {
                 Password = CryptographyHelper.GetPbkdf2(Password, _salt, _it_count, _length);
 
-                Ci_User userInfo = (from UInfo in _context.UserInfos.Where(p => p.Email.Equals(Email) && (bool)p.Isuse && !p.Isdelete)
-                                    join UAuthentications in _context.UserAuths.Where(p => p.AuthKey.Equals(Password) && p.TypeCode == (int)AuthType.EM && (bool)p.Isuse && !p.Isdelete)
-                                    on UInfo.Id equals UAuthentications.UserInfoId
-                                    select new Ci_User()
-                                    {
-                                        TypeCode = UInfo.TypeCode,
-                                        Email = UInfo.Email,
-                                        Nickname = UInfo.Nickname,
-                                        AuthStep = UAuthentications.AuthStep
-                                    }).FirstOrDefault();
+                Ci_User userInfo = Repos.GetUser(Email, Password);
 
                 if (userInfo != null)
                 {
