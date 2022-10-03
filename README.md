@@ -29,6 +29,5 @@ ERD https://www.erdcloud.com/d/B3oTztbd5uhaTcmB5
 
 
 *접두어 추가
- - static : _s
  - member : _m
  - interface : i
