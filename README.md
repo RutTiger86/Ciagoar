@@ -23,6 +23,7 @@ ERD https://www.erdcloud.com/d/B3oTztbd5uhaTcmB5
 
 <예시>
 함수명 : GetMyName()
+
 변수명 : myName
 
 
