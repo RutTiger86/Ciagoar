@@ -14,3 +14,18 @@ DataBase를 설계 구현하여 사용하고 있으며
 DataBase 설계는 아래에서 보실수 있습니다. 
 
 ERD https://www.erdcloud.com/d/B3oTztbd5uhaTcmB5
+
+
+선정 코딩 규칙(Camel)
+* 각 단어 사이를 대문자로 구분
+* 함수명은 첫 글자를 대문자 
+* 변수명은 첫 글자가 소문자 
+
+<예시>
+함수명 : GetMyName()
+변수명 : myName
+
+
+*접두어 추가
+ - static : s_
+ - interface : i
