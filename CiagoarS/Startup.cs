@@ -16,7 +16,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using log4net;
-
+using CiagoarS.Interface;
+using CiagoarS.Repositorys;
 
 namespace CiagoarS
 {
@@ -53,6 +54,8 @@ namespace CiagoarS
             var DBConnection = Configuration["ConnectionStrings:DataBaseInfo:ConnectionString"];
 
             services.AddDbContext<CiagoarContext>(options => options.UseSqlServer(DBConnection));
+
+            services.AddScoped<IUserRepository, UserRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -6,20 +6,16 @@ namespace CiagoarS.Common
 {
     public static class Localproperties
     {
-        private static JsonSerializerOptions _jsonOption;
+        private static JsonSerializerOptions _mJsonOption;
         public static JsonSerializerOptions JsonOption
         {
             get
             {
-                if (_jsonOption == null)
-                {
-                    _jsonOption = new JsonSerializerOptions
+                _mJsonOption ??= new JsonSerializerOptions
                     {
                         Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
                     };
-                }
-
-                return _jsonOption;
+                return _mJsonOption;
             }
         }
     }

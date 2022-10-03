@@ -25,7 +25,7 @@ namespace CiagoarS.Controllers
         public RelativeCompaniesController(ILogger<UsersController> logger, CiagoarContext context)
         {
             _mLogger = logger;
-            _context = context;
+            _mContext = context;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace CiagoarS.Controllers
 
             try
             {
-                IQueryable<RelativeCo> relativeCos = _context.RelativeCos.Where(p => p.Isdelete == false);
+                IQueryable<RelativeCo> relativeCos = _mContext.RelativeCos.Where(p => p.Isdelete == false);
 
                 if (!string.IsNullOrWhiteSpace(parameters.searchString))
                 {
@@ -169,8 +169,8 @@ namespace CiagoarS.Controllers
                     Updatetime = null
                 };
 
-                _context.RelativeCos.Add(relativeCo);
-                _context.SaveChanges();
+                _mContext.RelativeCos.Add(relativeCo);
+                _mContext.SaveChanges();
 
 
                 response.Result = true;
@@ -223,7 +223,7 @@ namespace CiagoarS.Controllers
 
             try
             {
-                RelativeCo relativeCo = _context.RelativeCos.FirstOrDefault(p => p.Id == parameters.id);
+                RelativeCo relativeCo = _mContext.RelativeCos.FirstOrDefault(p => p.Id == parameters.id);
 
                 if(relativeCo != null)
                 {
@@ -235,7 +235,7 @@ namespace CiagoarS.Controllers
                     relativeCo.Isuse = parameters.isuse;
                     relativeCo.Updatetime = DateTime.Now.ToUniversalTime();
 
-                    _context.SaveChanges();
+                    _mContext.SaveChanges();
 
                     response.Result = true;
                     response.Data = relativeCo.Id;
@@ -286,14 +286,14 @@ namespace CiagoarS.Controllers
 
             try
             {
-                RelativeCo relativeCo = _context.RelativeCos.FirstOrDefault(p => p.Id == parameters.id);
+                RelativeCo relativeCo = _mContext.RelativeCos.FirstOrDefault(p => p.Id == parameters.id);
 
                 if (relativeCo != null)
                 {
                     relativeCo.Isdelete = true;
                     relativeCo.Updatetime = DateTime.Now.ToUniversalTime();
 
-                    _context.SaveChanges();
+                    _mContext.SaveChanges();
 
                     response.Result = true;
                     response.Data = relativeCo.Id;

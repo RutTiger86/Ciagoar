@@ -16,7 +16,7 @@ namespace CiagoarS.Common
     public class BaseController : ControllerBase
     {
         protected ILogger<BaseController> _mLogger;
-        protected CiagoarContext _context;
+        protected CiagoarContext _mContext;
 
         protected string ModuleName
         {
@@ -37,7 +37,6 @@ namespace CiagoarS.Common
 
         protected void LogingRES(object response)
         {
-
             _mLogger.LogInformation($"[{ModuleName}]  RESPONSE DATA  [{Serialize(response)}]{Environment.NewLine}");
         }
 
