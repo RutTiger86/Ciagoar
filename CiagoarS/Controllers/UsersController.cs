@@ -1,4 +1,5 @@
-﻿using Ciagoar.Core.Helper;
+﻿using Azure;
+using Ciagoar.Core.Helper;
 using Ciagoar.Core.OAuth;
 using Ciagoar.Data.Enums;
 using Ciagoar.Data.HTTPS;
@@ -19,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -31,9 +33,9 @@ namespace CiagoarS.Controllers
     /// </summary>
     public class UsersController : BaseController
     {
-        private const string _salt = "ciagoar";
-        private const int _it_count = 5;
-        private const int _length = 128;
+        private const string mSalt = "ciagoar";
+        private const int mIt_count = 5;
+        private const int mLength = 128;
 
         private readonly IUserRepository mUsers;
 
@@ -108,16 +110,16 @@ namespace CiagoarS.Controllers
         {
             try
             {
-                Password = CryptographyHelper.GetPbkdf2(Password, _salt, _it_count, _length);
+                Password = CryptographyHelper.GetPbkdf2(Password, mSalt, mIt_count, mLength);
 
-                Ci_User userInfo = await mUsers.GetUserByEmailPWAsync(Email, Password);
+                Ci_User CiUser = await mUsers.GetUserByEmailPWAsync(Email, Password);
 
-                if (userInfo != null)
+                if (CiUser != null)
                 {
                     return new BaseResponse<Ci_User>
                     {
                         Result = true,
-                        Data = userInfo
+                        Data = CiUser
                     };
                 }
                 else
@@ -140,9 +142,9 @@ namespace CiagoarS.Controllers
         {
             try
             {
-                Tuple<Ci_User, string> userInfo = await mUsers.GetUserAuthkeyByEmailAsync(Email);
+                Tuple<Ci_User, string> CiUserAuth = await mUsers.GetUserAuthkeyByEmailAsync(Email);
 
-                if (userInfo != default)
+                if (CiUserAuth != default)
                 {
                     List<AuthInfo> oAuth_Info_List = await mUsers.GetAuthInfoByTypeAsync(AuthType.GG);
 
@@ -162,7 +164,7 @@ namespace CiagoarS.Controllers
                             TokenUri = oAuth_Info_List.Where(p => p.FieldName.Equals("tokenuri")).First().FieldValue
                         };
 
-                        BaseResponse<GoogleOAuth> response = await Google.RefrashAccessToken(ci_OAuth, userInfo.Item2);
+                        BaseResponse<GoogleOAuth> response = await Google.RefrashAccessToken(ci_OAuth, CiUserAuth.Item2);
 
                         if (response.Result)
                         {
@@ -170,7 +172,7 @@ namespace CiagoarS.Controllers
                             return new BaseResponse<Ci_User>
                             {
                                 Result = true,
-                                Data = userInfo.Item1
+                                Data = CiUserAuth.Item1
                             };
                         }
                         else
@@ -315,43 +317,41 @@ namespace CiagoarS.Controllers
         {
             LogingREQ(parameters);
 
-            BaseResponse<Ci_User> response = new();
+            BaseResponse<Ci_User> Response ;
 
             try
             {
 
                 if (await mUsers.CheckUserByEmailAsync(parameters.email))
                 {
-                    response = InsertUserInfo(parameters);
+                    Response = await InsertUserInfoAsync(parameters);
                 }
                 else
                 {
-                    response = ConnectUserAuthentication(parameters);
+                    Response = await ConnectUserAuthenticationAsync(parameters);
                 }
 
             }
             catch (Exception Exp)
             {
-                response = ExceptionError<Ci_User>(Exp.Message);
+                Response = ExceptionError<Ci_User>(Exp.Message);
             }
 
-            LogingRES(response);
+            LogingRES(Response);
 
-            return response;
+            return Response;
         }
 
-        private BaseResponse<Ci_User> InsertUserInfo(REQ_USER_JOIN parameters)
+        private async Task<BaseResponse<Ci_User>> InsertUserInfoAsync(REQ_USER_JOIN parameters)
         {
-            BaseResponse<Ci_User> response = new();
-
-            IDbContextTransaction Transaction = _mContext.Database.BeginTransaction();
+            BaseResponse<Ci_User> Response = new();
 
             try
             {
-                string Password = CryptographyHelper.GetPbkdf2(parameters.authKey, _salt, _it_count, _length);
+                string Password = CryptographyHelper.GetPbkdf2(parameters.authKey, mSalt, mIt_count, mLength);
               
                 //신규가입
-                UserInfo userInfo = new()
+                UserInfo UInfo = new()
                 {
                     Email = parameters.email,
                     TypeCode = (int)UserType.User,
@@ -369,108 +369,87 @@ namespace CiagoarS.Controllers
                     }
                 };
 
-                _mContext.UserInfos.Add(userInfo);
-                _mContext.SaveChanges();
+                Ci_User CiUser = await mUsers.InsertUserInfoAsync(UInfo);
 
-                if (parameters.authType == (short)AuthType.EM)
+                if (CiUser != null)
                 {
-                    response = SendEmailProcess(Transaction, userInfo);
-                }
-                else
-                {
-                    response.Result = true;
-                    response.Data = (from UInfo in _mContext.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
-                                     select new Ci_User()
-                                     {
-                                         TypeCode = UInfo.TypeCode,
-                                         Email = UInfo.Email,
-                                         Nickname = UInfo.Nickname,
-                                         AuthStep = 0
-                                     }).FirstOrDefault();
-                    Transaction.Commit();
-                }
+                    Response.Result = true;
+                    Response.Data = CiUser;
+                }                
 
+                if (parameters.authType == (short)AuthType.EM  && !SendEmailProcess(UInfo))
+                {
+                    Response = ProcessError<Ci_User>(ErrorCode.EC_EX);
+                }
             }
             catch (Exception Exp)
             {
-                response = ExceptionError<Ci_User>(Exp.Message);
-                Transaction.Rollback();
+                Response = ExceptionError<Ci_User>(Exp.Message);
             }
 
-            return response;
+            return Response;
         }
 
-        private BaseResponse<Ci_User> ConnectUserAuthentication( REQ_USER_JOIN parameters)
+        private async Task<BaseResponse<Ci_User>> ConnectUserAuthenticationAsync( REQ_USER_JOIN parameters)
         {
-            BaseResponse<Ci_User> response = new();
-            IDbContextTransaction Transaction = _mContext.Database.BeginTransaction();
+            BaseResponse<Ci_User> Response = new();
+
             try
             {
+                UserInfo UInfo = await mUsers.GetUserByEmailAsync(parameters.email);
 
-                UserInfo userInfo = _mContext.UserInfos.Where(p => p.Email.Equals(parameters.email)).FirstOrDefault();
+                UserAuth UInfoAuth = await mUsers.GetUserAuthsAsync(UInfo.Id, parameters.authType);
 
-                UserAuth userAuthentication = _mContext.UserAuths.FirstOrDefault(p => p.UserInfoId == userInfo.Id && p.TypeCode == parameters.authType);
-
-
-
-                if (userAuthentication != null)
+                if (UInfoAuth != null)
                 {
                     //사용자 정보도 있고 로그인 정보도 있음
                     if (parameters.authType != (int)AuthType.EM)
                     {
                         // RefrashCodeUpdate
-                        userAuthentication.AuthKey = parameters.authKey;
-                        _mContext.SaveChanges();
+                        _ = await mUsers.UpdateAuthKeyAsync(UInfoAuth.Id, parameters.authKey);
 
-                        response.Result = true;
-                        response.Data = (from UInfo in _mContext.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
-                                         select new Ci_User()
-                                         {
-                                             TypeCode = UInfo.TypeCode,
-                                             Email = UInfo.Email,
-                                             Nickname = UInfo.Nickname
-                                         }).FirstOrDefault();
-
-                        Transaction.Commit();
+                        Response.Result = true;
+                        Response.Data = new Ci_User()
+                        {
+                            TypeCode = UInfo.TypeCode,
+                            Email = UInfo.Email,
+                            Nickname = UInfo.Nickname
+                        };
                     }
                     else
                     {
                         // Email계정으로 등록 불가 
-                        response = ProcessError<Ci_User>(ErrorCode.RE_EXIST_USER);
+                        Response = ProcessError<Ci_User>(ErrorCode.RE_EXIST_USER);
                     }
                 }
                 else
                 {
+                    string Password = CryptographyHelper.GetPbkdf2(parameters.authKey, mSalt, mIt_count, mLength);
+
                     //사용자 정보는 있으나 로그인 정보는 없음 계정 연결 
                     UserAuth userAuth = new()
                     {
                         TypeCode = parameters.authType,
-                        AuthKey = parameters.authType == (int)AuthType.EM ? CryptographyHelper.GetPbkdf2(parameters.authKey, _salt, _it_count, _length) : parameters.authKey,
-                        UserInfoId = userInfo.Id,
+                        AuthKey = parameters.authType == (int)AuthType.EM ? Password : parameters.authKey,
+                        UserInfoId = UInfo.Id,
                         Isuse = true,
                     };
-
-                    _mContext.UserAuths.Add(userAuth);
-                    _mContext.SaveChanges();
-
-
-                    if (parameters.authType == (short)AuthType.EM)
+                    
+                    if(await mUsers.InsertUserAuthAsync(userAuth) != -1)
                     {
-
-                        response = SendEmailProcess(Transaction, userInfo);
-                    }
-                    else
-                    {
-                        response.Result = true;
-                        response.Data = (from UInfo in _mContext.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
-                                         select new Ci_User()
+                        Response.Result = true;
+                        Response.Data =  new Ci_User()
                                          {
                                              TypeCode = UInfo.TypeCode,
                                              Email = UInfo.Email,
                                              Nickname = UInfo.Nickname
-                                         }).FirstOrDefault();
+                                         };
+                    }
 
-                        Transaction.Commit();
+
+                    if (parameters.authType == (short)AuthType.EM && !SendEmailProcess(UInfo))
+                    {
+                        Response = ProcessError<Ci_User>(ErrorCode.EC_EX);
                     }
 
                 }
@@ -478,17 +457,14 @@ namespace CiagoarS.Controllers
             }
             catch (Exception Exp)
             {
-                response = ExceptionError<Ci_User>(Exp.Message);
-                Transaction.Rollback();
+                Response = ExceptionError<Ci_User>(Exp.Message);
             }
 
-            return response;
+            return Response;
         }
 
-        private BaseResponse<Ci_User> SendEmailProcess(IDbContextTransaction Transaction, UserInfo userInfo)
+        private bool SendEmailProcess(UserInfo UInfo)
         {
-            BaseResponse<Ci_User> response = new();
-
             try
             {
                 List<AuthInfo> SMTP_Info_List = _mContext.AuthInfos.Where(p => p.TypeCode == (short)AuthType.EM).ToList();
@@ -509,53 +485,19 @@ namespace CiagoarS.Controllers
 
                     };
 
-                    if (sMTP_INFO != null && EmailHelper.SendEMail(sMTP_INFO, userInfo, _mLogger))
+                    if (sMTP_INFO != null)
                     {
-                        UserAuth auth = userInfo.UserAuths.Where(p => p.TypeCode == (short)AuthType.EM).FirstOrDefault();
-
-                        if (auth != null)
-                        {
-                            auth.AuthStep = 1;
-                            _mContext.SaveChanges();
-
-                            response.Result = true;
-                            response.Data = (from UInfo in _mContext.UserInfos.Where(p => p.Email.Equals(userInfo.Email) && (bool)p.Isuse && !p.Isdelete)
-                                             select new Ci_User()
-                                             {
-                                                 TypeCode = UInfo.TypeCode,
-                                                 Email = UInfo.Email,
-                                                 Nickname = UInfo.Nickname,
-                                                 AuthStep = auth.AuthStep,
-                                             }).FirstOrDefault();
-
-                            Transaction.Commit();
-                        }
-                        else
-                        {
-                            response = ProcessError<Ci_User>(ErrorCode.EC_EX);
-                            Transaction.Rollback();
-                        }
+                        return EmailHelper.SendEMail(sMTP_INFO, UInfo, _mLogger);
                     }
-                    else
-                    {
-                        response = ProcessError<Ci_User>(ErrorCode.EC_EX);
-                        Transaction.Rollback();
-                    }
-                }
-                else
-                {
-                    response = ProcessError<Ci_User>(ErrorCode.EC_EX);
-                    Transaction.Rollback();
                 }
 
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
-                response = ExceptionError<Ci_User>(Exp.Message);
-                Transaction.Rollback();
+                throw;
             }
 
-            return response;
+            return false;
         }
 
         /// <summary>
@@ -582,41 +524,39 @@ namespace CiagoarS.Controllers
         [Route("UpdateAuthentication")]
         [HttpPut]
         [Produces("application/json")]
-        public BaseResponse<bool> UpdateAuthentication(REQ_AUTH parameters)
+        public async Task<BaseResponse<bool>> UpdateAuthentication(REQ_AUTH parameters)
         {
             LogingREQ(parameters);
 
-            BaseResponse<bool> response = new();
+            BaseResponse<bool> Response = new();
 
             try
             {
-                UserAuth userAuth = (from UAuthentications in _mContext.UserAuths.Where(p => p.TypeCode == (int)parameters.authType && (bool)p.Isuse && !p.Isdelete)
-                                     join UInfo in _mContext.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse && !p.Isdelete)
-                                     on UAuthentications.UserInfoId equals UInfo.Id
-                                     select UAuthentications
-                                                 ).FirstOrDefault();
+                UserAuth UAuth = await mUsers.GetUserAuthsByEmailAsync(parameters.email, parameters.authType);
 
-                if (userAuth != null)
+                if (UAuth != null)
                 {
-                    userAuth.AuthKey = parameters.authKey;
-                    userAuth.Updatetime = DateTime.Now;
-                    _mContext.SaveChanges();
+                    if(await mUsers.UpdateAuthKeyAsync(UAuth.Id, parameters.authKey) != -1)
+                    {
+                        Response.Result = true;
+                        Response.Data = true;
+                    }
                 }
                 else
                 {
                     //존재하지 않는 Authentication
-                    response = ProcessError<bool>(ErrorCode.RE_NEXIST_AUTHENTICATION);
+                    Response = ProcessError<bool>(ErrorCode.RE_NEXIST_AUTHENTICATION);
                 }
 
             }
             catch (Exception Exp)
             {
-                response = ExceptionError<bool>(Exp.Message);
+                Response = ExceptionError<bool>(Exp.Message);
             }
 
-            LogingRES(response);
+            LogingRES(Response);
 
-            return response;
+            return Response;
         }
 
 
