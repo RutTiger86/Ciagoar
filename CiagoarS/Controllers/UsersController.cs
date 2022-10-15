@@ -15,6 +15,7 @@ using CiagoarS.Repositorys;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
@@ -42,15 +43,13 @@ namespace CiagoarS.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="context"></param>
-        public UsersController(IUserRepository users, ILogger<UsersController> logger, CiagoarContext context)
+        /// <param name="Users"></param>
+        /// <param name="Logger"></param>
+        public UsersController(IUserRepository Users, ILogger<UsersController> Logger)
         {
-            _mLogger = logger;
+            _mLogger = Logger;
 
-            _mContext = context;
-
-            mUsers = users;
+            mUsers = Users;
         }
 
         /// <summary>
@@ -377,7 +376,7 @@ namespace CiagoarS.Controllers
                     Response.Data = CiUser;
                 }                
 
-                if (parameters.authType == (short)AuthType.EM  && !SendEmailProcess(UInfo))
+                if (parameters.authType == (short)AuthType.EM  && !await SendEmailProcess(UInfo))
                 {
                     Response = ProcessError<Ci_User>(ErrorCode.EC_EX);
                 }
@@ -447,7 +446,7 @@ namespace CiagoarS.Controllers
                     }
 
 
-                    if (parameters.authType == (short)AuthType.EM && !SendEmailProcess(UInfo))
+                    if (parameters.authType == (short)AuthType.EM && !await SendEmailProcess(UInfo))
                     {
                         Response = ProcessError<Ci_User>(ErrorCode.EC_EX);
                     }
@@ -463,11 +462,11 @@ namespace CiagoarS.Controllers
             return Response;
         }
 
-        private bool SendEmailProcess(UserInfo UInfo)
+        private async Task<bool> SendEmailProcess(UserInfo UInfo)
         {
             try
             {
-                List<AuthInfo> SMTP_Info_List = _mContext.AuthInfos.Where(p => p.TypeCode == (short)AuthType.EM).ToList();
+                List<AuthInfo> SMTP_Info_List = await mUsers.GetSMTPInfoAsync();
 
                 if (SMTP_Info_List.Count > 3
                     && SMTP_Info_List.Any(p => p.FieldName.Equals("smtpport"))
@@ -583,7 +582,7 @@ namespace CiagoarS.Controllers
         [Route("AuthenticationStepCheck")]
         [HttpPut]
         [Produces("application/json")]
-        public BaseResponse<bool> AuthenticationStepCheck(REQ_AUTH_STEP parameters)
+        public async Task<BaseResponse<bool>> AuthenticationStepCheck(REQ_AUTH_STEP parameters)
         {
             LogingREQ(parameters);
 
@@ -591,26 +590,28 @@ namespace CiagoarS.Controllers
 
             try
             {
-                UserInfo user = _mContext.UserInfos.Where(p => p.Email.Equals(parameters.email) && (bool)p.Isuse).FirstOrDefault();
+                UserInfo user = await mUsers.GetUserByEmailAsync(parameters.email);
 
-                string Key = CryptographyHelper.GetHash(user.Createtime.ToString("HHmmssfff")).ToString()[..6];
-
-                if (user != null && parameters.authStepKey.Equals(Key))
+                if (user != null)
                 {
+                    string Key = CryptographyHelper.GetHash(user.Createtime.ToString("HHmmssfff")).ToString()[..6];
 
-                    UserAuth auth = _mContext.UserAuths.FirstOrDefault(p => p.UserInfoId == user.Id && p.TypeCode == (short)AuthType.EM);
+                    if (parameters.authStepKey.Equals(Key))
+                    {                        
 
-                    if (auth != null)
-                    {
-                        auth.AuthStep = 0;
-                        _mContext.SaveChanges();
+                        UserAuth auth = await mUsers.GetUserAuthsByEmailAsync(parameters.email, (short)AuthType.EM);
 
-                        response.Result = true;
-                        response.Data = true;
-                    }
-                    else
-                    {
-                        response = ProcessError<bool>(ErrorCode.EC_EX);
+                        if (auth != null)
+                        {
+                            await mUsers.UpdateAuthStepAsync(auth.Id, 0);
+
+                            response.Result = true;
+                            response.Data = true;
+                        }
+                        else
+                        {
+                            response = ProcessError<bool>(ErrorCode.EC_EX);
+                        }
                     }
                 }
                 else

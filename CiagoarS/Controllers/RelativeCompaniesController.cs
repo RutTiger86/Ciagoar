@@ -4,11 +4,13 @@ using Ciagoar.Data.Response.RelativecCompanies;
 using CiagoarS.Common;
 using CiagoarS.Common.Enums;
 using CiagoarS.DataBase;
+using CiagoarS.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CiagoarS.Controllers
 {
@@ -17,15 +19,20 @@ namespace CiagoarS.Controllers
     /// </summary>
     public class RelativeCompaniesController : BaseController
     {
+
+        private readonly IRelatevCoRepository mRelaytevCo;
+
+
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="RelaytevCo"></param> 
         /// <param name="logger"></param>
         /// <param name="context"></param>
-        public RelativeCompaniesController(ILogger<UsersController> logger, CiagoarContext context)
+        public RelativeCompaniesController(IRelatevCoRepository RelaytevCo, ILogger<RelativeCompaniesController> logger, CiagoarContext context)
         {
             _mLogger = logger;
-            _mContext = context;
+            mRelaytevCo = RelaytevCo;
         }
 
         /// <summary>
@@ -56,10 +63,10 @@ namespace CiagoarS.Controllers
         /// <para>     - ConnectUrl   : 연락 URL </para>
         /// <para>     - Memo         : 메모 </para>
         /// </response>
-       
+
         [HttpGet]
         [Produces("application/json")]
-        public BaseResponse<List<Ci_RELATVE_CO>> GetRelativeCompanies([FromQuery] REQ_RELATVE_CO_LIST parameters)
+        public async Task<BaseResponse<List<Ci_RELATVE_CO>>> GetRelativeCompanies([FromQuery] REQ_RELATVE_CO_LIST parameters)
         {
             LogingREQ(parameters);
 
@@ -67,49 +74,8 @@ namespace CiagoarS.Controllers
 
             try
             {
-                IQueryable<RelativeCo> relativeCos = _mContext.RelativeCos.Where(p => p.Isdelete == false);
-
-                if (!string.IsNullOrWhiteSpace(parameters.searchString))
-                {
-                    relativeCos = relativeCos.Where(p => p.Id.ToString().Contains(parameters.searchString)
-                    || p.CoName.Contains(parameters.searchString)
-                    || p.PhoneNumber.Contains(parameters.searchString)
-                    || p.CoAddress.Contains(parameters.searchString));
-                }
-
-                if (!string.IsNullOrWhiteSpace(parameters.sortOrder))
-                {
-                    switch (parameters.sortOrder.ToUpper())
-                    {
-                        case "ID_DESC": relativeCos = relativeCos.OrderByDescending(p => p.Id); break;
-                        case "CONAME": relativeCos = relativeCos.OrderBy(p => p.CoName); break;
-                        case "CONAME_DESC": relativeCos = relativeCos.OrderByDescending(p => p.CoName); break;
-                        case "COADDRESS": relativeCos = relativeCos.OrderBy(p => p.CoAddress); break;
-                        case "COADDRESS_DESC": relativeCos = relativeCos.OrderByDescending(p => p.CoAddress); break;
-                        case "PHONENUMBER": relativeCos = relativeCos.OrderBy(p => p.PhoneNumber); break;
-                        case "PHONENUMBER_DESC": relativeCos = relativeCos.OrderByDescending(p => p.PhoneNumber); break;
-                        default: relativeCos = relativeCos.OrderBy(p => p.Id); break;
-                    }
-                }
-                else
-                {
-                    relativeCos = relativeCos.OrderBy(p => p.Id);
-                }
-
                 response.Result = true;
-                response.Data = relativeCos.Skip(parameters.pageCount* parameters.pageIndex-1)
-                    .Take(parameters.pageCount)
-                    .Select(p => new Ci_RELATVE_CO()
-                    {
-                        Id = p.Id,
-                        CoAddress = p.CoAddress,
-                        CoName = p.CoName,
-                        ConnectUrl = p.ConnectUrl,
-                        Memo = p.Memo,
-                        PhoneNumber = p.PhoneNumber,
-                        CreateTime = p.Createtime,
-                        UpdateTime = p.Updatetime
-                    }).ToList();
+                response.Data = await mRelaytevCo.CheckUserByEmailAsync(parameters.searchString, parameters.sortOrder, parameters.pageCount, parameters.pageIndex);
             }
             catch (Exception Exp)
             {
@@ -156,11 +122,11 @@ namespace CiagoarS.Controllers
 
             try
             {
-                RelativeCo relativeCo = new()
+                RelativeCo mRelativeCo = new()
                 {
                     CoAddress = parameters.coAddress,
-                    CoName=parameters.coName,
-                    ConnectUrl=parameters.connectUrl,
+                    CoName = parameters.coName,
+                    ConnectUrl = parameters.connectUrl,
                     Createtime = DateTime.Now.ToUniversalTime(),
                     Memo = parameters.memo,
                     Isuse = parameters.isuse,
@@ -169,12 +135,10 @@ namespace CiagoarS.Controllers
                     Updatetime = null
                 };
 
-                _mContext.RelativeCos.Add(relativeCo);
-                _mContext.SaveChanges();
-
+                mRelaytevCo.InsertRelativeCoAsync(mRelativeCo);
 
                 response.Result = true;
-                response.Data = relativeCo.Id;
+                response.Data = mRelativeCo.Id;
             }
             catch (Exception Exp)
             {
@@ -215,7 +179,7 @@ namespace CiagoarS.Controllers
         [Route("RelativeCompany")]
         [HttpPut]
         [Produces("application/json")]
-        public BaseResponse<int> UpdateRelativeCompany([FromBody] REQ_RELATVE_CO_POST parameters)
+        public async Task<BaseResponse<int>> UpdateRelativeCompany([FromBody] REQ_RELATVE_CO_POST parameters)
         {
             LogingREQ(parameters);
 
@@ -223,20 +187,21 @@ namespace CiagoarS.Controllers
 
             try
             {
-                RelativeCo relativeCo = _mContext.RelativeCos.FirstOrDefault(p => p.Id == parameters.id);
-
-                if(relativeCo != null)
+                RelativeCo relativeCo = new RelativeCo()
                 {
-                    relativeCo.CoName = parameters.coName;
-                    relativeCo.CoAddress = parameters.coAddress;
-                    relativeCo.PhoneNumber = parameters.phoneNumber;
-                    relativeCo.ConnectUrl = parameters.connectUrl;
-                    relativeCo.Memo = parameters.memo;
-                    relativeCo.Isuse = parameters.isuse;
-                    relativeCo.Updatetime = DateTime.Now.ToUniversalTime();
+                    Id = parameters.id,
+                    CoName = parameters.coName,
+                    CoAddress = parameters.coAddress,
+                    PhoneNumber = parameters.phoneNumber,
+                    ConnectUrl = parameters.connectUrl,
+                    Memo = parameters.memo,
+                    Isuse = parameters.isuse,
+                    Updatetime = DateTime.Now.ToUniversalTime()
 
-                    _mContext.SaveChanges();
+                };
 
+                if (await mRelaytevCo.UpdateRelativeCoAsync(relativeCo) >0)
+                {
                     response.Result = true;
                     response.Data = relativeCo.Id;
 
@@ -278,7 +243,7 @@ namespace CiagoarS.Controllers
         [Route("RelativeCompany")]
         [HttpDelete]
         [Produces("application/json")]
-        public BaseResponse<int> DeleteRelativeCompany([FromBody] REQ_RELATVE_CO_DELETE parameters)
+        public async Task<BaseResponse<int>> DeleteRelativeCompany([FromBody] REQ_RELATVE_CO_DELETE parameters)
         {
             LogingREQ(parameters);
 
@@ -286,17 +251,12 @@ namespace CiagoarS.Controllers
 
             try
             {
-                RelativeCo relativeCo = _mContext.RelativeCos.FirstOrDefault(p => p.Id == parameters.id);
+                int result = await mRelaytevCo.DeleteRelativeCoAsync(parameters.id);
 
-                if (relativeCo != null)
+                if (result > 0)
                 {
-                    relativeCo.Isdelete = true;
-                    relativeCo.Updatetime = DateTime.Now.ToUniversalTime();
-
-                    _mContext.SaveChanges();
-
                     response.Result = true;
-                    response.Data = relativeCo.Id;
+                    response.Data = parameters.id;
                 }
                 else
                 {

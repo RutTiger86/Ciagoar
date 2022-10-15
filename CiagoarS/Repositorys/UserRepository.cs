@@ -87,14 +87,47 @@ namespace CiagoarS.Repositorys
             }
         }
 
+        public async Task<List<AuthInfo>> GetSMTPInfoAsync()
+        {
+            try
+            {
+                return await mContext.AuthInfos.Where(p => p.TypeCode == (short)AuthType.EM).ToListAsync();
 
-        public async Task<int> UpdateAuthKeyAsync(int UserAuthID, string AuthKey)
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+
+        public async Task<int> UpdateAuthKeyAsync(int UserAuthID, string UpdateAuthKey)
         {
             try
             {
                 if (await mContext.UserAuths.FindAsync(UserAuthID) is UserAuth Auth)
                 {
-                    Auth.AuthKey = AuthKey;
+                    Auth.AuthKey = UpdateAuthKey;
+                    return await mContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return -1;
+        }
+
+        public async Task<int> UpdateAuthStepAsync(int UserAuthID, short UpdateAuthStep)
+        {
+            try
+            {
+                if (await mContext.UserAuths.FindAsync(UserAuthID) is UserAuth Auth)
+                {
+                    Auth.AuthStep = UpdateAuthStep;
                     return await mContext.SaveChangesAsync();
                 }
             }
@@ -164,17 +197,17 @@ namespace CiagoarS.Repositorys
         }
 
 
-        public async Task<Ci_User> InsertUserInfoAsync(UserInfo UserInfo)
+        public async Task<Ci_User> InsertUserInfoAsync(UserInfo InsertUserInfo)
         {
 
             IDbContextTransaction Transaction = mContext.Database.BeginTransaction();
             Ci_User response = null;
             try
             {
-                mContext.UserInfos.Add(UserInfo);
+                mContext.UserInfos.Add(InsertUserInfo);
                 mContext.SaveChanges();
 
-                response = await (from UInfo in mContext.UserInfos.Where(p => p.Email.Equals(UserInfo.Email) && (bool)p.Isuse && !p.Isdelete)
+                response = await (from UInfo in mContext.UserInfos.Where(p => p.Email.Equals(InsertUserInfo.Email) && (bool)p.Isuse && !p.Isdelete)
                                   select new Ci_User()
                                   {
                                       TypeCode = UInfo.TypeCode,
@@ -197,11 +230,11 @@ namespace CiagoarS.Repositorys
         }
 
 
-        public async Task<int> InsertUserAuthAsync(UserAuth UserAuthData)
+        public async Task<int> InsertUserAuthAsync(UserAuth InsertUserAuthData)
         {
             try
             {
-                mContext.UserAuths.Add(UserAuthData);
+                mContext.UserAuths.Add(InsertUserAuthData);
                 return await mContext.SaveChangesAsync();
             }
             catch (Exception)

@@ -9,6 +9,8 @@ namespace CiagoarS.Interface
 {
     public interface IUserRepository
     {
+        Task<bool> CheckUserByEmailAsync(string Email);
+
         Task<Ci_User> GetUserByEmailPWAsync(string Email, string Password);
 
         Task<UserInfo> GetUserByEmailAsync(string Email);
@@ -17,17 +19,18 @@ namespace CiagoarS.Interface
 
         Task<UserAuth> GetUserAuthsByEmailAsync(string Email, short TypeCode);
 
-        Task<int> UpdateAuthKeyAsync(int UserAuthID, string AuthKey);
+        Task<List<AuthInfo>> GetSMTPInfoAsync();
 
         Task<Tuple<Ci_User, string>> GetUserAuthkeyByEmailAsync(string Email);
 
         Task<List<AuthInfo>> GetAuthInfoByTypeAsync(AuthType Type);
 
-        Task<bool> CheckUserByEmailAsync(string Email);
+        Task<Ci_User> InsertUserInfoAsync(UserInfo InsertUserInfo);
 
-        Task<Ci_User> InsertUserInfoAsync(UserInfo userInfo);
+        Task<int> InsertUserAuthAsync(UserAuth InsertUserAuthData);
 
-        Task<int> InsertUserAuthAsync(UserAuth UserAuthData);
+        Task<int> UpdateAuthStepAsync(int UserAuthID, short UpdateAuthStep);
 
+        Task<int> UpdateAuthKeyAsync(int UserAuthID, string UpdateAuthKey);
     }
 }

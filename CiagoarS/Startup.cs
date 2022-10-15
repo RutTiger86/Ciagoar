@@ -56,6 +56,7 @@ namespace CiagoarS
             services.AddDbContext<CiagoarContext>(options => options.UseSqlServer(DBConnection));
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRelatevCoRepository, RelatevCoRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

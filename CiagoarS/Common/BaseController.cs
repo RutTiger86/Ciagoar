@@ -16,8 +16,6 @@ namespace CiagoarS.Common
     public class BaseController : ControllerBase
     {
         protected ILogger<BaseController> _mLogger;
-        protected CiagoarContext _mContext;
-
         protected string ModuleName
         {
             get => ControllerContext.ActionDescriptor.AttributeRouteInfo.Template;
