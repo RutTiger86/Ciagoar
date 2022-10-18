@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Base\" />
+    <Folder Include="Logger\" />
   </ItemGroup>
 
 </Project>
